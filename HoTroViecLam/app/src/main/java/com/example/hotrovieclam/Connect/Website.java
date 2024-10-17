@@ -2,8 +2,8 @@ package com.example.hotrovieclam.API;
 
 import android.util.Log;
 
-import com.example.findwork.Job.JobDataAapi;
-import com.example.findwork.OnDataLoadedCallback;
+import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.OnDataLoadedCallback;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class LinkedIn {
 
     public void loadAPIsConcurrently(OnDataLoadedCallback callback) {
         // Khai báo danh sách công việc hiện tại
-        List<JobDataAapi.Job> currentJobList = new ArrayList<>();
+        List<Job> currentJobList = new ArrayList<>();
 
         // Luồng 1: Tải dữ liệu từ API 2
         executorService.execute(() -> {
