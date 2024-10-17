@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="Model.forgotpassword.ForgotPassWord">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/dangki"
+            style="@style/lable"
+            android:text="Quên mật khẩu" />
+
+
+        <EditText style="@style/email" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_forgotpass"
+            style="@style/myButton"
+            android:text="Quên mật khẩu" />
+
+
+    </LinearLayout>
+
+</LinearLayout>
