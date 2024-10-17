@@ -1,9 +1,18 @@
-package com.example.hotrovieclam.API;
+package com.example.hotrovieclam.Connect;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.Model.JobDataAPI;
 import com.example.hotrovieclam.OnDataLoadedCallback;
+import com.google.gson.Gson;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,46 +24,65 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class LinkedIn {
-    OkHttpClient client = new OkHttpClient();
-    ExecutorService executorService = Executors.newFixedThreadPool(2);
-    Request request = new Request.Builder()
-            .url("https://api.linkedin.com/v2/jobPosts")
-            .addHeader("86w0dw8sjvphn7", "Bearer WPL_AP1.vRW7qOyGVFMRhmI3.xXY9wQ==")
-            .build();
-
-    public void loadAPIsConcurrently(OnDataLoadedCallback callback) {
-        // Khai báo danh sách công việc hiện tại
-        List<Job> currentJobList = new ArrayList<>();
-
-        // Luồng 1: Tải dữ liệu từ API 2
+public class Website {
+    private static final String TAG = "TopCVScraper";
+    private static final String URL = "https://www.topcv.vn/";
+    private ExecutorService executorService = Executors.newFixedThreadPool(2);
+    public void loadWebsitesConcurrently() {
         executorService.execute(() -> {
             try {
-                Response response = client.newCall(request).execute();
-                if (response.isSuccessful() && response.body() != null) {
-                    String jsonResponse = response.body().string();
-                    Log.d("ss", jsonResponse);
-                    // Sử dụng Gson để parse chuỗi JSON thành đối tượng JobDataAapi
-//                    Gson gson = new Gson();
-//                    JobDataAapi jobData = gson.fromJson(jsonResponse, JobDataAapi.class);
-//
-//                    // Lấy danh sách công việc mới từ jobData
-//                    List<JobDataAapi.Job> newJobList = jobData.getResults();
-//
-//                    // Kiểm tra và thêm vào danh sách hiện tại
-//                    if (newJobList != null && !newJobList.isEmpty()) {
-//                        currentJobList.addAll(newJobList);  // Thêm các công việc mới vào danh sách hiện tại
-//
-//                        // Cập nhật UI trên main thread
-//                        new Handler(Looper.getMainLooper()).post(() -> {
-//                            callback.onDataLoaded(currentJobList);  // Gọi callback để cập nhật giao diện
-//                        });
-//                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e("Error", "Failed to fetch job data", e);
+                Document document = Jsoup.connect("https://www.vietnamworks.com/viec-lam-goi-y")
+                        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+                        .timeout(900000)
+                        .get();
 
+                // Lấy tiêu đề của trang
+                String title = document.title();
+                Elements jobElementss = document.select("div.sc-cKXybt.gCRvSm");
+//                Log.d(TAG, "oooooooo: " + title);
+//
+//                // Lấy tất cả các công việc có thể nằm trong thẻ <h3> hoặc thẻ khác
+//                Elements jobElements = document.select("strong");  // Ví dụ, chọn thẻ <h3>
+//
+//                // Duyệt qua từng thẻ để lấy tên công việc (hoặc các dữ liệu khác)
+//                for (Element job : jobElements) {
+//                    Log.d(TAG, "gg" + job.text());
+//                }
+                for (Element jobElement : jobElementss) {
+                    // Lấy tiêu đề công việc
+                    String jobTitle = jobElement.select("div.sc-dUWDJJ h2 a").text();
+                    String jobUrl = jobElement.select("div.sc-dUWDJJ h2 a").attr("href");
+
+                    // Lấy tên công ty
+                    String companyName = jobElement.select("div.sc-iLWXdy a").text();
+                    String companyUrl = jobElement.select("div.sc-iLWXdy a").attr("href");
+
+                    // Lấy mức lương và địa điểm
+                    String salary = jobElement.select("span.sc-enkILE").text();
+                    String location = jobElement.select("span.sc-bcSKrn").text();
+
+                    // Lấy ngày cập nhật
+                    String updateDate = jobElement.select("div.sc-dBFDNq").text();
+
+                    // Lấy các kỹ năng yêu cầu
+                    Elements skillElements = jobElement.select("ul.sc-iZzKWI li label");
+                    StringBuilder skills = new StringBuilder();
+                    for (Element skill : skillElements) {
+                        skills.append(skill.text()).append(", ");
+                    }
+
+                    // In ra thông tin công việc
+                    Log.d(TAG, "Job Title: " + jobTitle);
+                    Log.d(TAG, "Job URL: " + jobUrl);
+                    Log.d(TAG, "Company: " + companyName + " (" + companyUrl + ")");
+                    Log.d(TAG, "Salary: " + salary);
+                    Log.d(TAG, "Location: " + location);
+                    Log.d(TAG, "Update Date: " + updateDate);
+                    Log.d(TAG, "Skills: " + skills.toString());
+                }
+
+            } catch (IOException e) {
+                Log.e(TAG, e.getMessage());
             }
         });
     }

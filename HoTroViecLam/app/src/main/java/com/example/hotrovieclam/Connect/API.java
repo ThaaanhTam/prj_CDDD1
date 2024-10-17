@@ -1,4 +1,4 @@
-package com.example.hotrovieclam.API;
+package com.example.hotrovieclam.Connect;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -21,7 +21,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class APIconnect {
+public class API {
     private OkHttpClient okHttpClient = new OkHttpClient();
     private ExecutorService executorService = Executors.newFixedThreadPool(2);  // 2 luồng cho việc tải
 

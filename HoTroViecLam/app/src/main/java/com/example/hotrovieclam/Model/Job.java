@@ -2,7 +2,7 @@ package com.example.hotrovieclam.Model;
 
 import java.sql.Timestamp;
 
-public class JobData {
+public class Job {
     private int id;
     private String employerId; // ref to employers.user_id
     private int jobTypeId; // ref to job_types.id

@@ -1,5 +1,9 @@
+import org.apache.tools.ant.util.JavaEnvUtils.VERSION_11
+import org.apache.tools.ant.util.JavaEnvUtils.VERSION_1_8
+
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -29,6 +33,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    buildFeatures{ viewBinding = true}
 }
 
 dependencies {
@@ -37,7 +42,21 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation ("com.github.bumptech.glide:glide:4.15.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.0")
+    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation ("io.reactivex.rxjava3:rxjava:3.0.0")
+    implementation ("io.reactivex.rxjava3:rxandroid:3.0.0")
+    implementation ("com.squareup.retrofit2:adapter-rxjava3:2.9.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation ("com.google.firebase:firebase-database:21.0.0")
+    implementation ("com.google.firebase:firebase-storage:20.1.0")
+    implementation ("org.jsoup:jsoup:1.15.3")
+     // Kiểm tra phiên bản mới nhất
+
 }

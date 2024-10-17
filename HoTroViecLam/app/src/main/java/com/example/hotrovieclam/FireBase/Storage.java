@@ -5,7 +5,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.findwork.OnUriRetrievedListener;
+
+import com.example.hotrovieclam.OnUriRetrievedListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;

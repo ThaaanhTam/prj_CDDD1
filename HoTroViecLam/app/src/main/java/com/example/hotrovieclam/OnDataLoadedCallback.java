@@ -1,9 +1,9 @@
 package com.example.hotrovieclam;
 
-import com.example.findwork.Job.JobDataAapi;
+import com.example.hotrovieclam.Model.Job;
 
 import java.util.List;
 
 public interface OnDataLoadedCallback {
-    void onDataLoaded(List<JobDataAapi.Job> jobList);
+    void onDataLoaded(List<Job> jobList);
 }

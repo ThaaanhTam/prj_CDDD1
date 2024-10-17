@@ -1,4 +1,4 @@
-package com.example.hotrovieclam.Job;
+package com.example.hotrovieclam.Model;
 
 import java.sql.Timestamp;
 

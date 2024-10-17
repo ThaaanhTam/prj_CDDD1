@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.hotrovieclam.Job.JobData;
+import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.databinding.ListItemBinding;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.MyViewHolder> {
 
     private Activity context;
-    private ArrayList<JobData.Job> jobDataAPIs;
+    private ArrayList<Job> jobs;
 
 
 
@@ -26,14 +26,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         return new MyViewHolder(ListItemBinding.inflate(context.getLayoutInflater(), parent, false));
     }
 
-    public MyRecyclerViewAdapter(Activity context, ArrayList<JobData.Job> jobDataAPIs) {
+    public MyRecyclerViewAdapter(Activity context, ArrayList<Job> jobs) {
         this.context = context;
-        this.jobDataAPIs = jobDataAPIs;
+        this.jobs = jobs;
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        JobData.Job jobDataAapi = jobDataAPIs.get(position);
+        Job job = jobs.get(position);
 //        Storage storageHelper = new Storage();
 //
 //        storageHelper.getUri(new OnUriRetrievedListener() {
@@ -45,19 +45,19 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 //            }
 //        },jobDataAapi.getCompany().getLogo());
 
-        Uri uri = Uri.parse(jobDataAapi.getCompany().getLogo());
+       // Uri uri = Uri.parse(job.);
 
         // Sử dụng Glide để tải hình ảnh từ Uri
-        Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
+     //   Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
 
 
-        holder.binding.tvNameCompany.setText(jobDataAapi.getCompany().getName());
-        holder.binding.tvNameLocation.setText(jobDataAapi.getLocation());
+        holder.binding.tvNameCompany.setText(job.getTitle());
+        holder.binding.tvNameLocation.setText(job.getDescription());
     }
 
     @Override
     public int getItemCount() {
-        return jobDataAPIs.size();
+        return jobs.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
