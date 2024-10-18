@@ -2,6 +2,7 @@ package com.example.hotrovieclam;
 
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.hotrovieclam.Connect.API;
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.example.hotrovieclam.Connect.Website;
+import com.example.hotrovieclam.FireBase.Storage;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.databinding.ActivityMainBinding;
 
@@ -54,10 +56,19 @@ public class MainActivity extends AppCompatActivity {
                 // Thêm các công việc mới vào danh sách hiện tại
                 jobList.addAll(newJobList);
 
-                // Cập nhật UI từ luồng chính
-                runOnUiThread(() -> myRecyclerViewAdapter.notifyDataSetChanged());
-            }
 
+       Runnable task1 = () -> {
+            API api = new API();
+            jobList.addAll(api.loadAPIsConcurrently());
+               runOnUiThread(() -> myRecyclerViewAdapter.notifyDataSetChanged());
+        };
+        Runnable task2 = () -> {
+            Website website = new Website();
+            jobList.addAll(website.loadWebsitesConcurrently());
+            runOnUiThread(() -> myRecyclerViewAdapter.notifyDataSetChanged());
+        };
+        executorService.submit(task1);
+        executorService.submit(task2);
 
         });
         Website website = new Website();

@@ -56,7 +56,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
     implementation ("com.google.firebase:firebase-database:21.0.0")
     implementation ("com.google.firebase:firebase-storage:20.1.0")
-    implementation ("org.jsoup:jsoup:1.15.3")
-     // Kiểm tra phiên bản mới nhất
+    implementation ("org.jsoup:jsoup:1.18.1")
+    implementation ("com.squareup.picasso:picasso:2.71828")
+
+    // Kiểm tra phiên bản mới nhất
 
 }
