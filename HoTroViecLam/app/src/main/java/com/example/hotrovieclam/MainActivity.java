@@ -1,6 +1,8 @@
 package com.example.hotrovieclam;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -20,12 +22,16 @@ import com.example.hotrovieclam.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private MyRecyclerViewAdapter myRecyclerViewAdapter;
     private ArrayList<Job> jobList; // Khai báo danh sách công việc
+
+    ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +54,6 @@ public class MainActivity extends AppCompatActivity {
         binding.rcListJob.setLayoutManager(new LinearLayoutManager(this));
         binding.rcListJob.setAdapter(myRecyclerViewAdapter);
 
-        // Gọi phương thức tải dữ liệu từ API
-        API apiConnect = new API();
-        apiConnect.loadAPIsConcurrently(new OnDataLoadedCallback() {
-            @Override
-            public void onDataLoaded(List<Job> newJobList) {
-                // Thêm các công việc mới vào danh sách hiện tại
-                jobList.addAll(newJobList);
-
 
        Runnable task1 = () -> {
             API api = new API();
@@ -70,8 +68,7 @@ public class MainActivity extends AppCompatActivity {
         executorService.submit(task1);
         executorService.submit(task2);
 
-        });
-        Website website = new Website();
-        website.loadWebsitesConcurrently();
+
+
     }
 }

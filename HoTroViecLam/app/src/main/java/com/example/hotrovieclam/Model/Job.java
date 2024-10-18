@@ -3,8 +3,18 @@ package com.example.hotrovieclam.Model;
 import java.sql.Timestamp;
 
 public class Job {
-    private int id;
-    private String employerId; // ref to employers.user_id
+    private String id;
+    private String employerId;
+    private String avatar; // ref to employers.user_id
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     private int jobTypeId; // ref to job_types.id
     private String title;
     private String description;
@@ -20,11 +30,11 @@ public class Job {
 
 
     // Getters and Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

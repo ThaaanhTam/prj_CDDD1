@@ -70,6 +70,7 @@ public class Website {
                     newJobList.add(job);
 
                     // Lấy mô tả ngắn
+
                     // In ra thông tin
                     Log.d("Job Title: " , jobTitle);
                     Log.d("Job URL: " , jobUrl);
@@ -85,7 +86,6 @@ public class Website {
                 // Xử lý lỗi nếu không tải được trang
                 Log.e(TAG, "Error fetching data: " + e.getMessage());
             }
-
             return newJobList;
     }
 }
