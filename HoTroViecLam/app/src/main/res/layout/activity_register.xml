@@ -20,18 +20,25 @@
             style="@style/lable"
             android:text="Đăng ký tài khoản" />
 
-        <EditText style="@style/name" />
+        <EditText
+            android:id="@+id/name"
+            style="@style/name" />
 
-        <EditText style="@style/email" />
+        <EditText
+            android:id="@+id/email"
+            style="@style/email" />
 
-        <EditText style="@style/phone" />
+        <EditText
+            android:inputType="number"
+            android:id="@+id/phone"
+            style="@style/phone" />
 
         <EditText
             android:id="@+id/password"
             style="@style/password" />
 
         <EditText
-            android:id="@+id/fogetpass"
+            android:id="@+id/password_again"
             style="@style/fogotpassword" />
 
         <androidx.appcompat.widget.AppCompatButton

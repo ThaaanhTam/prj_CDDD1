@@ -7,8 +7,10 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -19,13 +21,20 @@ import com.example.hotrovieclam.Nam.forgotpassword.ForgotPassWord;
 import com.example.hotrovieclam.Nam.register.Register;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityLoginBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class Login extends AppCompatActivity {
     private ActivityLoginBinding binding;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mAuth = FirebaseAuth.getInstance();
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -38,9 +47,13 @@ public class Login extends AppCompatActivity {
         binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                String email = binding.editTextEmail.getText().toString().trim();
+                String pass = binding.editTextPassword.getText().toString().trim();
+                signIn(email,pass);
+
+//                Intent intent = new Intent(Login.this, MainActivity.class);
+//                startActivity(intent);
+//                finish();
             }
         });
         binding.editTextPassword.setOnTouchListener(new View.OnTouchListener() {
@@ -89,5 +102,27 @@ public class Login extends AppCompatActivity {
             }
         });
 
+
+    }
+    private void signIn(String email, String password) {
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Đăng nhập thành công
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                            // Có thể chuyển sang màn hình khác sau khi đăng nhập thành công
+//                            Intent intent = new Intent(loginn.this, MainActivity.class);
+//                            startActivity(intent);
+//                            finish();
+                        } else {
+                            // Nếu đăng nhập thất bại
+                            Toast.makeText(Login.this, "Tài khoản mật khẩu không chính xác: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

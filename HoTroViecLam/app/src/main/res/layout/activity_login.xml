@@ -24,6 +24,7 @@
 
         <EditText
             android:id="@+id/editText_email"
+            android:inputType="textEmailAddress"
             style="@style/email" />
 
         <EditText
