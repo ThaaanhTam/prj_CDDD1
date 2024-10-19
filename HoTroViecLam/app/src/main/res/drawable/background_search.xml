@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFFFFF" /> <!-- Màu xanh (thay #00FF00 bằng màu xanh bạn cần) -->
+    <corners android:radius="5dp" /> <!-- Góc bo tròn -->
+</shape>
