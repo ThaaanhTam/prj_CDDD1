@@ -44,7 +44,7 @@ public class Navigation extends AppCompatActivity {
                 int id = item.getItemId();
                 if (id == R.id.home) {
                     selectedFragment = new Home();
-                } else if (id == R.id.message) {
+                } else if (id == R.id.saved) {
                     selectedFragment = new Save_job();
                 }
                 if (selectedFragment != null) {
