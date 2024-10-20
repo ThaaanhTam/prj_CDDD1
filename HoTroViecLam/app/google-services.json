@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "1040924015940",
+    "firebase_url": "https://findwork-c1286-default-rtdb.firebaseio.com",
+    "project_id": "findwork-c1286",
+    "storage_bucket": "findwork-c1286.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1040924015940:android:fc8c390311915717426b11",
+        "android_client_info": {
+          "package_name": "com.example.findwork"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyu8y_yps0szdTgL1mBshYIHeoDl7_3wU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1040924015940:android:6fd8cfdc6b3024c5426b11",
+        "android_client_info": {
+          "package_name": "com.example.hotrovieclam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyu8y_yps0szdTgL1mBshYIHeoDl7_3wU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
