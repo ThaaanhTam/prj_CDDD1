@@ -19,7 +19,9 @@
             android:text="Quên mật khẩu" />
 
 
-        <EditText style="@style/email" />
+        <EditText style="@style/email"
+            android:id="@+id/email"
+            />
 
 
         <androidx.appcompat.widget.AppCompatButton

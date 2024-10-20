@@ -52,69 +52,82 @@ public class Register extends AppCompatActivity {
         binding.buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Vô hiệu hóa nút đăng ký
+                binding.buttonRegister.setEnabled(false);
+
                 String name = binding.name.getText().toString().trim();
                 String email = binding.email.getText().toString().trim();
                 String sdt = binding.phone.getText().toString().trim();
                 String pass = binding.password.getText().toString().trim();
                 String passAgain = binding.passwordAgain.getText().toString().trim();
 
-// Kiểm tra trường rỗng
+                // Kiểm tra trường rỗng
                 if (name.isEmpty()) {
                     Toast.makeText(Register.this, "Vui lòng nhập tên", Toast.LENGTH_SHORT).show();
                     binding.name.requestFocus();
+                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
 
                 if (email.isEmpty()) {
                     Toast.makeText(Register.this, "Vui lòng nhập email", Toast.LENGTH_SHORT).show();
                     binding.email.requestFocus();
+                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
 
                 if (sdt.isEmpty()) {
                     Toast.makeText(Register.this, "Vui lòng nhập số điện thoại", Toast.LENGTH_SHORT).show();
                     binding.phone.requestFocus();
+                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
 
                 if (pass.isEmpty()) {
                     Toast.makeText(Register.this, "Vui lòng nhập mật khẩu", Toast.LENGTH_SHORT).show();
                     binding.password.requestFocus();
+                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
 
                 if (passAgain.isEmpty()) {
                     Toast.makeText(Register.this, "Vui lòng nhập lại mật khẩu", Toast.LENGTH_SHORT).show();
                     binding.passwordAgain.requestFocus();
+                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
 
-// Kiểm tra mật khẩu khớp
+                // Kiểm tra mật khẩu khớp
                 if (!pass.equals(passAgain)) {
                     Toast.makeText(Register.this, "Mật khẩu không khớp!", Toast.LENGTH_SHORT).show();
                     binding.passwordAgain.requestFocus();
+                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
 
-// Kiểm tra độ dài mật khẩu
+                // Kiểm tra độ dài mật khẩu
                 if (pass.length() < 6) {
                     Toast.makeText(Register.this, "Mật khẩu phải tối thiểu 6 kí tự", Toast.LENGTH_SHORT).show();
                     binding.password.requestFocus();
+                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
+
                 if (!isValidEmail(email)) {
-                    Toast.makeText(Register.this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Register.this, "Email phải đúng định dạng Abc@gmail.com", Toast.LENGTH_SHORT).show();
                     binding.email.requestFocus();
+                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
 
-
+                // Gọi phương thức tạo tài khoản
                 createAccount(name, email, sdt, pass);
             }
         });
+
     }
 
-    private boolean isValidEmail(String email) {
+    public boolean isValidEmail(String email) {
         String emailPattern = "[a-zA-Z0-9._%+-]+@gmail\\.com";
         return email.matches(emailPattern);
     }
@@ -202,6 +215,7 @@ public class Register extends AppCompatActivity {
         });
     }
     private void clearInputFields() {
+        binding.buttonRegister.setEnabled(true);
         binding.name.setText("");
         binding.email.setText("");
         binding.phone.setText("");

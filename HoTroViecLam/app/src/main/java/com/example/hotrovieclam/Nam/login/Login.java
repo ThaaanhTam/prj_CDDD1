@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class Login extends AppCompatActivity {
     private ActivityLoginBinding binding;
     FirebaseAuth mAuth;
+    Register register = new Register();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +50,26 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 String email = binding.editTextEmail.getText().toString().trim();
                 String pass = binding.editTextPassword.getText().toString().trim();
-                signIn(email,pass);
 
-//                Intent intent = new Intent(Login.this, MainActivity.class);
-//                startActivity(intent);
-//                finish();
+                // Kiểm tra nếu email hoặc password trống
+                if (email.isEmpty() || pass.isEmpty()) {
+                    Toast.makeText(Login.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                    return; // Dừng lại nếu chưa nhập đầy đủ
+                }
+
+                // Kiểm tra định dạng email
+                if (!register.isValidEmail(email)) {
+                    Toast.makeText(Login.this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Tiếp tục thực hiện đăng nhập nếu tất cả điều kiện thỏa mãn
+                signIn(email, pass);
+                Intent intent = new Intent(Login.this,MainActivity.class);
+                startActivity(intent);
             }
         });
+
         binding.editTextPassword.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
