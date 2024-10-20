@@ -69,4 +69,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
         }
     }
+    public void updateList(ArrayList<Job> newJobs) {
+        jobs.clear(); // Xóa danh sách cũ
+        jobs.addAll(newJobs); // Thêm danh sách mới
+        notifyDataSetChanged(); // Cập nhật RecyclerView
+    }
 }
