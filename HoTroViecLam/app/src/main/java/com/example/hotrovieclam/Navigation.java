@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.hotrovieclam.Fragment.Home;
+import com.example.hotrovieclam.Fragment.ManagerPostFragment;
 import com.example.hotrovieclam.Fragment.Save_job;
 import com.example.hotrovieclam.databinding.NavigationBinding;
 import com.google.android.material.navigation.NavigationBarView;
@@ -46,7 +47,10 @@ public class Navigation extends AppCompatActivity {
                     selectedFragment = new Home();
                 } else if (id == R.id.saved) {
                     selectedFragment = new Save_job();
+                } else if (id==R.id.managerPost) {
+                    selectedFragment = new ManagerPostFragment();
                 }
+
                 if (selectedFragment != null) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
                     return true;

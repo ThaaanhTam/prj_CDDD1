@@ -22,6 +22,7 @@
         app:menu="@menu/nav_buttom"
         app:itemTextColor="@color/navigation"
         app:itemIconTint="@color/navigation"
+        app:labelVisibilityMode="labeled"
         />
 
 </RelativeLayout>
