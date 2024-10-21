@@ -16,7 +16,7 @@
         android:theme="@style/Theme.HoTroViecLam"
         tools:targetApi="31">
         <activity
-            android:name=".Nam.AuthencationPassWord.AuthenticationPassWord"
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".Nam.AuthenticationAcount.AuthenticationAcount"
@@ -31,10 +31,10 @@
             android:name=".Nam.register.Register"
             android:exported="true" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Nam.login.Login"
             android:exported="false" />
         <activity
-            android:name=".Nam.login.Login"
+            android:name=".Navigation"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
