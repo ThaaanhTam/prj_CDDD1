@@ -8,4 +8,9 @@
 
     <color name="otpcolor">#E7A0A0</color>
     <color name="red">#FA0202</color>
+    <color name="navigation">#50AF1D</color>
+    <color name="xanhdatroi">#1EBDD9</color>
+    <color name="xanhlexanhlet">#486544</color>
+    <color name="dennhat">#202120</color>
+
 </resources>
