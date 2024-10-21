@@ -1,4 +1,4 @@
-package com.example.tvl;
+package com.example.hotrovieclam.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,88 +8,59 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hotrovieclam.Model.Message;
+import com.example.hotrovieclam.R;
+
 import java.util.List;
 
-public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final int VIEW_TYPE_APPLICANT = 1;
-    private static final int VIEW_TYPE_RECRUITER = 2;
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
-    private List<Message> messages;
+    private List<Message> messageList;
+    private String currentUserId;
 
-    public MessageAdapter(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        Message message = messages.get(position);
-        // Phân loại dựa trên người gửi
-        if (message.isFromApplicant()) {
-            return VIEW_TYPE_APPLICANT;
-        } else {
-            return VIEW_TYPE_RECRUITER;
-        }
+    public MessageAdapter(List<Message> messageList, String currentUserId) {
+        this.messageList = messageList;
+        this.currentUserId = currentUserId;
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == VIEW_TYPE_APPLICANT) {
-            //View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_left, parent, false);
-            //return new ApplicantMessageViewHolder(view);
-
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_right, parent, false);
-            return new RecruiterMessageViewHolder(view);
-        } else {
-            //View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_right, parent, false);
-            //return new RecruiterMessageViewHolder(view);
-
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_left, parent, false);
-            return new ApplicantMessageViewHolder(view);
-        }
+    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_message, parent, false);
+        return new MessageViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Message message = messages.get(position);
-        if (holder instanceof ApplicantMessageViewHolder) {
-            ((ApplicantMessageViewHolder) holder).bind(message);
+    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+        Message message = messageList.get(position);
+
+        if (message.getSenderId().equals(currentUserId)) {
+            // Nếu là tin nhắn do người dùng hiện tại gửi, hiển thị tin nhắn bên phải
+            holder.textViewMessageRight.setText(message.getContent());
+            holder.textViewMessageRight.setVisibility(View.VISIBLE);
+            holder.textViewMessageLeft.setVisibility(View.GONE);
         } else {
-            ((RecruiterMessageViewHolder) holder).bind(message);
+            // Nếu là tin nhắn của người khác, hiển thị tin nhắn bên trái
+            holder.textViewMessageLeft.setText(message.getContent());
+            holder.textViewMessageLeft.setVisibility(View.VISIBLE);
+            holder.textViewMessageRight.setVisibility(View.GONE);
         }
     }
 
     @Override
     public int getItemCount() {
-        return messages.size();
+        return messageList.size();
     }
 
-    // ViewHolder cho ứng viên
-    public static class ApplicantMessageViewHolder extends RecyclerView.ViewHolder {
-        TextView messageText;
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+        public TextView textViewMessageLeft;
+        public TextView textViewMessageRight;
 
-        public ApplicantMessageViewHolder(View itemView) {
+        public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
-            messageText = itemView.findViewById(R.id.textViewMessageLeft);
-        }
-
-        public void bind(Message message) {
-            messageText.setText(message.getContent());
-        }
-    }
-
-    // ViewHolder cho nhà tuyển dụng
-    public static class RecruiterMessageViewHolder extends RecyclerView.ViewHolder {
-        TextView messageText;
-
-        public RecruiterMessageViewHolder(View itemView) {
-            super(itemView);
-            messageText = itemView.findViewById(R.id.textViewMessageRight);
-        }
-
-        public void bind(Message message) {
-            messageText.setText(message.getContent());
+            textViewMessageLeft = itemView.findViewById(R.id.textViewMessageLeft);
+            textViewMessageRight = itemView.findViewById(R.id.textViewMessageRight);
         }
     }
 }
-
