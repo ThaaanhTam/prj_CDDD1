@@ -18,8 +18,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private Activity context;
     private ArrayList<Job> jobs;
 
-
-
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -34,25 +32,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Job job = jobs.get(position);
-//        Storage storageHelper = new Storage();
-//
-//        storageHelper.getUri(new OnUriRetrievedListener() {
-//            @Override
-//            public void onUriRetrieved(Uri uri) {
-//                Log.d("Firebase", "Download URL: " + uri.toString());
-//                Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
-//
-//            }
-//        },jobDataAapi.getCompany().getLogo());
-
-       // Uri uri = Uri.parse(job.);
-
-        // Sử dụng Glide để tải hình ảnh từ Uri
-     //   Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
 
 
+        Uri uri = Uri.parse(job.getAvatar());
+
+        Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
         holder.binding.tvNameCompany.setText(job.getTitle());
-        holder.binding.tvNameLocation.setText(job.getDescription());
+        holder.binding.tvNameLocation.setText(job.getAgreement());
     }
 
     @Override
