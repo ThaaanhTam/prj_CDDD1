@@ -14,8 +14,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,37 +31,6 @@ public class Storage {
         storageRef = storage.getReference();
     }
 
-    public void uploadImageFromUrl(String imageUrl, String fileName) {
-        Picasso.get().load(imageUrl).into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                // Chuyển đổi Bitmap thành Uri
-                Uri fileUri = getImageUri(bitmap, fileName);
-                uploadFile(fileUri);
-            }
-
-            @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                Log.e("Storage", "Failed to load image: " + e.getMessage());
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                // Không làm gì ở đây
-            }
-        });
-    }
-
-    private Uri getImageUri(Bitmap bitmap, String fileName) {
-        File file = new File(context.getCacheDir(), fileName); // Lưu vào bộ nhớ cache
-        try (FileOutputStream out = new FileOutputStream(file)) {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out); // Lưu bitmap vào file
-            return Uri.fromFile(file); // Trả về Uri của file
-        } catch (Exception e) {
-            Log.e("Storage", "Error saving bitmap to file: " + e.getMessage());
-            return null;
-        }
-    }
 
     public void uploadFile(Uri fileUri) {
         if (fileUri != null) {

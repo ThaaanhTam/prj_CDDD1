@@ -34,9 +34,15 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         Job job = jobs.get(position);
 
 
-        Uri uri = Uri.parse(job.getAvatar());
+        String avatarUrl = job.getAvatar();
 
-        Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            // Nếu avatarUrl hợp lệ, tải ảnh bằng Glide
+            Uri uri = Uri.parse(avatarUrl);
+            Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
+        }
+        // Nếu avatarUrl không hợp lệ hoặc rỗng, không làm gì cả (không cần else)
+
         holder.binding.tvNameCompany.setText(job.getTitle());
         holder.binding.tvNameLocation.setText(job.getAgreement());
     }

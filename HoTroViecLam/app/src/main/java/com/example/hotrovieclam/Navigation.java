@@ -11,17 +11,27 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.example.hotrovieclam.Fragment.AcountFragment;
 import com.example.hotrovieclam.Fragment.Home;
 import com.example.hotrovieclam.Fragment.ManagerPostFragment;
 import com.example.hotrovieclam.Fragment.MessageFragment;
 import com.example.hotrovieclam.Fragment.Save_job;
+import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.databinding.NavigationBinding;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Navigation extends AppCompatActivity {
 
     private NavigationBinding binding;
+    private MyRecyclerViewAdapter myRecyclerViewAdapter;
+    private ArrayList<Job> jobList; // Khai báo danh sách công việc
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +68,6 @@ public class Navigation extends AppCompatActivity {
                 } else if (id == R.id.accout) {
                     selectedFragment = new AcountFragment();
                 }
-
                 if (selectedFragment != null) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
                     return true;
@@ -66,5 +75,7 @@ public class Navigation extends AppCompatActivity {
                 return false;
             }
         });
+
+
     }
 }
