@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/home_25dp_e8eaed_fill0_wght400_grad0_opsz24"
+        android:title="Trang chủ" />
+
+    <item
+        android:id="@+id/saved"
+        android:icon="@drawable/baseline_save_as_24"
+        android:title="Đã lưu" />
+
+    <item
+        android:id="@+id/managerPost"
+        android:icon="@drawable/post_manager"
+        android:title="Quản lý đăng tin" />
+
+    <item
+        android:id="@+id/message"
+        android:icon="@drawable/facebook_messenger_brands_solid"
+        android:title="Tin nhắn" />
+
+    <item
+        android:id="@+id/accout"
+        android:icon="@drawable/user_solid"
+        android:title="Tài khoản" />
+</menu>

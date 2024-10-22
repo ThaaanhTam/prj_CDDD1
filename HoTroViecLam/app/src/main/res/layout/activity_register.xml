@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="Model.register.Register">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/dangki"
+            style="@style/lable"
+            android:text="Đăng ký tài khoản" />
+
+        <EditText
+            android:id="@+id/name"
+            style="@style/name" />
+
+        <EditText
+            android:id="@+id/email"
+            style="@style/email" />
+
+        <EditText
+            android:inputType="number"
+            android:id="@+id/phone"
+            style="@style/phone" />
+
+        <EditText
+            android:id="@+id/password"
+            style="@style/password" />
+
+        <EditText
+            android:id="@+id/password_again"
+            style="@style/fogotpassword" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_register"
+            style="@style/myButton"
+            android:text="Đăng ký" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Bạn đã có tài khoản ? "
+                android:textAlignment="textEnd"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/myTextView"
+
+                android:text="Đăng nhập ngay" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/myTextView"
+            android:text="Trải nghiệm mà không cần đăng nhập"
+
+            />
+    </LinearLayout>
+
+
+</LinearLayout>
