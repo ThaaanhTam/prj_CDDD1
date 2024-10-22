@@ -1,5 +1,7 @@
 package com.example.hotrovieclam;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -7,7 +9,9 @@ import android.view.View;
 import android.webkit.WebView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -29,18 +33,43 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
-    private MyRecyclerViewAdapter myRecyclerViewAdapter;
-    private ArrayList<Job> jobList; // Khai báo danh sách công việc
+    private static final int PICK_IMAGE_REQUEST = 1;
+
+    // Khai báo thành phần giao diện và biến Firebase
+    private Uri frontCCCDUri, backCCCDUri, companyCertUri;
+    private EditText etRecruiterName, etPhoneNumber, etCompanyMail, etCompanyName, etLocation, etWebsite;
+    private Button btnSubmit;
+    private ImageView ImFrontID, ImBackID, ImBusinessLicense;
+    private TextView tvFrontIDPath, tvBackIDPath, tvBusinessLicensePath;
+
+    private DatabaseReference databaseReference;
+    private StorageReference storageReference;
+    private RegisterEmployerBinding binding;
 
     ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this); // Bật chế độ Edge to Edge
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        // Bật chế độ Edge to Edge và thiết lập giao diện
+        EdgeToEdge.enable(this);
+        binding = RegisterEmployerBinding.inflate(getLayoutInflater());
         View root = binding.getRoot();
+        setContentView(root);
+
+        // Khởi tạo Firebase Database và Storage
+        databaseReference = FirebaseDatabase.getInstance().getReference("Companies");
+        storageReference = FirebaseStorage.getInstance().getReference();
+
+        // Ánh xạ các thành phần giao diện
+        etRecruiterName = findViewById(R.id.etRecruiterName);
+        etPhoneNumber = findViewById(R.id.etPhoneNumber);
+        etCompanyMail = findViewById(R.id.etCompanyMail);
+        etCompanyName = findViewById(R.id.etCompanyName);
+        etLocation = findViewById(R.id.etLocation);
+        etWebsite = findViewById(R.id.etWebsite);
+
         setContentView(root); // Sử dụng root view từ binding
 
         // Thiết lập padding cho view
