@@ -18,8 +18,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private Activity context;
     private ArrayList<Job> jobs;
 
-
-
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -34,25 +32,19 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Job job = jobs.get(position);
-//        Storage storageHelper = new Storage();
-//
-//        storageHelper.getUri(new OnUriRetrievedListener() {
-//            @Override
-//            public void onUriRetrieved(Uri uri) {
-//                Log.d("Firebase", "Download URL: " + uri.toString());
-//                Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
-//
-//            }
-//        },jobDataAapi.getCompany().getLogo());
 
-       // Uri uri = Uri.parse(job.);
 
-        // Sử dụng Glide để tải hình ảnh từ Uri
-     //   Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
+        String avatarUrl = job.getAvatar();
 
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            // Nếu avatarUrl hợp lệ, tải ảnh bằng Glide
+            Uri uri = Uri.parse(avatarUrl);
+            Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
+        }
+        // Nếu avatarUrl không hợp lệ hoặc rỗng, không làm gì cả (không cần else)
 
         holder.binding.tvNameCompany.setText(job.getTitle());
-        holder.binding.tvNameLocation.setText(job.getDescription());
+        holder.binding.tvNameLocation.setText(job.getAgreement());
     }
 
     @Override
@@ -68,5 +60,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             this.binding = itemView;
 
         }
+    }
+    public void updateList(ArrayList<Job> newJobs) {
+        jobs.clear(); // Xóa danh sách cũ
+        jobs.addAll(newJobs); // Thêm danh sách mới
+        notifyDataSetChanged(); // Cập nhật RecyclerView
     }
 }
