@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#92EBBA"
     tools:context=".Navigation"
-    >
+    tools:ignore="ExtraText">
 
     <!-- Thanh tìm kiếm -->
     <EditText
@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@drawable/background_search"
         />
-
+    
     <!-- Danh sách công việc -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/job_list"

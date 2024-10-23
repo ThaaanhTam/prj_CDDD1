@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -83,14 +84,20 @@ public class Home extends Fragment {
         // Lấy dữ liệu từ Firestore
         fetchJobsFromFirestore();
 
+
+
+
         // Thêm listener cho touch trên search bar
         binding.searchBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     // Kiểm tra nếu người dùng nhấn vào drawable bên trái
                     if (event.getRawX() <= (binding.searchBar.getCompoundDrawables()[0].getBounds().width())) {
-                        // Người dùng đã nhấn vào drawable bên trái
+
+
                         String searchText = binding.searchBar.getText().toString();
                         Log.d("SearchInput", "Search text: " + searchText);
 

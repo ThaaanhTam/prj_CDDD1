@@ -20,8 +20,10 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".Buoc.RegisterEmployer"
             android:name=".Nam.AuthenticationAcount.AuthenticationAcount"
+            android:exported="false" />
+        <activity
+            android:name=".Buoc.RegisterEmployer"
             android:exported="false" />
         <activity
             android:name=".Nam.ChangePassword.ChangePassWord"

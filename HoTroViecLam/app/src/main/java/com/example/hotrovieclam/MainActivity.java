@@ -23,6 +23,8 @@ import com.example.hotrovieclam.Connect.Website;
 import com.example.hotrovieclam.FireBase.Storage;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.databinding.ActivityMainBinding;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +38,10 @@ public class MainActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
 
     // Khai báo thành phần giao diện và biến Firebase
-    private Uri frontCCCDUri, backCCCDUri, companyCertUri;
-    private EditText etRecruiterName, etPhoneNumber, etCompanyMail, etCompanyName, etLocation, etWebsite;
-    private Button btnSubmit;
-    private ImageView ImFrontID, ImBackID, ImBusinessLicense;
-    private TextView tvFrontIDPath, tvBackIDPath, tvBusinessLicensePath;
 
-    private DatabaseReference databaseReference;
-    private StorageReference storageReference;
-    private RegisterEmployerBinding binding;
+
+
+    private ActivityMainBinding binding;
 
     ExecutorService executorService = Executors.newFixedThreadPool(2);
 
@@ -54,21 +51,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Bật chế độ Edge to Edge và thiết lập giao diện
         EdgeToEdge.enable(this);
-        binding = RegisterEmployerBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         View root = binding.getRoot();
         setContentView(root);
 
-        // Khởi tạo Firebase Database và Storage
-        databaseReference = FirebaseDatabase.getInstance().getReference("Companies");
-        storageReference = FirebaseStorage.getInstance().getReference();
-
-        // Ánh xạ các thành phần giao diện
-        etRecruiterName = findViewById(R.id.etRecruiterName);
-        etPhoneNumber = findViewById(R.id.etPhoneNumber);
-        etCompanyMail = findViewById(R.id.etCompanyMail);
-        etCompanyName = findViewById(R.id.etCompanyName);
-        etLocation = findViewById(R.id.etLocation);
-        etWebsite = findViewById(R.id.etWebsite);
+        // Khởi tạo Firebase Database
 
         setContentView(root); // Sử dụng root view từ binding
 
@@ -79,25 +66,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Khởi tạo danh sách công việc và adapter
-        jobList = new ArrayList<>();
-        myRecyclerViewAdapter = new MyRecyclerViewAdapter(this, jobList);
-        binding.rcListJob.setLayoutManager(new LinearLayoutManager(this));
-        binding.rcListJob.setAdapter(myRecyclerViewAdapter);
 
 
-       Runnable task1 = () -> {
-            API api = new API();
-            jobList.addAll(api.loadAPIsConcurrently());
-               runOnUiThread(() -> myRecyclerViewAdapter.notifyDataSetChanged());
-        };
-        Runnable task2 = () -> {
-            Website website = new Website();
-            jobList.addAll(website.loadWebsitesConcurrently());
-            runOnUiThread(() -> myRecyclerViewAdapter.notifyDataSetChanged());
-        };
-        executorService.submit(task1);
-        executorService.submit(task2);
 
 
     }
