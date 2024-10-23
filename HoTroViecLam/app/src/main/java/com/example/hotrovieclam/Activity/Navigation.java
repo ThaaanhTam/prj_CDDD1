@@ -1,4 +1,4 @@
-package com.example.hotrovieclam;
+package com.example.hotrovieclam.Activity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -16,6 +16,7 @@ import com.example.hotrovieclam.Fragment.Home;
 import com.example.hotrovieclam.Fragment.ManagerPostFragment;
 import com.example.hotrovieclam.Fragment.MessageFragment;
 import com.example.hotrovieclam.Fragment.Save_job;
+import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.NavigationBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -37,7 +38,7 @@ public class Navigation extends AppCompatActivity {
 //        khởi chạy màn hình home đầu tiên
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new Home())
+                    .replace(R.id.fragment_container, new AcountFragment())
                     .commit();
         }
         binding.navButtom.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

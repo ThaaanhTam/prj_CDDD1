@@ -1,4 +1,4 @@
-package com.example.hotrovieclam;
+package com.example.hotrovieclam.Activity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +14,8 @@ import com.example.hotrovieclam.Connect.API;
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.example.hotrovieclam.Connect.Website;
 import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.OnDataLoadedCallback;
+import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
