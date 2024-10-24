@@ -21,18 +21,23 @@ public class AcountFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(View.VISIBLE);
+        }
         // Inflate the layout for this fragment
         binding = FragmentAcountBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         binding.profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MyProFileFragment myProFileFragment = new MyProFileFragment();
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, myProFileFragment).addToBackStack("null").commit();
                 BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
                 if (bottomNav != null) {
                     bottomNav.setVisibility(View.GONE);
                 }
-                MyProFileFragment myProFileFragment = new MyProFileFragment();
-                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, myProFileFragment).addToBackStack(null).commit();
+
             }
         });
         return view;
