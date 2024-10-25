@@ -31,6 +31,7 @@ public class AcountFragment extends Fragment {
         BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
         if (bottomNav != null) {
             bottomNav.setVisibility(View.VISIBLE);
+
         }
         // Inflate the layout for this fragment
         binding = FragmentAcountBinding.inflate(inflater, container, false);

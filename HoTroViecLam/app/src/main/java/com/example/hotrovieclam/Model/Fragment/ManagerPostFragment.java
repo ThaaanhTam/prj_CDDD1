@@ -23,6 +23,7 @@ public class ManagerPostFragment extends Fragment {
 
 
 
+
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
