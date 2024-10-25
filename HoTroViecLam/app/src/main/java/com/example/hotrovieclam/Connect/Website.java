@@ -48,6 +48,8 @@ public class Website {
 
 
                     String jobTitlee = jobTitleElement.attr("alt");
+                    Log.d("jobTitlee:  " , jobTitlee);
+                    Log.d("jobUrll:  " , jobUrll);
 
 //                    Document document2 = Jsoup.connect(jobUrl)
 //                            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
