@@ -35,13 +35,13 @@
             android:name=".Nam.register.Register"
             android:exported="true" />
         <activity
-            android:name=".Nam.login.Login"
+            android:name=".Buoc.RegisterEmployer"
             android:exported="false" />
         <activity
             android:name=".Messege"
             android:exported="false" />
         <activity
-            android:name=".Buoc.RegisterEmployer"
+            android:name=".Nam.login.Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.example.hotrovieclam.Fragment;
+package com.example.hotrovieclam.Model.Fragment;
 
 import android.os.Bundle;
 

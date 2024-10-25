@@ -1,4 +1,4 @@
-package com.example.hotrovieclam.Fragment;
+package com.example.hotrovieclam.Model.Fragment;
 
 import android.os.Bundle;
 
@@ -12,10 +12,10 @@ import com.example.hotrovieclam.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Save_job#newInstance} factory method to
+ * Use the {@link ManagerPostFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Save_job extends Fragment {
+public class ManagerPostFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +26,7 @@ public class Save_job extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public Save_job() {
+    public ManagerPostFragment() {
         // Required empty public constructor
     }
 
@@ -36,11 +36,11 @@ public class Save_job extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Save_job.
+     * @return A new instance of fragment ManagerPostFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static Save_job newInstance(String param1, String param2) {
-        Save_job fragment = new Save_job();
+    public static ManagerPostFragment newInstance(String param1, String param2) {
+        ManagerPostFragment fragment = new ManagerPostFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,6 +61,6 @@ public class Save_job extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_save_job, container, false);
+        return inflater.inflate(R.layout.fragment_manager_post, container, false);
     }
 }
