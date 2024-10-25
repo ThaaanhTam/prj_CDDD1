@@ -47,6 +47,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation ("com.google.firebase:firebase-auth:22.0.0")
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")
     implementation ("com.github.bumptech.glide:glide:4.15.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.0")
@@ -57,7 +58,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
     implementation ("com.google.firebase:firebase-database:21.0.0")
     implementation ("com.google.firebase:firebase-storage:20.1.0")
-    implementation ("org.jsoup:jsoup:1.18.1")
-     // Kiểm tra phiên bản mới nhất
+    implementation ("org.jsoup:jsoup:1.15.3")
+    implementation ("com.google.android.material:material:1.9.0")
+
+    // Kiểm tra phiên bản mới nhất
 
 }

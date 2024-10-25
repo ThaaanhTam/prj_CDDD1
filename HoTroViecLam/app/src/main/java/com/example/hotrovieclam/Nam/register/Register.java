@@ -10,12 +10,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotrovieclam.Model.User;
+import com.example.hotrovieclam.Nam.login.Login;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityRegisterBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -124,6 +126,13 @@ public class Register extends AppCompatActivity {
                 createAccount(name, email, sdt, pass);
             }
         });
+        binding.dangnhapngay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Register.this, Login.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -183,17 +192,34 @@ public class Register extends AppCompatActivity {
                             // Nếu email chưa tồn tại, tiếp tục tạo tài khoản
                             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, authTask -> {
                                 if (authTask.isSuccessful()) {
-                                    // Đăng ký thành công, lưu thông tin người dùng vào Firestore
+                                    // Đăng ký thành công, gửi email xác thực
                                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
                                     if (firebaseUser != null) {
-                                        User user = new User(firebaseUser.getUid(), name, email, // Lưu mật khẩu đã hash thay vì pass trực tiếp
-                                                phone, 1, // user_type_id (ví dụ: 1 cho người dùng thông thường)
-                                                null, // avatar chưa có lúc này
-                                                new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
+                                        // Tạo đối tượng User
+                                        User user = new User(firebaseUser.getUid(), name, email, phone, 1, null, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
+
+                                        // Lưu thông tin người dùng vào Firestore
                                         saveUserToFirestore(user);
+
+                                        // Gửi email xác thực
+                                        firebaseUser.sendEmailVerification().addOnCompleteListener(verificationTask -> {
+                                            if (verificationTask.isSuccessful()) {
+                                                // Hiển thị AlertDialog thông báo người dùng kiểm tra email
+                                                new AlertDialog.Builder(Register.this)
+                                                        .setTitle("Xác nhận tài khoản")
+                                                        .setMessage("Vui lòng kiểm tra email để xác nhận tài khoản của bạn!")
+                                                        .setPositiveButton("OK", (dialog, which) -> {
+                                                            clearInputFields(); // Xóa các trường nhập
+                                                            mAuth.signOut(); // Đăng xuất sau khi gửi mail xác nhận
+                                                        })
+                                                        .setCancelable(false) // Không cho phép đóng dialog khi bấm ngoài
+                                                        .show();
+                                            } else {
+                                                // Gửi email xác thực thất bại
+                                                Toast.makeText(Register.this, "Lỗi khi gửi email xác thực: " + verificationTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
                                     }
-                                    Toast.makeText(Register.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                                    clearInputFields();
                                 } else {
                                     // Đăng ký thất bại
                                     Toast.makeText(Register.this, "Đăng ký thất bại: " + authTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -206,14 +232,15 @@ public class Register extends AppCompatActivity {
                 });
     }
 
-    private void saveUserToFirestore(User user) {
-        // Lưu thông tin người dùng vào Firestore
-        db.collection("users").document(user.getId()).set(user).addOnSuccessListener(aVoid -> {
-            Toast.makeText(Register.this, "Thông tin người dùng đã được lưu vào Firestore", Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(Register.this, "Lỗi khi lưu thông tin người dùng", Toast.LENGTH_SHORT).show();
-        });
-    }
+
+        private void saveUserToFirestore(User user) {
+            // Lưu thông tin người dùng vào Firestore
+            db.collection("users").document(user.getId()).set(user).addOnSuccessListener(aVoid -> {
+                Toast.makeText(Register.this, "Thông tin người dùng đã được lưu vào Firestore", Toast.LENGTH_SHORT).show();
+            }).addOnFailureListener(e -> {
+                Toast.makeText(Register.this, "Lỗi khi lưu thông tin người dùng", Toast.LENGTH_SHORT).show();
+            });
+        }
     private void clearInputFields() {
         binding.buttonRegister.setEnabled(true);
         binding.name.setText("");

@@ -60,6 +60,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/dangnhapngay"
                 style="@style/myTextView"
 
                 android:text="Đăng nhập ngay" />

@@ -10,20 +10,18 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.hotrovieclam.MainActivity;
+import com.example.hotrovieclam.Activity.MainActivity;
+import com.example.hotrovieclam.Activity.Navigation;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.Nam.forgotpassword.ForgotPassWord;
 import com.example.hotrovieclam.Nam.register.Register;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityLoginBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -64,9 +62,9 @@ public class Login extends AppCompatActivity {
                 }
 
                 // Tiếp tục thực hiện đăng nhập nếu tất cả điều kiện thỏa mãn
-                signIn(email, pass);
-                Intent intent = new Intent(Login.this,MainActivity.class);
-                startActivity(intent);
+
+             signIn(email, pass);
+
             }
         });
 
@@ -119,24 +117,35 @@ public class Login extends AppCompatActivity {
 
     }
     private void signIn(String email, String password) {
-
+        binding.progressBarLogin.setVisibility(View.GONE);
+        // Kiểm tra đăng nhập với Firebase Authentication
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Đăng nhập thành công
-                            FirebaseUser user = mAuth.getCurrentUser();
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Lấy thông tin người dùng sau khi đăng nhập thành công
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null && user.isEmailVerified()) {
+                            // Kiểm tra email đã xác thực
                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                            // Có thể chuyển sang màn hình khác sau khi đăng nhập thành công
-//                            Intent intent = new Intent(loginn.this, MainActivity.class);
-//                            startActivity(intent);
-//                            finish();
+
+                            String uid = user.getUid();
+                            // Lưu UID vào UserSessionManager
+                            UserSessionManager sessionManager = new UserSessionManager();
+                            sessionManager.setUserUid(uid);  // Lưu UID vào session
+                            // Chuyển đến MainActivity
+                            Intent intent = new Intent(Login.this, Navigation.class);
+                            startActivity(intent);
+                            finish();
                         } else {
-                            // Nếu đăng nhập thất bại
-                            Toast.makeText(Login.this, "Tài khoản mật khẩu không chính xác: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            // Email chưa được xác thực
+                            Toast.makeText(Login.this, "Vui lòng xác thực email trước khi đăng nhập!", Toast.LENGTH_SHORT).show();
+                            mAuth.signOut(); // Đăng xuất người dùng chưa xác thực
                         }
+                    } else {
+                        // Nếu đăng nhập thất bại
+                        Toast.makeText(Login.this, "Tài khoản hoặc mật khẩu không chính xác: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
 }
