@@ -24,7 +24,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AcountFragment extends Fragment {
 
-    
     private FragmentAcountBinding binding;
 
     @Override
