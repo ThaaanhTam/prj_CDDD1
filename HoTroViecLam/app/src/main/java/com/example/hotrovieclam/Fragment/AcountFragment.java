@@ -48,6 +48,12 @@ public class AcountFragment extends Fragment {
 
             }
         });
+        binding.logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         HienThiThongTin();
         return view;
 
