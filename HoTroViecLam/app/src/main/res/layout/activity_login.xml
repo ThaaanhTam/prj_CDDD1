@@ -61,5 +61,13 @@
             android:text="Trải nghiệm mà không cần đăng nhập"
             android:textAlignment="center" />
 
+        <ProgressBar
+            android:id="@+id/progressBar_login"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
     </LinearLayout>
+
 </LinearLayout>

@@ -36,8 +36,6 @@ public class RegisterEmployer extends AppCompatActivity {
         binding.ImFrontID.setOnClickListener(v -> pickImage(101));
         binding.ImBackID.setOnClickListener(v -> pickImage(102));
         binding.ImBusinessLicense.setOnClickListener(v -> pickImage(103));
-
-
         binding.btnSubmit.setOnClickListener(view -> {
             saveDataToFirebase(frontCCCDUri, backCCCDUri, companyCertUri, logoUri);
         });
