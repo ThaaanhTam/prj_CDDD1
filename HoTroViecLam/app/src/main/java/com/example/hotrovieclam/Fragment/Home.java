@@ -12,7 +12,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
+import com.example.hotrovieclam.Interface.UserSession;
 import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentHomeBinding;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -47,7 +49,9 @@ public class Home extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+UserSession userSession = new UserSessionManager();
+String uid = userSession.getUserUid();
+        Log.d("if", "onViewCreated: "+uid);
         // Khởi tạo danh sách công việc và adapter
         listJob = new ArrayList<>();
         adapter = new MyRecyclerViewAdapter(getActivity(), listJob);

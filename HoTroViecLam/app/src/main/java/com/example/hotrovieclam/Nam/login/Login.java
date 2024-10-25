@@ -16,6 +16,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotrovieclam.Activity.MainActivity;
+import com.example.hotrovieclam.Activity.Navigation;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.Nam.forgotpassword.ForgotPassWord;
 import com.example.hotrovieclam.Nam.register.Register;
 import com.example.hotrovieclam.R;
@@ -115,6 +117,7 @@ public class Login extends AppCompatActivity {
 
     }
     private void signIn(String email, String password) {
+        binding.progressBarLogin.setVisibility(View.GONE);
         // Kiểm tra đăng nhập với Firebase Authentication
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
@@ -124,8 +127,13 @@ public class Login extends AppCompatActivity {
                         if (user != null && user.isEmailVerified()) {
                             // Kiểm tra email đã xác thực
                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+
+                            String uid = user.getUid();
+                            // Lưu UID vào UserSessionManager
+                            UserSessionManager sessionManager = new UserSessionManager();
+                            sessionManager.setUserUid(uid);  // Lưu UID vào session
                             // Chuyển đến MainActivity
-                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            Intent intent = new Intent(Login.this, Navigation.class);
                             startActivity(intent);
                             finish();
                         } else {

@@ -14,7 +14,7 @@ import com.example.hotrovieclam.Connect.API;
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.example.hotrovieclam.Connect.Website;
 import com.example.hotrovieclam.Model.Job;
-import com.example.hotrovieclam.OnDataLoadedCallback;
+import com.example.hotrovieclam.Interface.OnDataLoadedCallback;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityMainBinding;
 

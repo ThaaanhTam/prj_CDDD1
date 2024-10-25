@@ -29,10 +29,13 @@
             android:name=".Nam.register.Register"
             android:exported="true" />
         <activity
-            android:name=".Nam.login.Login"
+            android:name=".Activity.Navigation"
             android:exported="false" />
         <activity
-            android:name=".Activity.Navigation"
+            android:name=".Activity.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Nam.login.Login"
 
             android:exported="true">
             <intent-filter>

@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.Model.JobDataAPI;
-import com.example.hotrovieclam.OnDataLoadedCallback;
+import com.example.hotrovieclam.Interface.OnDataLoadedCallback;
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
