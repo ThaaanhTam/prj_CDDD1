@@ -4,4 +4,16 @@
     <string name="SaveJob">Danh sách việc làm đã lưu</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="location_options">
+        <item>Hà Nội</item>
+        <item>Hồ Chí Minh</item>
+        <item>Đà Nẵng</item>
+        <item>Cần Thơ</item>
+    </string-array>
+
+    <string-array name="salary_options">
+        <item>Dưới 5 triệu</item>
+        <item>5 triệu - 10 triệu</item>
+        <item>Trên 10 triệu</item>
+    </string-array>
 </resources>

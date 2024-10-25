@@ -1,10 +1,23 @@
 package com.example.hotrovieclam.Model;
 
 import java.sql.Timestamp;
+import android.graphics.Color;
+
 
 public class Job {
-    private int id;
-    private String employerId; // ref to employers.user_id
+    private String id;
+    private String employerId;
+    private String avatar; // ref to employers.user_id
+   // private Source source;
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     private int jobTypeId; // ref to job_types.id
     private String title;
     private String description;
@@ -17,14 +30,20 @@ public class Job {
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
-
+//    public Source getSource() {
+//        return source;
+//    }
+//
+//    public void setSource(Source source) {
+//        this.source = source;
+//    }
 
     // Getters and Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -142,5 +161,6 @@ public class Job {
                 ", updatedAt=" + updatedAt +
                 '}';
     }
+
 }
 
