@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context="Model.AuthenticationAcount.AuthenticationAcount">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/lable"
+            android:text="Xác thực đăng kí" />
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:background="@drawable/borderlinearlayout"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/lable"
+                android:layout_marginTop="20dp"
+                android:text="Xác thực OTP" />
+
+            <TextView
+                style="@style/commonTextStyle"
+                android:text="Mã xác thực đã được gửi qua email:" />
+
+            <TextView
+                style="@style/commonTextStyle"
+                android:text="namtran181124@gmail.com" />
+
+            <TextView
+                style="@style/commonTextStyle"
+                android:text="Nhập mã OTP"
+                android:textSize="25sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:weightSum="5">
+
+                <EditText
+                    android:id="@+id/otpId1"
+                    style="@style/OtpEditText" />
+
+                <EditText
+                    android:id="@+id/otpId2"
+                    style="@style/OtpEditText" />
+
+                <EditText
+                    android:id="@+id/otpId3"
+                    style="@style/OtpEditText" />
+
+                <EditText
+                    android:id="@+id/otpId4"
+                    style="@style/OtpEditText" />
+
+                <EditText
+                    android:id="@+id/otpId5"
+                    style="@style/OtpEditTextend" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/thongbao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OTP không chính xác"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textColor="@color/red"
+                android:visibility="gone"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_margin="15dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:text="60"
+                    />
+                <TextView
+                    android:layout_weight="3"
+                    android:layout_width="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                                       android:text="Bạn chưa nhận được mã"
+                    />
+                <TextView
+                    android:layout_weight="3"
+                    android:textColor="@color/red"
+                    android:textStyle="bold"
+                    android:textSize="18dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gửi lại OTP"
+                    />
+            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnXacNhanOTP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/xanhla"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="22dp"
+                android:text="XÁC NHẬN"
+                android:layout_margin="20dp"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
