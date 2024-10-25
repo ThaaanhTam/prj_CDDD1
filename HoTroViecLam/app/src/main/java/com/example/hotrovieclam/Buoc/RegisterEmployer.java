@@ -80,6 +80,7 @@ public class RegisterEmployer extends AppCompatActivity {
 
 
     private void saveToFirestore(String logoFileName, String frontFileName, String backFileName, String certFileName) {
+        String id = "";
         String recruiterName = binding.etRecruiterName.getText().toString().trim();
         String phoneNumber = binding.etPhoneNumber.getText().toString().trim();
         String companyMail = binding.etCompanyMail.getText().toString().trim();
@@ -95,7 +96,7 @@ public class RegisterEmployer extends AppCompatActivity {
             return;
         }
 
-        CompanyInfo companyInfo = new CompanyInfo(recruiterName, phoneNumber, companyMail, companyName, location, website, frontFileName, backFileName, certFileName,logoFileName,status);
+        CompanyInfo companyInfo = new CompanyInfo(id, recruiterName, phoneNumber, companyMail, companyName, location, website, frontFileName, backFileName, certFileName,logoFileName,status);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("employer")
