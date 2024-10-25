@@ -12,5 +12,10 @@
     <color name="mauda">#EDE5DD</color>
 
     <color name="otpcolor">#E7A0A0</color>
+    <color name="API">#DEC2C4</color>
+    <color name="website">#AFCA9B</color>
+
     <color name="red">#FA0202</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorAccent">#FF4081</color>
 </resources>

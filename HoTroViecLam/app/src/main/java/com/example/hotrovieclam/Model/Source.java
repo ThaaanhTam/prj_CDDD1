@@ -1,2 +1,5 @@
-package com.example.hotrovieclam.Model;public class Source {
+package com.example.hotrovieclam.Model;
+
+public enum Source {
+    API, WEBSITE, FIRESTORE
 }

@@ -67,6 +67,7 @@ public class Website {
                     job.setDescription(description);
                     job.setLocation(jobLocation);
                     job.setAgreement(jobSalary);
+                    job.setSourceId(2);
                     newJobList.add(job);
 
                     // Lấy mô tả ngắn

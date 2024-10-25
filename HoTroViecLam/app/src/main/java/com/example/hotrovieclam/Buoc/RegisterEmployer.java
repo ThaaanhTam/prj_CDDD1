@@ -41,8 +41,6 @@ public class RegisterEmployer extends AppCompatActivity {
         binding.ImFrontID.setOnClickListener(v -> pickImage(101));
         binding.ImBackID.setOnClickListener(v -> pickImage(102));
         binding.ImBusinessLicense.setOnClickListener(v -> pickImage(103));
-
-
         binding.btnSubmit.setOnClickListener(view -> {
                 saveDataToFirebase(frontCCCDUri, backCCCDUri, companyCertUri);
         });
@@ -80,7 +78,6 @@ public class RegisterEmployer extends AppCompatActivity {
             Toast.makeText(this, "Vui lòng tải đủ tất cả các ảnh", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 
     private void saveToFirestore(String frontFileName, String backFileName, String certFileName) {
