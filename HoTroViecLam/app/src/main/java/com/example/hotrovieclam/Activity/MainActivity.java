@@ -1,4 +1,4 @@
-package com.example.hotrovieclam;
+package com.example.hotrovieclam.Activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -22,6 +22,8 @@ import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.example.hotrovieclam.Connect.Website;
 import com.example.hotrovieclam.FireBase.Storage;
 import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.Interface.OnDataLoadedCallback;
+import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityMainBinding;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;

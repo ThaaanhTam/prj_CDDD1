@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.Model.JobDataAPI;
+import com.example.hotrovieclam.Interface.OnDataLoadedCallback;
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
@@ -46,6 +47,7 @@ public class API {
                         job.setDescription(cleanDescription);
                         job.setLocation(jobData.getLocation());
                         job.setAvatar(jobData.getCompany().getLogo());
+                        job.setSourceId(1);
                         job.setAgreement("Thoa thuan");
                         newJobList.add(job);
                     }
