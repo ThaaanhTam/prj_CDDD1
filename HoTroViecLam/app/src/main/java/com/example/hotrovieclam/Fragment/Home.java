@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -32,6 +34,8 @@ public class Home extends Fragment {
     private ArrayList<Job> listJob;
     private MyRecyclerViewAdapter adapter;
     ExecutorService executorService = Executors.newFixedThreadPool(2);
+    Spinner spinner;
+
     public Home() {
         // Required empty public constructor
     }
@@ -56,11 +60,11 @@ public class Home extends Fragment {
         // Khởi tạo danh sách công việc và adapter
         listJob = new ArrayList<>();
         adapter = new MyRecyclerViewAdapter(getActivity(), listJob);
-
+        binding.sourceSpinner.setSelection(3);
+        binding.sourceSpinner.setVisibility(View.GONE);
         // Thiết lập RecyclerView
         binding.jobList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.jobList.setAdapter(adapter);
-
         Runnable task1 = () -> {
             API api = new API();
             listJob.addAll(api.loadAPIsConcurrently());
@@ -84,35 +88,77 @@ public class Home extends Fragment {
         // Lấy dữ liệu từ Firestore
         fetchJobsFromFirestore();
 
-
-
-
-        // Thêm listener cho touch trên search bar
-        binding.searchBar.setOnTouchListener(new View.OnTouchListener() {
+        binding.sourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("ii", "onItemSelected: " + position);
 
+                if (position == 0) {
+                    ArrayList<Job> jobAPI = new ArrayList<>();
+                    for (Job job : listJob) {
+                        if (job.getSourceId() == 1) {
+                            jobAPI.add(job);
 
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Kiểm tra nếu người dùng nhấn vào drawable bên trái
-                    if (event.getRawX() <= (binding.searchBar.getCompoundDrawables()[0].getBounds().width())) {
-
-
-                        String searchText = binding.searchBar.getText().toString();
-                        Log.d("SearchInput", "Search text: " + searchText);
-
-                        adapter = new MyRecyclerViewAdapter(getActivity(),  performSearch(searchText));
-                        // Gọi hàm tìm kiếm
-
-                        binding.jobList.setAdapter(adapter);
-                        // Gọi hàm tìm kiếm
-                        requireActivity().runOnUiThread(() -> {
-                            adapter.notifyDataSetChanged();
-                        });
-                        return true; // Đã xử lý sự kiện
+                        }
                     }
+                    adapter = new MyRecyclerViewAdapter(getActivity(), jobAPI);
+                    // Gọi hàm tìm kiếm
+
+                    binding.jobList.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    Log.d("ii", jobAPI.toString());
+
+                } else if (position == 1) {
+                        ArrayList<Job> jobWeb = new ArrayList<>();
+                        for (Job job : listJob) {
+                            if (job.getSourceId() == 2) {
+                                jobWeb.add(job);
+                            }
+                        }
+                        adapter = new MyRecyclerViewAdapter(getActivity(), jobWeb);
+                        // Gọi hàm tìm kiếm
+                        binding.jobList.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                } else if (position == 2) {
+                    ArrayList<Job> jobFire = new ArrayList<>();
+                    for (Job job : listJob) {
+                        if (job.getSourceId() == 3) {
+                            jobFire.add(job);
+                        }
+                    }
+                    adapter = new MyRecyclerViewAdapter(getActivity(), jobFire);
+                    // Gọi hàm tìm kiếm
+
+                    binding.jobList.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
                 }
-                return false; // Không xử lý sự kiện
+                else {
+                    adapter = new MyRecyclerViewAdapter(getActivity(), listJob);
+                    // Gọi hàm tìm kiếm
+                    binding.jobList.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // Lấy dữ liệu từ Firestore
+        // Thêm listener cho touch trên search bar
+        binding.btnTim.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                binding.sourceSpinner.setVisibility(View.VISIBLE);
+                String searchText = binding.searchBar.getText().toString();
+                Log.d("SearchInput", "Search text: " + searchText);
+                adapter = new MyRecyclerViewAdapter(getActivity(), performSearch(searchText));
+                binding.jobList.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
         });
     }
@@ -138,7 +184,10 @@ public class Home extends Fragment {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Job job = document.toObject(Job.class); // Chuyển đổi document thành đối tượng Job
+                            Job job = document.toObject(Job.class);
+                          job.setSourceId(3);
+                           Log.d("test",job.toString());
+                            // Chuyển đổi document thành đối tượng Job
                             listJob.add(job); // Thêm vào danh sách
                         }
                         adapter.notifyDataSetChanged(); // Cập nhật adapter
