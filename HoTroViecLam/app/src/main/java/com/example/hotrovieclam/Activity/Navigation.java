@@ -1,4 +1,4 @@
-package com.example.hotrovieclam;
+package com.example.hotrovieclam.Activity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -11,13 +11,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
-import com.example.hotrovieclam.Model.Fragment.AcountFragment;
-import com.example.hotrovieclam.Model.Fragment.Home;
-import com.example.hotrovieclam.Model.Fragment.ManagerPostFragment;
-import com.example.hotrovieclam.Model.Fragment.MessageFragment;
-import com.example.hotrovieclam.Model.Fragment.Save_job;
-import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.Fragment.AcountFragment;
+import com.example.hotrovieclam.Fragment.Home;
+import com.example.hotrovieclam.Fragment.ManagerPostFragment;
+import com.example.hotrovieclam.Fragment.MessageFragment;
+import com.example.hotrovieclam.Fragment.Save_job;
+import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.NavigationBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -45,7 +44,7 @@ public class Navigation extends AppCompatActivity {
 //        khởi chạy màn hình home đầu tiên
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new Home())
+                    .replace(R.id.fragment_container, new AcountFragment())
                     .commit();
         }
         binding.navButtom.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

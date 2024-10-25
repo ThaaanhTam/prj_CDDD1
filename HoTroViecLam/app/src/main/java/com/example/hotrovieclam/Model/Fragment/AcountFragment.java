@@ -2,65 +2,81 @@ package com.example.hotrovieclam.Model.Fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.hotrovieclam.Fragment.Child_Fragment.MyProFileFragment;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
+import com.example.hotrovieclam.databinding.FragmentAcountBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AcountFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class AcountFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public AcountFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AcountFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AcountFragment newInstance(String param1, String param2) {
-        AcountFragment fragment = new AcountFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private FragmentAcountBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(View.VISIBLE);
+        }
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_acount, container, false);
+        binding = FragmentAcountBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        binding.profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyProFileFragment myProFileFragment = new MyProFileFragment();
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, myProFileFragment).addToBackStack("null").commit();
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
+                if (bottomNav != null) {
+                    bottomNav.setVisibility(View.GONE);
+                }
+
+            }
+        });
+        HienThiThongTin();
+        return view;
+
+    }
+    public void HienThiThongTin(){
+        UserSessionManager sessionManager = new UserSessionManager();
+        String uid = sessionManager.getUserUid();
+
+        // Dùng UID để truy vấn Firestore hoặc hiển thị thông tin người dùng
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(uid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        String name = document.getString("name");
+                        String email = document.getString("email");
+                        // Hiển thị thông tin người dùng
+                        binding.name.setText(name);
+                        binding.email.setText(email);
+                        Log.d("PPPP", "onComplete: "+email+name);
+                    } else {
+                        Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
+                    }
+                } else {
+                    Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
+                }
+            }
+        });
     }
 }

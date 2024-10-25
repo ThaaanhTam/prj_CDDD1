@@ -1,7 +1,5 @@
 package com.example.hotrovieclam.Connect;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import com.example.hotrovieclam.Model.Job;
@@ -12,8 +10,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
