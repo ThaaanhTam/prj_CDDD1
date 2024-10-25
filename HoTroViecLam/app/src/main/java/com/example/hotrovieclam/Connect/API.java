@@ -46,6 +46,7 @@ public class API {
                         job.setDescription(cleanDescription);
                         job.setLocation(jobData.getLocation());
                         job.setAvatar(jobData.getCompany().getLogo());
+                        job.setSourceId(1);
                         job.setAgreement("Thoa thuan");
                         newJobList.add(job);
                     }
