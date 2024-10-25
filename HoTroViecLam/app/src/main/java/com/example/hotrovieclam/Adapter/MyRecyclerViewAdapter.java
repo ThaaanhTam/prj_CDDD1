@@ -2,6 +2,7 @@ package com.example.hotrovieclam.Adapter;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Job job = jobs.get(position);
+
+        Uri uri;
+        //String avatarUrl = job.getAvatar();
 
 
         Uri uri;
