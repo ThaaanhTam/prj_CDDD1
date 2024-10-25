@@ -2,6 +2,7 @@ package com.example.hotrovieclam.Adapter;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -33,15 +34,16 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Job job = jobs.get(position);
 
+        Uri uri;
+        //String avatarUrl = job.getAvatar();
 
-        String avatarUrl = job.getAvatar();
-
-        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+        if (job.getAvatar() != null && !job.getAvatar().isEmpty()) {
             // Nếu avatarUrl hợp lệ, tải ảnh bằng Glide
-            Uri uri = Uri.parse(avatarUrl);
-            Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
+            uri = Uri.parse(job.getAvatar());
+        }else {
+            uri = Uri.parse("https://123job.vn/images/no_company.png");
         }
-        // Nếu avatarUrl không hợp lệ hoặc rỗng, không làm gì cả (không cần else)
+        Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
 
         holder.binding.tvNameCompany.setText(job.getTitle());
         holder.binding.tvNameLocation.setText(job.getAgreement());
