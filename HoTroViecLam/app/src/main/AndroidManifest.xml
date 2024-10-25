@@ -39,6 +39,7 @@
             android:exported="false" />
         <activity
             android:name=".Buoc.RegisterEmployer"
+            android:name=".Messege"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
