@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotrovieclam.Model.CompanyInfo;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.databinding.RegisterEmployerBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -78,7 +79,11 @@ public class RegisterEmployer extends AppCompatActivity {
 
 
     private void saveToFirestore(String logoFileName, String frontFileName, String backFileName, String certFileName) {
-        String id = "";
+        UserSessionManager userSessionManager = new UserSessionManager();
+
+        String uid = userSessionManager.getUserUid();
+
+        String id = uid;
         String recruiterName = binding.etRecruiterName.getText().toString().trim();
         String phoneNumber = binding.etPhoneNumber.getText().toString().trim();
         String companyMail = binding.etCompanyMail.getText().toString().trim();
@@ -101,11 +106,13 @@ public class RegisterEmployer extends AppCompatActivity {
                 .add(companyInfo)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(this, "Lưu dữ liệu thành công", Toast.LENGTH_SHORT).show();
+                    Log.d("BBBBBBBBBBBBB", "User id " + uid);
                     clearInputs(); // Xóa các trường nhập sau khi lưu thành công
                     Log.d("Firestore", "Dữ liệu đã được lưu: " + companyInfo.toString());
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Lưu dữ liệu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d("BBBBBBBBBBBBB", "User id " + uid);
                 });
     }
 

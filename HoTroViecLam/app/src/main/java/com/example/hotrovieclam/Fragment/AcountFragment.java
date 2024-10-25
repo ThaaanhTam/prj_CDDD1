@@ -1,5 +1,6 @@
 package com.example.hotrovieclam.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.hotrovieclam.Buoc.RegisterEmployer;
 import com.example.hotrovieclam.Fragment.Child_Fragment.MyProFileFragment;
 import com.example.hotrovieclam.Model.UserSessionManager;
+import com.example.hotrovieclam.Nam.register.Register;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentAcountBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,6 +49,14 @@ public class AcountFragment extends Fragment {
                     bottomNav.setVisibility(View.GONE);
                 }
 
+            }
+        });
+        binding.acount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i =new Intent(getActivity(), RegisterEmployer.class);
+
+                startActivity(i);
             }
         });
         HienThiThongTin();
