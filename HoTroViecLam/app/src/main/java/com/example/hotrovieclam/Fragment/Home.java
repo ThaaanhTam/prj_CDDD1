@@ -28,6 +28,7 @@ public class Home extends Fragment {
     private FirebaseFirestore db;
     private ArrayList<Job> listJob;
     private MyRecyclerViewAdapter adapter;
+    Spinner spinner;
 
     public Home() {
         // Required empty public constructor
@@ -55,14 +56,84 @@ String uid = userSession.getUserUid();
         // Khởi tạo danh sách công việc và adapter
         listJob = new ArrayList<>();
         adapter = new MyRecyclerViewAdapter(getActivity(), listJob);
-
-        // Thiết lập RecyclerView
+        binding.sourceSpinner.setSelection(3);
+        binding.sourceSpinner.setVisibility(View.GONE);
         binding.jobList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.jobList.setAdapter(adapter);
 
+
+
+        Website websiteLoader = new Website();
+        websiteLoader.loadWebsitesConcurrentlySequentially(adapter, listJob);
+        API apiLoader = new API();
+        apiLoader.loadAPIsConcurrently(adapter, listJob);
         // Lấy dữ liệu từ Firestore
         fetchJobsFromFirestore();
 
+
+
+
+
+        binding.sourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("ii", "onItemSelected: " + position);
+
+                if (position == 0) {
+                    ArrayList<Job> jobAPI = new ArrayList<>();
+                    for (Job job : listJob) {
+                        if (job.getSourceId() == 1) {
+                            jobAPI.add(job);
+
+                        }
+                    }
+                    adapter = new MyRecyclerViewAdapter(getActivity(), jobAPI);
+                    // Gọi hàm tìm kiếm
+
+                    binding.jobList.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    Log.d("ii", jobAPI.toString());
+
+                } else if (position == 1) {
+                        ArrayList<Job> jobWeb = new ArrayList<>();
+                        for (Job job : listJob) {
+                            if (job.getSourceId() == 2) {
+                                jobWeb.add(job);
+                            }
+                        }
+                        adapter = new MyRecyclerViewAdapter(getActivity(), jobWeb);
+                        // Gọi hàm tìm kiếm
+                        binding.jobList.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                } else if (position == 2) {
+                    ArrayList<Job> jobFire = new ArrayList<>();
+                    for (Job job : listJob) {
+                        if (job.getSourceId() == 3) {
+                            jobFire.add(job);
+                        }
+                    }
+                    adapter = new MyRecyclerViewAdapter(getActivity(), jobFire);
+                    // Gọi hàm tìm kiếm
+
+                    binding.jobList.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                }
+                else {
+                    adapter = new MyRecyclerViewAdapter(getActivity(), listJob);
+                    // Gọi hàm tìm kiếm
+                    binding.jobList.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // Lấy dữ liệu từ Firestore
         // Thêm listener cho touch trên search bar
         binding.searchBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -115,13 +186,16 @@ String uid = userSession.getUserUid();
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Job job = document.toObject(Job.class); // Chuyển đổi document thành đối tượng Job
-                            listJob.add(job); // Thêm vào danh sách
+                            Job job = document.toObject(Job.class);
+                            job.setSourceId(3);
+                            Log.d("test", job.toString());
+                            listJob.add(job);
+                            adapter.notifyItemInserted(listJob.size() - 1);
                         }
-                        adapter.notifyDataSetChanged(); // Cập nhật adapter
                     } else {
                         Log.w("HomeFragment", "Error getting documents.", task.getException());
                     }
                 });
     }
+
 }
