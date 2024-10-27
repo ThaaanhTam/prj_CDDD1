@@ -33,7 +33,6 @@ public class Home extends Fragment {
     private FirebaseFirestore db;
     private ArrayList<Job> listJob;
     private MyRecyclerViewAdapter adapter;
-    ExecutorService executorService = Executors.newFixedThreadPool(2);
     Spinner spinner;
 
     public Home() {
@@ -62,31 +61,21 @@ public class Home extends Fragment {
         adapter = new MyRecyclerViewAdapter(getActivity(), listJob);
         binding.sourceSpinner.setSelection(3);
         binding.sourceSpinner.setVisibility(View.GONE);
-        // Thiết lập RecyclerView
         binding.jobList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.jobList.setAdapter(adapter);
-        Runnable task1 = () -> {
-            API api = new API();
-            listJob.addAll(api.loadAPIsConcurrently());
-            requireActivity().runOnUiThread(() -> {
-                adapter.notifyDataSetChanged();
-            });
-        };
-        Runnable task2 = () -> {
-            Website website = new Website();
-            listJob.addAll(website.loadWebsitesConcurrently());
-
-            requireActivity().runOnUiThread(() -> {
-                adapter.notifyDataSetChanged();
-            });
-
-        };
-        executorService.submit(task1);
-        executorService.submit(task2);
 
 
+
+        Website websiteLoader = new Website();
+        websiteLoader.loadWebsitesConcurrentlySequentially(adapter, listJob);
+        API apiLoader = new API();
+        apiLoader.loadAPIsConcurrently(adapter, listJob);
         // Lấy dữ liệu từ Firestore
         fetchJobsFromFirestore();
+
+
+
+
 
         binding.sourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -185,15 +174,15 @@ public class Home extends Fragment {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Job job = document.toObject(Job.class);
-                          job.setSourceId(3);
-                           Log.d("test",job.toString());
-                            // Chuyển đổi document thành đối tượng Job
-                            listJob.add(job); // Thêm vào danh sách
+                            job.setSourceId(3);
+                            Log.d("test", job.toString());
+                            listJob.add(job);
+                            adapter.notifyItemInserted(listJob.size() - 1);
                         }
-                        adapter.notifyDataSetChanged(); // Cập nhật adapter
                     } else {
                         Log.w("HomeFragment", "Error getting documents.", task.getException());
                     }
                 });
     }
+
 }
