@@ -34,7 +34,7 @@ public class Home extends Fragment {
     private ArrayList<Job> listJob;
     private MyRecyclerViewAdapter adapter;
     ExecutorService executorService = Executors.newFixedThreadPool(2);
-    Spinner spinner;
+
 
     public Home() {
         // Required empty public constructor
@@ -137,7 +137,6 @@ public class Home extends Fragment {
                     binding.jobList.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 }
-
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {

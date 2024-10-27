@@ -107,6 +107,17 @@
                     android:padding="10dp"
                     android:spinnerMode="dropdown"
                     android:layout_marginRight="20dp"/>
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="luong"
+                    android:background="@drawable/spiner_background"
+                    android:entries="@array/provinces"
+                    android:padding="10dp"
+                    android:spinnerMode="dropdown"
+                    android:layout_marginRight="20dp"/>
             </LinearLayout>
 
         </HorizontalScrollView>
