@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-    <resources>
-        <string-array name="source_options">
-            <item>API</item>
-            <item>Website</item>
-            <item>Firestore</item>
-            <item>Tất cả</item> <!-- Tùy chọn để hiển thị tất cả các nguồn -->
-        </string-array>
-    </resources>
