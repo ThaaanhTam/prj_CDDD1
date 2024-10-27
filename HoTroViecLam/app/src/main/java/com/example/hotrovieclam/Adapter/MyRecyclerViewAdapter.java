@@ -38,10 +38,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         Uri uri;
         //String avatarUrl = job.getAvatar();
 
-
-        Uri uri;
-        //String avatarUrl = job.getAvatar();
-
         if (job.getAvatar() != null && !job.getAvatar().isEmpty()) {
             // Nếu avatarUrl hợp lệ, tải ảnh bằng Glide
             uri = Uri.parse(job.getAvatar());

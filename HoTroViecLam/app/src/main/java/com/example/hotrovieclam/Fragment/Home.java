@@ -61,7 +61,7 @@ public class Home extends Fragment {
         listJob = new ArrayList<>();
         adapter = new MyRecyclerViewAdapter(getActivity(), listJob);
         binding.sourceSpinner.setSelection(3);
-        binding.sourceSpinner.setVisibility(View.GONE);
+        binding.line1.setVisibility(View.GONE);
         // Thiết lập RecyclerView
         binding.jobList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.jobList.setAdapter(adapter);
@@ -98,7 +98,6 @@ public class Home extends Fragment {
                     for (Job job : listJob) {
                         if (job.getSourceId() == 1) {
                             jobAPI.add(job);
-
                         }
                     }
                     adapter = new MyRecyclerViewAdapter(getActivity(), jobAPI);
@@ -140,25 +139,33 @@ public class Home extends Fragment {
                 }
 
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
 
         // Lấy dữ liệu từ Firestore
         // Thêm listener cho touch trên search bar
         binding.btnTim.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                binding.sourceSpinner.setVisibility(View.VISIBLE);
+                binding.line1.setVisibility(View.VISIBLE);
                 String searchText = binding.searchBar.getText().toString();
                 Log.d("SearchInput", "Search text: " + searchText);
                 adapter = new MyRecyclerViewAdapter(getActivity(), performSearch(searchText));
                 binding.jobList.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
+
+                for (Job job : listJob) {
+                    // Lấy location của mỗi job
+                    String location = job.getLocation();
+                    if (location != null) {
+                        // Hiển thị location trong Logcat
+                        Log.d("JobLocation", "Location: " + location);
+                    } else {
+                        Log.d("JobLocation", "Location: Không có thông tin địa điểm");
+                    }
+                }
             }
         });
     }
