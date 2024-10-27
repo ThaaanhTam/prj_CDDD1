@@ -8,6 +8,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -39,6 +40,7 @@ public class Login extends AppCompatActivity {
     private ActivityLoginBinding binding;
     FirebaseAuth mAuth;
     Register register = new Register();
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +50,11 @@ public class Login extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(binding.getRoot());
 
-        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         String id = sharedPreferences.getString("user_uid", null);
         Log.d("KK", "onCreate: " + id);
 
-        if (id!=null)
-        {
+        if (id != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             DocumentReference userRef = db.collection("users").document(id);
 
@@ -77,80 +78,65 @@ public class Login extends AppCompatActivity {
                 }
             });
         }
+        setupPasswordToggle(binding.editTextPassword, R.drawable.lock, R.drawable.eye, R.drawable.eyes);
 
 
         binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = binding.editTextEmail.getText().toString().trim();
-                String pass = binding.editTextPassword.getText().toString().trim();
-
-                // Kiểm tra nếu email hoặc password trống
-                if (email.isEmpty() || pass.isEmpty()) {
-                    Toast.makeText(Login.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                    return; // Dừng lại nếu chưa nhập đầy đủ
-                }
-
-                // Kiểm tra định dạng email
-                if (!register.isValidEmail(email)) {
-                    Toast.makeText(Login.this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // Tiếp tục thực hiện đăng nhập nếu tất cả điều kiện thỏa mãn
-
-                signIn(email, pass);
-
-            }
-        });
-
-        binding.editTextPassword.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                final int DRAWABLE_RIGHT = 2;
-                Drawable drawableRight = binding.editTextPassword.getCompoundDrawables()[DRAWABLE_RIGHT];
-
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (drawableRight != null && event.getRawX() >= (binding.editTextPassword.getRight() - drawableRight.getBounds().width())) {
-                        // Icon drawableRight đã được nhấn
-                        Log.d("EditText", "Icon hiện/ẩn mật khẩu đã được nhấn");
-
-                        // Kiểm tra inputType và thay đổi giữa hiển thị mật khẩu và mật khẩu ẩn
-                        if (binding.editTextPassword.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
-                            // Hiện mật khẩu
-                            binding.editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                            binding.editTextPassword.setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock, 0, R.drawable.eyes, 0); // Biểu tượng hiển thị ở bên phải
-                        } else {
-                            // Ẩn mật khẩu
-                            binding.editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                            binding.editTextPassword.setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock, 0, R.drawable.eye, 0); // Biểu tượng ẩn ở bên phải
-                        }
-
-                        binding.editTextPassword.setSelection(binding.editTextPassword.getText().length()); // Đặt con trỏ ở cuối
-                        return true;
-                    }
-                }
-                return false;
+                login();
             }
         });
         binding.textViewRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login.this, Register.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
+                reister();
             }
         });
         binding.textViewForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login.this, ForgotPassWord.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
+                forgetpassWord();
             }
         });
 
 
+    }
+
+    private void login() {
+
+        String email = binding.editTextEmail.getText().toString().trim();
+        String pass = binding.editTextPassword.getText().toString().trim();
+
+        // Kiểm tra nếu email hoặc password trống
+        if (email.isEmpty() || pass.isEmpty()) {
+            Toast.makeText(Login.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            return; // Dừng lại nếu chưa nhập đầy đủ
+        }
+
+        // Kiểm tra định dạng email
+        if (!register.isValidEmail(email)) {
+            Toast.makeText(Login.this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Tiếp tục thực hiện đăng nhập nếu tất cả điều kiện thỏa mãn
+
+        signIn(email, pass);
+
+
+    }
+
+    private void forgetpassWord() {
+        Intent intent = new Intent(Login.this, ForgotPassWord.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+    }
+
+    private void reister() {
+        Intent intent = new Intent(Login.this, Register.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 
     private void signIn(String email, String password) {
@@ -189,6 +175,38 @@ public class Login extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    private void setupPasswordToggle(final EditText editText, int lockDrawable, int eyeDrawableHidden, int eyeDrawableVisible) {
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;
+                Drawable drawableRight = editText.getCompoundDrawables()[DRAWABLE_RIGHT];
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (drawableRight != null && event.getRawX() >= (editText.getRight() - drawableRight.getBounds().width())) {
+                        // Icon drawableRight đã được nhấn
+                        Log.d("EditText", "Icon hiện/ẩn mật khẩu đã được nhấn");
+
+                        // Kiểm tra inputType và thay đổi giữa hiển thị mật khẩu và mật khẩu ẩn
+                        if (editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                            // Hiện mật khẩu
+                            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            editText.setCompoundDrawablesWithIntrinsicBounds(lockDrawable, 0, eyeDrawableVisible, 0); // Biểu tượng hiển thị ở bên phải
+                        } else {
+                            // Ẩn mật khẩu
+                            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                            editText.setCompoundDrawablesWithIntrinsicBounds(lockDrawable, 0, eyeDrawableHidden, 0); // Biểu tượng ẩn ở bên phải
+                        }
+
+                        editText.setSelection(editText.getText().length()); // Đặt con trỏ ở cuối
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
 
