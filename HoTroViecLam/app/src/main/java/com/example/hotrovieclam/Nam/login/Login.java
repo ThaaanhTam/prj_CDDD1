@@ -1,6 +1,7 @@
 package com.example.hotrovieclam.Nam.login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
@@ -24,6 +25,14 @@ import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityLoginBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class Login extends AppCompatActivity {
@@ -38,11 +47,38 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(binding.getRoot());
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String id = sharedPreferences.getString("user_uid", null);
+        Log.d("KK", "onCreate: " + id);
+
+        if (id!=null)
+        {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference userRef = db.collection("users").document(id);
+
+            ((DocumentReference) userRef).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        // Lấy thông tin của user từ document
+                        String name = document.getString("name");
+                        String email = document.getString("email");
+                        binding.editTextEmail.setText(email);
+                        binding.editTextPassword.requestFocus();
+                        // Log ra thông tin user
+                        Log.d("KK", "User Name: " + name);
+                        Log.d("KK", "User Email: " + email);
+                    } else {
+                        Log.d("KK", "User not found.");
+                    }
+                } else {
+                    Log.e("KK", "Error getting user info: ", task.getException());
+                }
+            });
+        }
+
+
         binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,7 +99,7 @@ public class Login extends AppCompatActivity {
 
                 // Tiếp tục thực hiện đăng nhập nếu tất cả điều kiện thỏa mãn
 
-             signIn(email, pass);
+                signIn(email, pass);
 
             }
         });
@@ -100,9 +136,9 @@ public class Login extends AppCompatActivity {
         binding.textViewRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              Intent intent = new Intent(Login.this, Register.class);
+                Intent intent = new Intent(Login.this, Register.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-              startActivity(intent);
+                startActivity(intent);
             }
         });
         binding.textViewForgotPassword.setOnClickListener(new View.OnClickListener() {
@@ -116,8 +152,9 @@ public class Login extends AppCompatActivity {
 
 
     }
+
     private void signIn(String email, String password) {
-        binding.progressBarLogin.setVisibility(View.GONE);
+        binding.progressBarLogin.setVisibility(View.VISIBLE);
         // Kiểm tra đăng nhập với Firebase Authentication
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
@@ -125,7 +162,10 @@ public class Login extends AppCompatActivity {
                         // Lấy thông tin người dùng sau khi đăng nhập thành công
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null && user.isEmailVerified()) {
-                            // Kiểm tra email đã xác thực
+                            SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("user_uid", user.getUid());
+                            editor.apply();  // Lưu thay đổi
                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
                             String uid = user.getUid();
@@ -139,13 +179,17 @@ public class Login extends AppCompatActivity {
                         } else {
                             // Email chưa được xác thực
                             Toast.makeText(Login.this, "Vui lòng xác thực email trước khi đăng nhập!", Toast.LENGTH_SHORT).show();
+                            binding.progressBarLogin.setVisibility(View.GONE);
                             mAuth.signOut(); // Đăng xuất người dùng chưa xác thực
                         }
                     } else {
                         // Nếu đăng nhập thất bại
-                        Toast.makeText(Login.this, "Tài khoản hoặc mật khẩu không chính xác: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, "Tài khoản hoặc mật khẩu không chính xác: ", Toast.LENGTH_SHORT).show();
+                        binding.progressBarLogin.setVisibility(View.GONE);
+
                     }
                 });
     }
+
 
 }

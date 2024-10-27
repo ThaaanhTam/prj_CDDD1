@@ -299,6 +299,7 @@
                 android:background="@color/dennhat" />
 
             <LinearLayout
+                android:id="@+id/doipassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
@@ -310,6 +311,7 @@
                     android:src="@drawable/key" />
 
                 <TextView
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
