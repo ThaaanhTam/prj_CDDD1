@@ -84,6 +84,8 @@ public class RegisterEmployer extends AppCompatActivity {
         String uid = userSessionManager.getUserUid();
 
         String id = uid;
+        Log.d("", "User id " + id);
+
         String recruiterName = binding.etRecruiterName.getText().toString().trim();
         String phoneNumber = binding.etPhoneNumber.getText().toString().trim();
         String companyMail = binding.etCompanyMail.getText().toString().trim();

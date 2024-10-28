@@ -42,7 +42,11 @@ public class Login extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+
+
         });
+        binding.editTextEmail.setText("phambuoc2003@gmail.com");
+        binding.editTextPassword.setText("123456");
         binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,7 +135,9 @@ public class Login extends AppCompatActivity {
                             String uid = user.getUid();
                             // Lưu UID vào UserSessionManager
                             UserSessionManager sessionManager = new UserSessionManager();
-                            sessionManager.setUserUid(uid);  // Lưu UID vào session
+                            sessionManager.setUserUid(uid);
+                            String i= sessionManager.getUserUid();
+                            Log.d("UUU", "signIn: "+i);// Lưu UID vào session
                             // Chuyển đến MainActivity
                             Intent intent = new Intent(Login.this, Navigation.class);
                             startActivity(intent);
