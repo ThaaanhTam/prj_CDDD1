@@ -110,9 +110,12 @@ public class AcountFragment extends Fragment {
                     if (document.exists()) {
                         String name = document.getString("name");
                         String email = document.getString("email");
+                        String phoneNumber = document.getString("phoneNumber");
+
                         // Hiển thị thông tin người dùng
                         binding.name.setText(name);
                         binding.email.setText(email);
+                        binding.sdt.setText(phoneNumber);
                         Log.d("PPPP", "onComplete: "+email+name);
                     } else {
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
