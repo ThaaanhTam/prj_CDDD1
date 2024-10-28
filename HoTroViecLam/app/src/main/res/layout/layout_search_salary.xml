@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:text="Select Number"
+        android:textSize="25sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <!-- EditText cho lương tối thiểu -->
+        <EditText
+            android:id="@+id/salaryMin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/editbox_background"
+            android:hint="Lương tối thiểu"
+            android:inputType="number"
+            android:padding="12dp"
+            android:singleLine="true"
+            android:textAlignment="center" />
+
+        <!-- TextView dấu "-" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:text="−"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp" />
+
+        <!-- EditText cho lương tối đa -->
+        <EditText
+            android:id="@+id/salaryMax"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:drawable/editbox_background"
+            android:hint="Lương tối đa"
+            android:inputType="number"
+            android:padding="12dp"
+            android:singleLine="true"
+            android:textAlignment="center" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:text="triệu"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/timLuong"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Áp dụng" />
+
+    <ListView
+        android:id="@+id/listView_of_searchableSalary"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
+
+</LinearLayout>
