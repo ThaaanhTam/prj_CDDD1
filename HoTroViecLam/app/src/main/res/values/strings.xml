@@ -17,12 +17,13 @@
         <item>Tất cả</item> <!-- Tùy chọn để hiển thị tất cả các nguồn -->
     </string-array>
     <string-array name="salary">
-        <item>10-15</item>
-        <item>15-20</item>
-        <item>20-25</item>
-        <item>25-30</item>
-        <item>30-35</item>
-        <item>35-40</item>
+        <item>dưới 10 triệu</item>
+        <item>10-20</item>
+        <item>20-30</item>
+        <item>30-40</item>
+        <item>40-50</item>
+        <item>trên 50 triệu</item>
+
         <item>Thoa thuan</item>
     </string-array>
     <string-array name="salary_options">

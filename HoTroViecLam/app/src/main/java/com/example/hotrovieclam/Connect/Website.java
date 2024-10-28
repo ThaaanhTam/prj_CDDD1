@@ -126,13 +126,9 @@ public class Website {
                     job.setLocation(jobLocation);
                     job.setAgreement(jobSalary);
                     job.setSourceId(2);
+
                     newJobList.add(job);
-
                     // Lấy mô tả ngắn
-
-
-
-
 
                     // In ra thông tin
                     Log.d("Job Title: " , jobTitle);
