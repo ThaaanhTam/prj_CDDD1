@@ -216,7 +216,7 @@ public class Register extends AppCompatActivity {
                                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
                                     if (firebaseUser != null) {
                                         // Tạo đối tượng User
-                                        User user = new User(firebaseUser.getUid(), name, email, phone, 1, null, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
+                                        User user = new User(firebaseUser.getUid(), name, email, phone, 1, null,null,null,null, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
 
                                         // Lưu thông tin người dùng vào Firestore
                                         saveUserToFirestore(user);
