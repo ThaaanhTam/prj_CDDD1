@@ -6,15 +6,18 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
-import com.example.hotrovieclam.Interface.UserSession;
+import com.example.hotrovieclam.Connect.API;
+import com.example.hotrovieclam.Connect.Website;
 import com.example.hotrovieclam.Model.Job;
-import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentHomeBinding;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -22,12 +25,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Home extends Fragment {
     private FragmentHomeBinding binding;
     private FirebaseFirestore db;
     private ArrayList<Job> listJob;
     private MyRecyclerViewAdapter adapter;
+    ExecutorService executorService = Executors.newFixedThreadPool(2);
     Spinner spinner;
 
     public Home() {
@@ -57,9 +63,29 @@ String uid = userSession.getUserUid();
         listJob = new ArrayList<>();
         adapter = new MyRecyclerViewAdapter(getActivity(), listJob);
         binding.sourceSpinner.setSelection(3);
-        binding.sourceSpinner.setVisibility(View.GONE);
+        binding.line1.setVisibility(View.GONE);
+        // Thiết lập RecyclerView
         binding.jobList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.jobList.setAdapter(adapter);
+        Runnable task1 = () -> {
+            API api = new API();
+            listJob.addAll(api.loadAPIsConcurrently());
+            requireActivity().runOnUiThread(() -> {
+                adapter.notifyDataSetChanged();
+            });
+        };
+        Runnable task2 = () -> {
+            Website website = new Website();
+            listJob.addAll(website.loadWebsitesConcurrently());
+
+            requireActivity().runOnUiThread(() -> {
+                adapter.notifyDataSetChanged();
+            });
+
+        };
+        executorService.submit(task1);
+        executorService.submit(task2);
+
 
 
 
@@ -69,10 +95,6 @@ String uid = userSession.getUserUid();
         apiLoader.loadAPIsConcurrently(adapter, listJob);
         // Lấy dữ liệu từ Firestore
         fetchJobsFromFirestore();
-
-
-
-
 
         binding.sourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -84,7 +106,6 @@ String uid = userSession.getUserUid();
                     for (Job job : listJob) {
                         if (job.getSourceId() == 1) {
                             jobAPI.add(job);
-
                         }
                     }
                     adapter = new MyRecyclerViewAdapter(getActivity(), jobAPI);
@@ -126,58 +147,50 @@ String uid = userSession.getUserUid();
                 }
 
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
 
         // Lấy dữ liệu từ Firestore
         // Thêm listener cho touch trên search bar
-        binding.searchBar.setOnTouchListener(new View.OnTouchListener() {
+        binding.btnTim.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Kiểm tra nếu người dùng nhấn vào drawable bên trái
-                    if (event.getRawX() <= (binding.searchBar.getCompoundDrawables()[0].getBounds().width())) {
-                        // Người dùng đã nhấn vào drawable bên trái
-                        String searchText = binding.searchBar.getText().toString();
-                        Log.d("SearchInput", "Search text: " + searchText);
-                        performSearch(searchText); // Gọi hàm tìm kiếm
-                        return true; // Đã xử lý sự kiện
+            public void onClick(View v) {
+                binding.line1.setVisibility(View.VISIBLE);
+                String searchText = binding.searchBar.getText().toString();
+                Log.d("SearchInput", "Search text: " + searchText);
+                adapter = new MyRecyclerViewAdapter(getActivity(), performSearch(searchText));
+                binding.jobList.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+
+                for (Job job : listJob) {
+                    // Lấy location của mỗi job
+                    String location = job.getLocation();
+                    if (location != null) {
+                        // Hiển thị location trong Logcat
+                        Log.d("JobLocation", "Location: " + location);
+                    } else {
+                        Log.d("JobLocation", "Location: Không có thông tin địa điểm");
                     }
                 }
-                return false; // Không xử lý sự kiện
             }
         });
     }
 
-    private void performSearch(String query) {
+    private ArrayList<Job> performSearch(String query) {
         if (query.isEmpty()) {
             Toast.makeText(getContext(), "Vui lòng nhập từ khóa tìm kiếm", Toast.LENGTH_SHORT).show();
-            return;
+            return listJob;  // Trả về toàn bộ danh sách nếu chuỗi tìm kiếm rỗng
         }
 
-        // Tạo truy vấn Firestore
-        db.collection("jobs") // Thay đổi tên collection nếu cần
-                .orderBy("title") // Có thể thay đổi theo trường bạn muốn tìm kiếm
-                .startAt(query) // Bắt đầu tìm kiếm từ chuỗi nhập
-                .endAt(query + "\uf8ff") // Tìm kiếm mọi thứ kết thúc bằng query
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ArrayList<Job> jobList = new ArrayList<>();
-                        for (DocumentSnapshot document : task.getResult()) {
-                            Job job = document.toObject(Job.class); // Chuyển đổi tài liệu thành đối tượng Job
-                            jobList.add(job);
-                        }
-                        // Cập nhật adapter với danh sách việc làm đã tìm thấy
-                        adapter.updateList(jobList); // Cập nhật danh sách hiển thị trong RecyclerView
-                    } else {
-                        Log.d("SSS", "Error getting documents: ", task.getException());
-                    }
-                });
+        ArrayList<Job> filteredList = new ArrayList<>();
+        for (Job job : listJob) {
+            if (job.getTitle().toUpperCase().contains(query.toUpperCase())) {
+                filteredList.add(job);
+            }
+        }
+        return filteredList;
     }
 
     private void fetchJobsFromFirestore() {
@@ -187,15 +200,15 @@ String uid = userSession.getUserUid();
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Job job = document.toObject(Job.class);
-                            job.setSourceId(3);
-                            Log.d("test", job.toString());
-                            listJob.add(job);
-                            adapter.notifyItemInserted(listJob.size() - 1);
+                          job.setSourceId(3);
+                           Log.d("test",job.toString());
+                            // Chuyển đổi document thành đối tượng Job
+                            listJob.add(job); // Thêm vào danh sách
                         }
+                        adapter.notifyDataSetChanged(); // Cập nhật adapter
                     } else {
                         Log.w("HomeFragment", "Error getting documents.", task.getException());
                     }
                 });
     }
-
 }

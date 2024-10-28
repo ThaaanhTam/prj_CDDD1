@@ -46,7 +46,7 @@ public class Navigation extends AppCompatActivity {
 //        khởi chạy màn hình home đầu tiên
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new AcountFragment())
+                    .replace(R.id.fragment_container, new Home())
                     .commit();
         }
         binding.navButtom.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

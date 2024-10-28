@@ -55,11 +55,7 @@
             android:text="Đăng Nhập"
              />
 
-        <TextView
-            android:id="@+id/textView_experience_without_login"
-            style="@style/myTextView"
-            android:text="Trải nghiệm mà không cần đăng nhập"
-            android:textAlignment="center" />
+
 
         <ProgressBar
             android:id="@+id/progressBar_login"

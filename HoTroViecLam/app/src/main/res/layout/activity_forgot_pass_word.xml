@@ -17,7 +17,13 @@
             android:id="@+id/dangki"
             style="@style/lable"
             android:text="Quên mật khẩu" />
-
+        <ProgressBar
+            android:id="@+id/progressBar_res"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone" />
 
         <EditText style="@style/email"
             android:id="@+id/email"
