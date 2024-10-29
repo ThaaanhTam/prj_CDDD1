@@ -103,6 +103,6 @@ public class Website {
             } catch (IOException e) {
                 Log.e(TAG, "Error fetching data from URL2: " + e.getMessage());
             }
-        });
     }
 }
+

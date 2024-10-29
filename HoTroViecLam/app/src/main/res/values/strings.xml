@@ -16,6 +16,16 @@
         <item>Firestore</item>
         <item>Tất cả</item> <!-- Tùy chọn để hiển thị tất cả các nguồn -->
     </string-array>
+    <string-array name="salary">
+        <item>dưới 10 triệu</item>
+        <item>10-20</item>
+        <item>20-30</item>
+        <item>30-40</item>
+        <item>40-50</item>
+        <item>trên 50 triệu</item>
+
+        <item>Thoa thuan</item>
+    </string-array>
     <string-array name="salary_options">
         <item>Dưới 5 triệu</item>
         <item>5 triệu - 10 triệu</item>
@@ -23,68 +33,69 @@
     </string-array>
     <string-array name="provinces">
         <item>An Giang</item>
-        <item>Bà Rịa - Vũng Tàu</item>
-        <item>Bắc Giang</item>
-        <item>Bắc Kạn</item>
-        <item>Bạc Liêu</item>
-        <item>Bắc Ninh</item>
-        <item>Bến Tre</item>
-        <item>Bình Định</item>
-        <item>Bình Dương</item>
-        <item>Bình Phước</item>
-        <item>Bình Thuận</item>
-        <item>Cà Mau</item>
-        <item>Cần Thơ</item>
-        <item>Cao Bằng</item>
-        <item>Đà Nẵng</item>
-        <item>Đắk Lắk</item>
-        <item>Đắk Nông</item>
-        <item>Điện Biên</item>
-        <item>Đồng Nai</item>
-        <item>Đồng Tháp</item>
+        <item>Ba Ria - Vung Tau</item>
+        <item> bac Giang</item>
+        <item>Bac Kan</item>
+        <item>Bac Lieu</item>
+        <item>Bac Ninh</item>
+        <item>Ben Tre</item>
+        <item>Binh Dinh</item>
+        <item>Binh Duong</item>
+        <item>Binh Phuoc</item>
+        <item>Binh Thuan</item>
+        <item>Ca Mau</item>
+        <item>Cand Tho</item>
+        <item>Cao Bang</item>
+        <item>Da Nang</item>
+        <item>Dak Lak</item>
+        <item>Dak Nong</item>
+        <item>Dieu Bien</item>
+        <item>Dong Nai</item>
+        <item>Dong Thap</item>
         <item>Gia Lai</item>
-        <item>Hà Giang</item>
-        <item>Hà Nam</item>
-        <item>Hà Nội</item>
-        <item>Hà Tĩnh</item>
-        <item>Hải Dương</item>
-        <item>Hải Phòng</item>
-        <item>Hậu Giang</item>
-        <item>Hòa Bình</item>
-        <item>Hưng Yên</item>
-        <item>Khánh Hòa</item>
-        <item>Kiên Giang</item>
+        <item>Ha Giang</item>
+        <item>Ha Nam</item>
+        <item>Ha Noi</item>
+        <item>Ha Tinh</item>
+        <item>Hai Duong</item>
+        <item>Hai Phong</item>
+        <item>Hau Giang</item>
+        <item>Hoa Binh</item>
+        <item>Hung Yen</item>
+        <item>Khánh Hoa</item>
+        <item>Kien Giang</item>
         <item>Kon Tum</item>
-        <item>Lai Châu</item>
-        <item>Lâm Đồng</item>
-        <item>Lạng Sơn</item>
-        <item>Lào Cai</item>
+        <item>Lai Chau</item>
+        <item>Lam Dong</item>
+        <item>Lang Son</item>
+        <item>Lao Cai</item>
         <item>Long An</item>
-        <item>Nam Định</item>
-        <item>Nghệ An</item>
-        <item>Ninh Bình</item>
-        <item>Ninh Thuận</item>
-        <item>Phú Thọ</item>
-        <item>Phú Yên</item>
-        <item>Quảng Bình</item>
-        <item>Quảng Nam</item>
-        <item>Quảng Ngãi</item>
-        <item>Quảng Ninh</item>
-        <item>Quảng Trị</item>
-        <item>Sóc Trăng</item>
-        <item>Sơn La</item>
-        <item>Tây Ninh</item>
-        <item>Thái Bình</item>
-        <item>Thái Nguyên</item>
-        <item>Thanh Hóa</item>
-        <item>Thừa Thiên Huế</item>
-        <item>Tiền Giang</item>
-        <item>TP Hồ Chí Minh</item>
-        <item>Trà Vinh</item>
-        <item>Tuyên Quang</item>
-        <item>Vĩnh Long</item>
-        <item>Vĩnh Phúc</item>
-        <item>Yên Bái</item>
+        <item>Nam Dinh</item>
+        <item>Nghe An</item>
+        <item>Ninh Binh</item>
+        <item>Ninh Thuan</item>
+        <item>Phu Tho</item>
+        <item>Phu Yen</item>
+        <item>Quang Binh</item>
+        <item>Quang Nam</item>
+        <item>Quang Ngai</item>
+        <item>Quang Ninh</item>
+        <item>Quang Tri</item>
+        <item>Soc Trang</item>
+        <item>Son La</item>
+        <item>Tay Ninh</item>
+        <item>Thai Binh</item>
+        <item>Thai Nguyen</item>
+        <item>Thanh Hoa</item>
+        <item>Thua Thien Hue</item>
+        <item>Tien Giang</item>
+        <item>Ho Chi Minh</item>
+        <item>Tra Vinh</item>
+        <item>Tuyen Quang</item>
+        <item>Vinh Long</item>
+        <item>Vinh Phuc</item>
+        <item>Yen Bai</item>
+
     </string-array>
 
 </resources>
