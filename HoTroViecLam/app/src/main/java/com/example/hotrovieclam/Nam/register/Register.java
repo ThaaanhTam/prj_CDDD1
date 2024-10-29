@@ -238,7 +238,7 @@ public class Register extends AppCompatActivity {
 
 
                                             } else {
-                                                // Gửi email xác thực thất bại
+                                                // Gửi email xác thực thất bại.
 
                                                 Toast.makeText(Register.this, "Lỗi khi gửi email xác thực: " + verificationTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                                 binding.progressBarRes.setVisibility(View.GONE);
