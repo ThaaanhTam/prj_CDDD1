@@ -29,7 +29,7 @@ public class Job {
     private int salaryMax;
 
 
-
+    private String major;
     private String agreement;
     private Timestamp createdAt;
     private Timestamp updatedAt;
@@ -79,6 +79,14 @@ public class Job {
 
     public void setJobTypeId(int jobTypeId) {
         this.jobTypeId = jobTypeId;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
     }
 
     public String getTitle() {
@@ -167,6 +175,7 @@ public class Job {
                 ", location='" + location + '\'' +
                 ", sourceId=" + sourceId +
                 ", agreement='" + agreement + '\'' +
+                ", major='" + major + '\'' +
                 ", salaryMin='" + salaryMin + '\'' +
                 ", salaryMax='" + salaryMax + '\'' +
                 ", createdAt=" + createdAt +
