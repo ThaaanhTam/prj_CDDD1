@@ -34,11 +34,12 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTim"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/bg_btntim"
-            android:drawableLeft="@drawable/search_25dp_e8eaed_fill0_wght400_grad0_opsz24" />
+            app:cornerRadius="10dp"
+            android:layout_margin="1dp"
+            android:backgroundTint="#92EBBA"
+            android:drawableEnd="@drawable/search_25dp_e8eaed_fill0_wght400_grad0_opsz24" />
     </LinearLayout>
 
     <!-- Spinner để chọn nguồn dữ liệu -->
