@@ -119,6 +119,16 @@
                     android:padding="10dp"
                     android:spinnerMode="dropdown"
                     android:layout_marginRight="20dp"/>
+                <TextView
+                    android:id="@+id/major"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="ngành"
+                    android:background="@drawable/spiner_background"
+                    android:padding="10dp"
+                    android:spinnerMode="dropdown"
+                    android:layout_marginRight="20dp"/>
             </LinearLayout>
 
         </HorizontalScrollView>

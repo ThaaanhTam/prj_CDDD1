@@ -26,6 +26,28 @@
 
         <item>Thoa thuan</item>
     </string-array>
+    <string-array name="job_industries">
+        <item>Cong nghe thong tin</item>
+        <item>Ky thuat phan mem</item>
+        <item>Quan tri kinh doanh</item>
+        <item>Marketing</item>
+        <item>Tai chinh - Ngan hang</item>
+        <item>Nhan su</item>
+        <item>Logistics va chuoi cung ung</item>
+        <item>Du lich va khach san</item>
+        <item>Y te</item>
+        <item>Ky thuat xay dung</item>
+        <item>Thiet ke do hoa</item>
+        <item>Truyen thong da phuong tien</item>
+        <item>Giao duc va dao tao</item>
+        <item>Nganh luat</item>
+        <item>Ky thuat dien - dien tu</item>
+        <item>Ngoai ngu</item>
+        <item>Khoa hoc du lieu</item>
+        <item>An toan thong tin</item>
+        <item>The duc the thao</item>
+    </string-array>
+
     <string-array name="salary_options">
         <item>Dưới 5 triệu</item>
         <item>5 triệu - 10 triệu</item>
