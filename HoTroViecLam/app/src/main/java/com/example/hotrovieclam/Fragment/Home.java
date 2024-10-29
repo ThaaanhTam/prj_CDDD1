@@ -369,7 +369,7 @@ public class Home extends Fragment {
         }
         return filteredList;
     }
-
+    
     // Hàm loại bỏ dấu
     public static String removeDiacritics(String input) {
         return input == null ? null :
