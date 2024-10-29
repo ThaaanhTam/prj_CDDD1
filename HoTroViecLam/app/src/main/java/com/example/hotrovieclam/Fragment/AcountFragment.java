@@ -24,70 +24,97 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-
 public class AcountFragment extends Fragment {
 
+    // Binding giúp liên kết các view với mã Java.
     private FragmentAcountBinding binding;
 
+    // Phương thức này được gọi để tạo giao diện cho Fragment.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Tìm và hiển thị thanh điều hướng dưới cùng (nếu tồn tại).
         BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
         if (bottomNav != null) {
             bottomNav.setVisibility(View.VISIBLE);
         }
-        // Inflate the layout for this fragment
+
+        // Khởi tạo binding và liên kết giao diện.
         binding = FragmentAcountBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+
+        // Xử lý sự kiện khi người dùng nhấn vào nút "Profile".
         binding.profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Chuyển sang `MyProFileFragment`.
                 MyProFileFragment myProFileFragment = new MyProFileFragment();
-                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, myProFileFragment).addToBackStack("null").commit();
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, myProFileFragment)
+                        .addToBackStack("null")
+                        .commit();
+
+                // Ẩn thanh điều hướng dưới cùng.
                 BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
                 if (bottomNav != null) {
                     bottomNav.setVisibility(View.GONE);
                 }
-
             }
         });
+
+        // Xử lý sự kiện khi người dùng nhấn vào nút "Acount".
         binding.acount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i =new Intent(getActivity(), RegisterEmployer.class);
-
+                // Chuyển sang màn hình đăng ký nhà tuyển dụng.
+                Intent i = new Intent(getActivity(), RegisterEmployer.class);
                 startActivity(i);
             }
         });
+
+        // Gọi hàm hiển thị thông tin người dùng.
         HienThiThongTin();
         return view;
-
     }
-    public void HienThiThongTin(){
+
+    /**
+     * Phương thức HienThiThongTin() dùng để lấy và hiển thị thông tin người dùng từ Firestore.
+     */
+    public void HienThiThongTin() {
+        // Tạo session để lấy UID người dùng hiện tại.
         UserSessionManager sessionManager = new UserSessionManager();
         String uid = sessionManager.getUserUid();
 
-        // Dùng UID để truy vấn Firestore hoặc hiển thị thông tin người dùng
+        // Lấy tham chiếu đến tài liệu người dùng trong Firestore dựa trên UID.
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(uid);
+
+        // Truy vấn thông tin người dùng và xử lý kết quả.
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
+                if (task.isSuccessful()) { // Kiểm tra nếu truy vấn thành công.
                     DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
+                    if (document.exists()) { // Kiểm tra nếu tài liệu tồn tại.
+                        // Lấy thông tin người dùng từ tài liệu.
                         String name = document.getString("name");
                         String email = document.getString("email");
                         String phonenumber = document.getString("phoneNumber");
-                        // Hiển thị thông tin người dùng
+
+                        // Hiển thị thông tin người dùng trên giao diện.
                         binding.name.setText(name);
                         binding.email.setText(email);
                         binding.sdt.setText(phonenumber);
-                        Log.d("PPPP", "onComplete: "+email+name);
+
+                        // Ghi log thông tin người dùng để kiểm tra.
+                        Log.d("PPPP", "onComplete: " + email + name);
                     } else {
+                        // Thông báo nếu không tìm thấy dữ liệu người dùng.
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
                     }
                 } else {
+                    // Thông báo nếu có lỗi khi truy vấn Firestore.
                     Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
                 }
             }
