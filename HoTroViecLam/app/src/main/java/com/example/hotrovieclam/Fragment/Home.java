@@ -143,14 +143,14 @@ public class Home extends Fragment {
             binding.jobList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
-            for (Job a : listJob) {
-                if (a.getSourceId() == 2) {
-                    Log.d("luong ", "luong web" + a.getAgreement() + "\nLuongMin: " +
-                            a.getSalaryMin() + "\nLuongMax: " + a.getSalaryMax());
-                } else if (a.getSourceId() == 1) {
-                    Log.d("luong ", "luong api" + a.getAgreement());
-                }
-            }
+//            for (Job a : listJob) {
+//                if (a.getSourceId() == 2) {
+//                    Log.d("luong ", "luong web" + a.getAgreement() + "\nLuongMin: " +
+//                            a.getSalaryMin() + "\nLuongMax: " + a.getSalaryMax());
+//                } else if (a.getSourceId() == 1) {
+//                    Log.d("luong ", "luong api" + a.getAgreement());
+//                }
+//            }
 
 
         });
@@ -336,7 +336,7 @@ public class Home extends Fragment {
         ArrayList<String> major = new ArrayList<>();
         String[] inforMajor = getResources().getStringArray(R.array.job_industries);
         for (String province : provincesArray) {
-            arrayList.add(province);
+            major.add(province);
         }
 
         TextView textViewMajor = binding.major;
