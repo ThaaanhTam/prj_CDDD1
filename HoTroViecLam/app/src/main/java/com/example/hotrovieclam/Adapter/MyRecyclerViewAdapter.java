@@ -48,7 +48,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
         // Nếu avatarUrl không hợp lệ hoặc rỗng, không làm gì cả (không cần else)
         holder.binding.tvNameCompany.setText(job.getTitle());
-        holder.binding.tvNameLocation.setText(job.getAgreement());
+        holder.binding.tvNameLocation.setText(job.getLocation());
+        holder.binding.tvSalary.setText(job.getAgreement());
 //        if(job.getSourceId()==1){
 //            holder.binding.backgroundItem.setBackgroundResource(R.color.API);
 //        }
