@@ -441,10 +441,12 @@ public class Home extends Fragment {
     private ArrayList<Job> filter(String location) {
         ArrayList<Job> filteredList = new ArrayList<>();
         for (Job job : listJob) {
-            String locationNoDiacritics = removeDiacritics(job.getLocation());
-            if (locationNoDiacritics != null && locationNoDiacritics.toUpperCase().contains(location.toUpperCase())) {
-                filteredList.add(job);
-                Log.d("locaaa", "Công việc phù hợp: " + job.getLocation());
+            if (job.getLocation()!=null) {
+                String locationNoDiacritics = removeDiacritics(job.getLocation());
+                if (locationNoDiacritics != null && locationNoDiacritics.toUpperCase().contains(location.toUpperCase())) {
+                    filteredList.add(job);
+                    Log.d("locaaa", "Công việc phù hợp: " + job.getLocation());
+                }
             }
         }
         return filteredList;
@@ -466,8 +468,8 @@ public class Home extends Fragment {
     private void updateRecyclerView(ArrayList<Job> filteredJobs) {
         MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(getActivity(), filteredJobs);
         for (Job a : filteredJobs) {
-            Log.d("luong hien thi", "Thoa thuan: " + a.getAgreement() + "\n max: " + a.getSalaryMax() + "\n min: " + a.getSalaryMin());
-            Log.d("nganh",a.getMajor());
+//            Log.d("luong hien thi", "Thoa thuan: " + a.getAgreement() + "\n max: " + a.getSalaryMax() + "\n min: " + a.getSalaryMin());
+//            Log.d("nganh",a.getMajor());
         }
         binding.jobList.setAdapter(adapter);
         adapter.notifyDataSetChanged(); // Cập nhật adapter với danh sách mới
