@@ -84,22 +84,6 @@ public class Home extends Fragment {
         binding.line1.setVisibility(View.GONE);
         binding.jobList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.jobList.setAdapter(adapter);
-        executorService.submit(() -> {
-            Website website = new Website();
-            listJob.addAll(website.loadWebsitesConcurrently());
-            requireActivity().runOnUiThread(adapter::notifyDataSetChanged);
-        });
-        executorService.submit(() -> {
-            API api = new API();
-            listJob.addAll(api.loadAPIsConcurrently());
-            requireActivity().runOnUiThread(adapter::notifyDataSetChanged);
-        });
-
-
-        executorService.submit(task2);
-
-
-
 
         Website websiteLoader = new Website();
         websiteLoader.loadWebsitesConcurrentlySequentially(adapter, listJob);
