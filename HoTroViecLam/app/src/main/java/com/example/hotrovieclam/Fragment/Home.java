@@ -311,7 +311,7 @@ public class Home extends Fragment {
                     }
                     updateRecyclerView(filteredJobs);
                     dialog.dismiss();
-                } else if (selectedItem.equals("Thoa thuan")) {
+                } else if (selectedItem.equals("Thỏa thuận")) {
                     ArrayList<Job> filteredJobs = new ArrayList<>();
                     for (Job jobL : listJob) {
                         if ((jobL.getSalaryMin() == jobL.getSalaryMax()) && jobL.getAgreement() != null) {
@@ -408,23 +408,29 @@ public class Home extends Fragment {
         return null;
     }
 
-    //Hàm lọc danh sách công việc dựa trên khoảng lương
     private ArrayList<Job> filterBySalaryRange(String minSalary, String maxSalary) {
         ArrayList<Job> filteredList = new ArrayList<>();
+
         try {
-            int min = Integer.parseInt(minSalary);
-            int max = Integer.parseInt(maxSalary);
-            for (Job lismm : listJob) {
-                if (min <= lismm.getSalaryMin() && max >= lismm.getSalaryMax() && lismm.getSalaryMin() != lismm.getSalaryMax()) {
-                    filteredList.add(lismm);
+
+            float min = Float.parseFloat(minSalary);
+            float max = Float.parseFloat(maxSalary);
+
+            for (Job job : listJob) {
+                if(job.getSalaryMax() != -1.0f  || job.getSalaryMin() != 1.0f) {
+                    if (job.getSalaryMin() >= min && job.getSalaryMax() <= max && job.getSalaryMin() != job.getSalaryMax()) {
+                        filteredList.add(job);
+                    }
                 }
             }
 
         } catch (NumberFormatException e) {
             Log.e("SalaryFilter", "Nhập lương không hợp lệ", e);
         }
+
         return filteredList;
     }
+
 
     // Hàm loại bỏ dấu
     public static String removeDiacritics(String input) {
@@ -433,13 +439,15 @@ public class Home extends Fragment {
                         .replaceAll("\\p{M}", "");
     }
 
-    // Hàm lọc danh sách công việc dựa trên địa điểm
     private ArrayList<Job> filter(String location) {
         ArrayList<Job> filteredList = new ArrayList<>();
-        for (Job job : listJob) {
-            if (job.getLocation()!=null) {
+
+        ArrayList<Job> jobListCopy = new ArrayList<>(listJob);
+
+        for (Job job : jobListCopy) {
+            if (job.getLocation() != null) {
                 String locationNoDiacritics = removeDiacritics(job.getLocation());
-                if (locationNoDiacritics != null && locationNoDiacritics.toUpperCase().contains(location.toUpperCase())) {
+                if (locationNoDiacritics != null && locationNoDiacritics.toUpperCase().contains(removeDiacritics(location.toUpperCase()))) {
                     filteredList.add(job);
                     Log.d("locaaa", "Công việc phù hợp: " + job.getLocation());
                 }
@@ -448,17 +456,27 @@ public class Home extends Fragment {
         return filteredList;
     }
 
+
     private ArrayList<Job> filterMajor(String major) {
         ArrayList<Job> filteredList = new ArrayList<>();
+
+
         for (Job job : listJob) {
-            String locationNoDiacritics = removeDiacritics(job.getMajor());
-            if (locationNoDiacritics != null && locationNoDiacritics.toUpperCase().contains(major.toUpperCase())) {
-                filteredList.add(job);
-                Log.d("locaaa", "Công việc phù hợp: " + job.getMajor());
+            if(job.getMajor()!= null) {
+                String majorNoDiacritics = removeDiacritics(job.getMajor());
+
+                if (majorNoDiacritics != null && majorNoDiacritics.toUpperCase().contains(removeDiacritics(major.toUpperCase()))) {
+                    filteredList.add(job);
+                    // Ghi log công việc phù hợp
+                    Log.d("locaaa", "Công việc phù hợp: " + job.getMajor());
+                }
             }
         }
+
+        // Trả về danh sách các công việc đã lọc
         return filteredList;
     }
+
 
     // Hàm cập nhật RecyclerView
     private void updateRecyclerView(ArrayList<Job> filteredJobs) {
