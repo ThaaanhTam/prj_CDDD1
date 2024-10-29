@@ -315,10 +315,10 @@ public class Home extends Fragment {
                     }
                     updateRecyclerView(filteredJobs);
                     dialog.dismiss();
-                }else if (selectedItem.equals("T")) {
+                }else if (selectedItem.equals("Thoa thuan")) {
                     ArrayList<Job> filteredJobs = new ArrayList<>();
                     for (Job jobL : listJob) {
-                        if (jobL.getSalaryMin() > 50) {
+                        if ((jobL.getSalaryMin() ==jobL.getSalaryMax())&&jobL.getAgreement()!=null) {
                             filteredJobs.add(jobL);
                         }
                     }
@@ -329,9 +329,9 @@ public class Home extends Fragment {
                     String jobSalary = selectedItem;
                     int[] salaryRange = parseSalaryRange(jobSalary);
                     ArrayList<Job> filteredJobs = filterBySalaryRange(salaryRange[0]+"",salaryRange[1]+"");
-                    updateRecyclerView(filteredJobs); // Đóng dialog
+                    updateRecyclerView(filteredJobs);
+                    dialog.dismiss();// Đóng dialog
                 }
-
 
             });
         });
@@ -359,7 +359,7 @@ public class Home extends Fragment {
             int min = Integer.parseInt(minSalary);
             int max = Integer.parseInt(maxSalary);
             for (Job lismm : listJob) {
-                if (min <= lismm.getSalaryMin() && max >= lismm.getSalaryMax()&&min!=max) {
+                if (min <= lismm.getSalaryMin() && max >= lismm.getSalaryMax()&&lismm.getSalaryMin()!=lismm.getSalaryMax()) {
                     filteredList.add(lismm);
                 }
             }
@@ -369,8 +369,7 @@ public class Home extends Fragment {
         }
         return filteredList;
     }
-
-
+    
     // Hàm loại bỏ dấu
     public static String removeDiacritics(String input) {
         return input == null ? null :
