@@ -88,7 +88,7 @@
                 <!-- Spinner chọn nguồn -->
                 <Spinner
                     android:id="@+id/source_spinner"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:background="@drawable/spiner_background"
@@ -100,29 +100,29 @@
                 <!-- Spinner khác (có thể thêm nội dung sau) -->
                 <TextView
                     android:id="@+id/luong"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:background="@drawable/spiner_background"
                     android:entries="@array/provinces"
                     android:padding="10dp"
-                    android:text="luong"
+                    android:text="Lương"
                     android:spinnerMode="dropdown"
                     android:layout_marginRight="20dp"/>
 
                 <TextView
                     android:id="@+id/location"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="địa điểm"
+                    android:text="Địa điểm"
                     android:background="@drawable/spiner_background"
                     android:padding="10dp"
                     android:spinnerMode="dropdown"
                     android:layout_marginRight="20dp"/>
                 <TextView
                     android:id="@+id/major"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="ngành"
