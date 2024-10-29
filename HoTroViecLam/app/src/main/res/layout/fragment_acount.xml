@@ -218,6 +218,7 @@
                 android:background="@color/dennhat" />
 
             <LinearLayout
+                android:id="@+id/acount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
