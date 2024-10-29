@@ -1,5 +1,7 @@
 package com.example.hotrovieclam.Fragment;
 
+import static androidx.constraintlayout.widget.Constraints.TAG;
+
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -30,6 +32,7 @@ import com.example.hotrovieclam.Connect.Website;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentHomeBinding;
+import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -72,7 +75,7 @@ public class Home extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         funCustomSpinner();
-       // funCustomSalaryDialog();
+        // funCustomSalaryDialog();
         listJob = new ArrayList<>();
         adapter = new MyRecyclerViewAdapter(getActivity(), listJob);
         binding.sourceSpinner.setSelection(3);
@@ -145,11 +148,12 @@ public class Home extends Fragment {
             adapter.notifyDataSetChanged();
 
             for (Job a : listJob) {
-                    if (a.getSourceId()==2){
-                        Log.d("luong ","luong web"+ a.getAgreement());
-                    } else if (a.getSourceId()==1){
-                        Log.d("luong ", "luong api" +a.getAgreement());
-                    }
+                if (a.getSourceId() == 2) {
+                    Log.d("luong ", "luong web" + a.getAgreement() + "\nLuongMin: " +
+                            a.getSalaryMin() + "\nLuongMax: " + a.getSalaryMax());
+                } else if (a.getSourceId() == 1) {
+                    Log.d("luong ", "luong api" + a.getAgreement());
+                }
             }
 
 
@@ -234,6 +238,7 @@ public class Home extends Fragment {
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     arrayAdapter.getFilter().filter(charSequence); // Lọc danh sách theo từng ký tự gõ
                 }
+
                 @Override
                 public void afterTextChanged(Editable editable) {
                 }
@@ -285,32 +290,79 @@ public class Home extends Fragment {
                     Toast.makeText(getActivity(), "Đã chọn: " + minSalary + " - " + maxSalary, Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
 
-                    // Lọc danh sách công việc dựa trên khoảng lương
-//                    ArrayList<Job> filteredJobs = filterBySalaryRange(minSalary, maxSalary);
-//                    updateRecyclerView(filteredJobs); // Cập nhật RecyclerView
+                    ArrayList<Job> filteredJobs = filterBySalaryRange(minSalary, maxSalary);
+
+                    updateRecyclerView(filteredJobs);
                 } else {
                     Toast.makeText(getActivity(), "Vui lòng nhập cả khoảng lương tối thiểu và tối đa.", Toast.LENGTH_SHORT).show();
                 }
             });
 
-
             aa.setOnItemClickListener((adapterView, view1, i, l) -> {
                 String selectedItem = arrayAdapter.getItem(i);
                 textViewSalary.setText(selectedItem); // Cập nhật TextView location bằng mục đã chọn
                 Toast.makeText(getActivity(), "Selected: " + selectedItem, Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-                ArrayList<Job> filteredJobs = filter(selectedItem);
-                updateRecyclerView(filteredJobs); // Đóng dialog
+                if (selectedItem.equals("dưới 10 triệu")) {
+                    ArrayList<Job> filteredJobs = filterBySalaryRange("0", "10");
+                    updateRecyclerView(filteredJobs);
+                    dialog.dismiss();
+                } else if (selectedItem.equals("trên 50 triệu")) {
+                    ArrayList<Job> filteredJobs = new ArrayList<>();
+                    for (Job jobL : listJob) {
+                        if (jobL.getSalaryMin() > 50) {
+                            filteredJobs.add(jobL);
+                        }
+                    }
+                    updateRecyclerView(filteredJobs);
+                    dialog.dismiss();
+                }else if (selectedItem.equals("T")) {
+                    ArrayList<Job> filteredJobs = new ArrayList<>();
+                    for (Job jobL : listJob) {
+                        if (jobL.getSalaryMin() > 50) {
+                            filteredJobs.add(jobL);
+                        }
+                    }
+                    updateRecyclerView(filteredJobs);
+                    dialog.dismiss();
+                }
+                else {
+                    String jobSalary = selectedItem;
+                    int[] salaryRange = parseSalaryRange(jobSalary);
+                    ArrayList<Job> filteredJobs = filterBySalaryRange(salaryRange[0]+"",salaryRange[1]+"");
+                    updateRecyclerView(filteredJobs); // Đóng dialog
+                }
+
+
             });
         });
     }
+
+    private int[] parseSalaryRange(String salaryText) {
+        try {
+            String[] salaryParts = salaryText.split("-");
+            if (salaryParts.length == 2) {
+                int salaryMin = Integer.parseInt(salaryParts[0].replaceAll("[^\\d]", "").trim());
+                int salaryMax = Integer.parseInt(salaryParts[1].replaceAll("[^\\d]", "").trim());
+                return new int[]{salaryMin, salaryMax};
+            }
+
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Error parsing salary range: " + e.getMessage());
+        }
+        return null;
+    }
+
     //Hàm lọc danh sách công việc dựa trên khoảng lương
     private ArrayList<Job> filterBySalaryRange(String minSalary, String maxSalary) {
         ArrayList<Job> filteredList = new ArrayList<>();
         try {
             int min = Integer.parseInt(minSalary);
             int max = Integer.parseInt(maxSalary);
-
+            for (Job lismm : listJob) {
+                if (min <= lismm.getSalaryMin() && max >= lismm.getSalaryMax()&&min!=max) {
+                    filteredList.add(lismm);
+                }
+            }
 
         } catch (NumberFormatException e) {
             Log.e("SalaryFilter", "Nhập lương không hợp lệ", e);
@@ -342,53 +394,11 @@ public class Home extends Fragment {
     // Hàm cập nhật RecyclerView
     private void updateRecyclerView(ArrayList<Job> filteredJobs) {
         MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(getActivity(), filteredJobs);
+        for (Job a: filteredJobs){
+            Log.d("luong hien thi","Thoa thuan: " + a.getAgreement() + "\n max: "+a.getSalaryMax()+ "\n min: " + a.getSalaryMin());
+        }
         binding.jobList.setAdapter(adapter);
         adapter.notifyDataSetChanged(); // Cập nhật adapter với danh sách mới
     }
-
-//    public void funCustomSalaryDialog() {
-//        // Thêm giá trị vào arrayList
-//        String[] provincesArray = getResources().getStringArray(R.array.salary);
-//        for (String province : provincesArray) {
-//            arrayList.add(province);
-//        }
-//
-//        // Tách biệt biến cho location
-//        TextView textViewSalary = binding.luong;
-//        textViewSalary.setOnClickListener(view -> {
-//            dialog = new Dialog(getActivity());
-//            dialog.setContentView(R.layout.layout_search_salary);
-//            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
-//            dialog.show();
-//
-//            EditText minSalaryEditText = dialog.findViewById(R.id.salaryMin);
-//            ListView listView = dialog.findViewById(R.id.listView_of_searchableSalary);
-//            EditText maxSalaryEditText = dialog.findViewById(R.id.salaryMax);
-//            Button submitButton = dialog.findViewById(R.id.timLuong);
-//
-//            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),
-//                    androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, arrayList);
-//            listView.setAdapter(arrayAdapter);
-//
-//            // Thiết lập sự kiện click cho nút Submit
-//            submitButton.setOnClickListener(v -> {
-//                String minSalary = minSalaryEditText.getText().toString().trim();
-//                String maxSalary = maxSalaryEditText.getText().toString().trim();
-//
-//                if (!minSalary.isEmpty() && !maxSalary.isEmpty()) {
-//                    textViewSalary.setText(minSalary + " - " + maxSalary); // Hiển thị khoảng lương đã chọn
-//                    Toast.makeText(getActivity(), "Đã chọn: " + minSalary + " - " + maxSalary, Toast.LENGTH_SHORT).show();
-//                    dialog.dismiss();
-//
-//                    // Lọc danh sách công việc dựa trên khoảng lương
-////                    ArrayList<Job> filteredJobs = filterBySalaryRange(minSalary, maxSalary);
-////                    updateRecyclerView(filteredJobs); // Cập nhật RecyclerView
-//                } else {
-//                    Toast.makeText(getActivity(), "Vui lòng nhập cả khoảng lương tối thiểu và tối đa.", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        });
-//
-//    }
 }
 

@@ -166,9 +166,9 @@ public class Job {
                 ", endTime='" + endTime + '\'' +
                 ", location='" + location + '\'' +
                 ", sourceId=" + sourceId +
+                ", agreement='" + agreement + '\'' +
                 ", salaryMin='" + salaryMin + '\'' +
                 ", salaryMax='" + salaryMax + '\'' +
-                ", agreement='" + agreement + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
