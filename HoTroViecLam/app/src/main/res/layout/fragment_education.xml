@@ -51,7 +51,7 @@
 
 
             <EditText
-
+                android:id="@+id/nameSchool"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_text_input_truong_hoc"
@@ -69,7 +69,8 @@
 
 
             <EditText
-                android:id="@+id/editTextEmail"
+
+                android:id="@+id/nameMajor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_text_input_truong_hoc"
@@ -121,6 +122,7 @@
 
 
             <CheckBox
+                android:id="@+id/check"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -134,7 +136,7 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/border_text_input_update_info"
                 android:gravity="top"
-                android:hint="|Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm
+                android:hint=" Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm
 việc"
                 android:minLines="6"
                 android:overScrollMode="always"
@@ -143,6 +145,7 @@ việc"
 
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="match_parent"
+                android:id="@+id/delete"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"

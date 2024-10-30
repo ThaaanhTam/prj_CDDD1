@@ -12,5 +12,6 @@
     <color name="xanhdatroi">#1EBDD9</color>
     <color name="xanhlexanhlet">#486544</color>
     <color name="dennhat">#202120</color>
+    <color name="gray">#808080</color> <!-- Màu xám -->
 
 </resources>

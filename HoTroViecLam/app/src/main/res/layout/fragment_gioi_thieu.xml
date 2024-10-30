@@ -29,6 +29,8 @@
                 android:textStyle="bold" />
 
             <ImageView
+                android:id="@+id/editGioiThieu"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/editprofile" />
@@ -40,7 +42,7 @@
             android:layout_margin="20dp"
             android:layout_height="wrap_content"
             android:text="Chưa có thông tin giới thiệu bản thân"
-            android:textAlignment="center" />
+             />
 
         <Button
             android:id="@+id/btnCapnhatProfile"
@@ -49,6 +51,7 @@
             android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
+            android:visibility="gone"
             android:text="Thêm thông tin giới thiệu bản thân" />
 
     </LinearLayout>

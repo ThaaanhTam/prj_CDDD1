@@ -49,7 +49,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(binding.getRoot());
-
+        binding.editTextPassword.setText("777777");
         sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         String id = sharedPreferences.getString("user_uid", null);
         Log.d("KK", "onCreate: " + id);
