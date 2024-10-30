@@ -298,11 +298,11 @@ public class Home extends Fragment {
                 String selectedItem = arrayAdapter.getItem(i);
                 textViewSalary.setText(selectedItem); // Cập nhật TextView location bằng mục đã chọn
                 Toast.makeText(getActivity(), "Selected: " + selectedItem, Toast.LENGTH_SHORT).show();
-                if (selectedItem.equals("dưới 10 triệu")) {
+                if (selectedItem.equals("Dưới 10 triệu")) {
                     ArrayList<Job> filteredJobs = filterBySalaryRange("0", "10");
                     updateRecyclerView(filteredJobs);
                     dialog.dismiss();
-                } else if (selectedItem.equals("trên 50 triệu")) {
+                } else if (selectedItem.equals("Trên 50 triệu")) {
                     ArrayList<Job> filteredJobs = new ArrayList<>();
                     for (Job jobL : listJob) {
                         if (jobL.getSalaryMin() > 50) {
