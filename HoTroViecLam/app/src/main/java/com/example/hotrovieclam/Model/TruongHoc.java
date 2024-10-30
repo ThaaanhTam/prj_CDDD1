@@ -1,6 +1,39 @@
 package com.example.hotrovieclam.Model;
 
 public class TruongHoc {
+    private String id_Shool,uid_Users,nameSchool, nganhHoc, timeStart, timeEnd, deltail;
+    private Integer type;//0 và 1 bểu thị cho ti đang học va méo hc ở đâu
+
+    public TruongHoc() {
+    }
+
+    public TruongHoc(String id_Shool, String uid_Users, String nameSchool, String nganhHoc, String timeStart, String timeEnd, String deltail, Integer type) {
+        this.id_Shool = id_Shool;
+        this.uid_Users = uid_Users;
+        this.nameSchool = nameSchool;
+        this.nganhHoc = nganhHoc;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+        this.deltail = deltail;
+        this.type = type;
+    }
+
+    public String getId_Shool() {
+        return id_Shool;
+    }
+
+    public void setId_Shool(String id_Shool) {
+        this.id_Shool = id_Shool;
+    }
+
+    public String getUid_Users() {
+        return uid_Users;
+    }
+
+    public void setUid_Users(String uid_Users) {
+        this.uid_Users = uid_Users;
+    }
+
     public String getNameSchool() {
         return nameSchool;
     }
@@ -48,19 +81,4 @@ public class TruongHoc {
     public void setType(Integer type) {
         this.type = type;
     }
-
-    public TruongHoc() {
-    }
-
-    public TruongHoc(String nameSchool, String nganhHoc, String timeStart, String timeEnd, String deltail, Integer type) {
-        this.nameSchool = nameSchool;
-        this.nganhHoc = nganhHoc;
-        this.timeStart = timeStart;
-        this.timeEnd = timeEnd;
-        this.deltail = deltail;
-        this.type = type;
-    }
-
-    private String nameSchool,nganhHoc,timeStart,timeEnd,deltail;
-    private Integer type;//0 và 1 bểu thị cho ti đang học va méo hc ở đâu
 }

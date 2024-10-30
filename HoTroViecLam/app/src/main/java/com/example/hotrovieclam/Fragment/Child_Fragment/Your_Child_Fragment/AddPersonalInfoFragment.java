@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.hotrovieclam.Fragment.Child_Fragment.ChangPassWordFragment;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentAddPersonalInfoBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -49,12 +48,12 @@ public class AddPersonalInfoFragment extends Fragment {
             }
         });
         Bundle bundle = getArguments();
-        String diaidu = null;
+        String aa = null;
         if (bundle != null) {
-            diaidu = bundle.getString("USER_UID");
-            Log.d("III", "onCreateView: " + diaidu); // Sử dụng UID cho mục đích của bạn, ví dụ: binding.someTextView.setText(uid);
+            aa = bundle.getString("USER_UID");
+            Log.d("III", "onCreateView: " + aa); // Sử dụng UID cho mục đích của bạn, ví dụ: binding.someTextView.setText(uid);
         }
-        String getUid = diaidu;
+        String getUid = aa;
         GetData(getUid);
         binding.btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
             private boolean isBottonClicked = false;

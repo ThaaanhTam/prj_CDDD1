@@ -5,19 +5,23 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentEducationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
 
 public class EducationFragment extends Fragment {
     private FragmentEducationBinding binding;
+    String id = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,6 +29,13 @@ public class EducationFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentEducationBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        Bundle bundle = getArguments();
+
+        if (bundle != null) {
+            id = bundle.getString("USER_ID");
+            Log.d("AA", "onCreateView: " + id);
+        }
+
         binding.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,8 +60,16 @@ public class EducationFragment extends Fragment {
                 showDatePickerDialogEnd();
             }
         });
+        binding.btnUpdateEducation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("VX", "onClick: " + id);
+                saveSchool();
+            }
+        });
         return view;
     }
+
     public void showDatePickerDialogStart() {
         // Lấy ngày hiện tại
         final Calendar calendar = Calendar.getInstance();
@@ -79,6 +98,7 @@ public class EducationFragment extends Fragment {
         // Hiển thị DatePickerDialog
         datePickerDialog.show();
     }
+
     public void showDatePickerDialogEnd() {
         // Lấy ngày hiện tại
         final Calendar calendar = Calendar.getInstance();
@@ -106,5 +126,36 @@ public class EducationFragment extends Fragment {
 
         // Hiển thị DatePickerDialog
         datePickerDialog.show();
+    }
+
+    private void saveSchool() {
+        // Khởi tạo Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Lấy các giá trị từ EditText và CheckBox
+        String UID = id; // ID người dùng hoặc bất kỳ thông tin nào bạn muốn lưu
+        String nameSchool = binding.nameSchool.getText().toString().trim();
+        String nameMajor = binding.nameMajor.getText().toString().trim();
+        String start = binding.start.getText().toString().trim();
+        String end = binding.end.getText().toString().trim();
+        String description = binding.editTextDC.getText().toString().trim();
+        Integer type = binding.check.isChecked() ? 1 : 0; // 1 cho đang học, 0 cho không học
+
+        // Tạo một đối tượng TruongHoc
+        TruongHoc truongHoc = new TruongHoc(null,UID, nameSchool, nameMajor, start, end, description, type);
+
+        // Lưu dữ liệu vào Firestore
+        db.collection("School")
+                .add(truongHoc) // Sử dụng add() để tạo ID tự động
+                .addOnSuccessListener(documentReference -> {
+                    // Cập nhật id_School vào đối tượng sau khi lưu thành công
+                    truongHoc.setId_Shool(documentReference.getId());
+                    documentReference.set(truongHoc); // Cập nhật với ID mới
+
+                    Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Lỗi khi lưu dữ liệu", e);
+                });
     }
 }

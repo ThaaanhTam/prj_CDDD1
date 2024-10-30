@@ -29,7 +29,7 @@ public class Navigation extends AppCompatActivity {
     private NavigationBinding binding;
     private MyRecyclerViewAdapter myRecyclerViewAdapter;
     private ArrayList<Job> jobList; // Khai báo danh sách công việc
-
+int n=1;
 
 
     @Override
@@ -49,6 +49,8 @@ public class Navigation extends AppCompatActivity {
                     .replace(R.id.fragment_container, new Home())
                     .commit();
         }
+        if(n==1){
+        binding.navButtom.getMenu().removeItem(R.id.managerPost);}
         binding.navButtom.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

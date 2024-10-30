@@ -131,7 +131,7 @@ public class Register extends AppCompatActivity {
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
-                if (sdt.length() <= 10){
+                if (sdt.length() <= 10) {
                     binding.progressBarRes.setVisibility(View.GONE);
                     Toast.makeText(Register.this, "Số điện thoại phải là 10 số", Toast.LENGTH_SHORT).show();
                     binding.phone.requestFocus();
@@ -158,7 +158,6 @@ public class Register extends AppCompatActivity {
         String emailPattern = "[a-zA-Z0-9._%+-]+@gmail\\.com";
         return email.matches(emailPattern);
     }
-
 
 
     private void setupPasswordToggle() {
@@ -216,7 +215,7 @@ public class Register extends AppCompatActivity {
                                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
                                     if (firebaseUser != null) {
                                         // Tạo đối tượng User
-                                        User user = new User(firebaseUser.getUid(), name, email, phone, 1, null,null,null,null, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
+                                        User user = new User(firebaseUser.getUid(), name, email, phone, 1, null, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
 
                                         // Lưu thông tin người dùng vào Firestore
                                         saveUserToFirestore(user);
@@ -263,18 +262,19 @@ public class Register extends AppCompatActivity {
     }
 
 
-        private void saveUserToFirestore(User user) {
-            // Lưu thông tin người dùng vào Firestore
-            db.collection("users").document(user.getId()).set(user).addOnSuccessListener(aVoid -> {
-                //Toast.makeText(Register.this, "Thông tin người dùng đã được lưu vào Firestore", Toast.LENGTH_SHORT).show();
-                binding.progressBarRes.setVisibility(View.GONE);
+    private void saveUserToFirestore(User user) {
+        // Lưu thông tin người dùng vào Firestore
+        db.collection("users").document(user.getId()).set(user).addOnSuccessListener(aVoid -> {
+            //Toast.makeText(Register.this, "Thông tin người dùng đã được lưu vào Firestore", Toast.LENGTH_SHORT).show();
+            binding.progressBarRes.setVisibility(View.GONE);
 
-            }).addOnFailureListener(e -> {
-                Toast.makeText(Register.this, "Lỗi khi lưu thông tin người dùng", Toast.LENGTH_SHORT).show();
-                binding.progressBarRes.setVisibility(View.GONE);
+        }).addOnFailureListener(e -> {
+            Toast.makeText(Register.this, "Lỗi khi lưu thông tin người dùng", Toast.LENGTH_SHORT).show();
+            binding.progressBarRes.setVisibility(View.GONE);
 
-            });
-        }
+        });
+    }
+
     private void clearInputFields() {
         binding.buttonRegister.setEnabled(true);
         binding.name.setText("");
