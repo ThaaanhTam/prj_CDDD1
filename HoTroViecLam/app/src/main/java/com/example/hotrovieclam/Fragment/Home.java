@@ -412,7 +412,6 @@ public class Home extends Fragment {
         ArrayList<Job> filteredList = new ArrayList<>();
 
         try {
-
             float min = Float.parseFloat(minSalary);
             float max = Float.parseFloat(maxSalary);
 
@@ -472,7 +471,6 @@ public class Home extends Fragment {
                 }
             }
         }
-
         // Trả về danh sách các công việc đã lọc
         return filteredList;
     }
@@ -481,10 +479,10 @@ public class Home extends Fragment {
     // Hàm cập nhật RecyclerView
     private void updateRecyclerView(ArrayList<Job> filteredJobs) {
         MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(getActivity(), filteredJobs);
-        for (Job a : filteredJobs) {
+       // for (Job a : filteredJobs) {
 //            Log.d("luong hien thi", "Thoa thuan: " + a.getAgreement() + "\n max: " + a.getSalaryMax() + "\n min: " + a.getSalaryMin());
 //            Log.d("nganh",a.getMajor());
-        }
+       // }
         binding.jobList.setAdapter(adapter);
         adapter.notifyDataSetChanged(); // Cập nhật adapter với danh sách mới
     }
