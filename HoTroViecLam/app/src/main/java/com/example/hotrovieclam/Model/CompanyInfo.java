@@ -10,15 +10,14 @@ public class CompanyInfo {
     private String frontCCCDUrl;
     private String backCCCDUrl;
     private String companyCertUrl;
+    private String logo;
+    private String status;
+    private String id;
 
-    // Constructor mặc định (bắt buộc cho Firebase)
-    public CompanyInfo() {
-    }
 
     // Constructor có tham số
-    public CompanyInfo(String recruiterName, String phoneNumber, String companyMail,
-                       String companyName, String location, String website,
-                       String frontCCCDUrl, String backCCCDUrl, String companyCertUrl) {
+    public CompanyInfo(String id, String recruiterName, String phoneNumber, String companyMail, String companyName, String location, String website, String frontCCCDUrl, String backCCCDUrl, String companyCertUrl, String logo, String status) {
+        this.id = id;
         this.recruiterName = recruiterName;
         this.phoneNumber = phoneNumber;
         this.companyMail = companyMail;
@@ -28,6 +27,28 @@ public class CompanyInfo {
         this.frontCCCDUrl = frontCCCDUrl;
         this.backCCCDUrl = backCCCDUrl;
         this.companyCertUrl = companyCertUrl;
+        this.logo = logo;
+        this.status = status;
+    }
+
+    // Constructor mặc định (bắt buộc cho Firebase)
+    public CompanyInfo() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     // Getter và Setter cho các thuộc tính
@@ -102,4 +123,12 @@ public class CompanyInfo {
     public void setCompanyCertUrl(String companyCertUrl) {
         this.companyCertUrl = companyCertUrl;
     }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 }

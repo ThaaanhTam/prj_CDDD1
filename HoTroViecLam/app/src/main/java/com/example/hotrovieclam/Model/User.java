@@ -9,22 +9,14 @@ public class User {
     private String email;        // varchar [unique, note: 'Email đăng ký']
     private String phoneNumber;  // phone_number varchar
     private int userTypeId;      // user_type_id integer [ref: > user_types.id]
-    private String avatar;       // avatar varchar
+    private String avatar;
+    private String Introduction;
+    private  String Adresss;// avatar varchar
+    private String Birthday;
     private Timestamp createdAt; // created_at timestamp
     private Timestamp updatedAt; // updated_at timestamp
 
     public User() {}
-
-    public User(String id, String name, String email, String phoneNumber, int userTypeId, String avatar, Timestamp createdAt, Timestamp updatedAt) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.userTypeId = userTypeId;
-        this.avatar = avatar;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 
     public String getId() {
         return id;
@@ -74,6 +66,30 @@ public class User {
         this.avatar = avatar;
     }
 
+    public String getIntroduction() {
+        return Introduction;
+    }
+
+    public void setIntroduction(String introduction) {
+        Introduction = introduction;
+    }
+
+    public String getAdresss() {
+        return Adresss;
+    }
+
+    public void setAdresss(String adresss) {
+        Adresss = adresss;
+    }
+
+    public String getBirthday() {
+        return Birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        Birthday = birthday;
+    }
+
     public Timestamp getCreatedAt() {
         return createdAt;
     }
@@ -87,6 +103,20 @@ public class User {
     }
 
     public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public User(String id, String name, String email, String phoneNumber, int userTypeId, String avatar, String introduction, String adresss, String birthday, Timestamp createdAt, Timestamp updatedAt) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.userTypeId = userTypeId;
+        this.avatar = avatar;
+        Introduction = introduction;
+        Adresss = adresss;
+        Birthday = birthday;
+        this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 }

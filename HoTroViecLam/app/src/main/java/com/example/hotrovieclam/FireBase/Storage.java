@@ -9,6 +9,8 @@ import android.os.Environment;
 
 import androidx.annotation.NonNull;
 
+
+import com.example.hotrovieclam.Interface.OnUriRetrievedListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;

@@ -25,8 +25,8 @@ public class Job {
     private String endTime;
     private String location;
     private int sourceId; // ref to source.id
-    private int salaryMin;
-    private int salaryMax;
+    private float salaryMin = -1.0f;
+    private float salaryMax = -1.0f;
 
 
     private String major;
@@ -54,19 +54,19 @@ public class Job {
     public String getEmployerId() {
         return employerId;
     }
-    public int getSalaryMin() {
+    public float getSalaryMin() {
         return salaryMin;
     }
 
-    public void setSalaryMin(int salaryMin) {
+    public void setSalaryMin(float salaryMin) {
         this.salaryMin = salaryMin;
     }
 
-    public int getSalaryMax() {
+    public float getSalaryMax() {
         return salaryMax;
     }
 
-    public void setSalaryMax(int salaryMax) {
+    public void setSalaryMax(float salaryMax) {
         this.salaryMax = salaryMax;
     }
     public void setEmployerId(String employerId) {

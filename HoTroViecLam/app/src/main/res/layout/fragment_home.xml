@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#92EBBA"
-    tools:context=".Navigation">
+    tools:context=".Activity.Navigation">
 
     <!-- Thanh tìm kiếm -->
     <LinearLayout
@@ -34,11 +34,12 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTim"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/bg_btntim"
-            android:drawableLeft="@drawable/search_25dp_e8eaed_fill0_wght400_grad0_opsz24" />
+            app:cornerRadius="10dp"
+            android:layout_margin="1dp"
+            android:backgroundTint="#92EBBA"
+            android:drawableEnd="@drawable/search_25dp_e8eaed_fill0_wght400_grad0_opsz24" />
     </LinearLayout>
 
     <!-- Spinner để chọn nguồn dữ liệu -->
@@ -87,7 +88,7 @@
                 <!-- Spinner chọn nguồn -->
                 <Spinner
                     android:id="@+id/source_spinner"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:background="@drawable/spiner_background"
@@ -99,29 +100,29 @@
                 <!-- Spinner khác (có thể thêm nội dung sau) -->
                 <TextView
                     android:id="@+id/luong"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:background="@drawable/spiner_background"
                     android:entries="@array/provinces"
                     android:padding="10dp"
-                    android:text="luong"
+                    android:text="Lương"
                     android:spinnerMode="dropdown"
                     android:layout_marginRight="20dp"/>
 
                 <TextView
                     android:id="@+id/location"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="địa điểm"
+                    android:text="Địa điểm"
                     android:background="@drawable/spiner_background"
                     android:padding="10dp"
                     android:spinnerMode="dropdown"
                     android:layout_marginRight="20dp"/>
                 <TextView
                     android:id="@+id/major"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="ngành"

@@ -19,7 +19,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,18 +84,12 @@ public class Home extends Fragment {
         binding.line1.setVisibility(View.GONE);
         binding.jobList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.jobList.setAdapter(adapter);
-        executorService.submit(() -> {
-            Website website = new Website();
-            listJob.addAll(website.loadWebsitesConcurrently());
-            requireActivity().runOnUiThread(adapter::notifyDataSetChanged);
-        });
-        executorService.submit(() -> {
-            API api = new API();
-            listJob.addAll(api.loadAPIsConcurrently());
-            requireActivity().runOnUiThread(adapter::notifyDataSetChanged);
-        });
 
-
+        Website websiteLoader = new Website();
+        websiteLoader.loadWebsitesConcurrentlySequentially(adapter, listJob);
+        API apiLoader = new API();
+        apiLoader.loadAPIsConcurrently(adapter, listJob);
+        // Lấy dữ liệu từ Firestore
         fetchJobsFromFirestore();
 
         binding.sourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -147,14 +143,14 @@ public class Home extends Fragment {
             binding.jobList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
-            for (Job a : listJob) {
-                if (a.getSourceId() == 2) {
-                    Log.d("luong ", "luong web" + a.getAgreement() + "\nLuongMin: " +
-                            a.getSalaryMin() + "\nLuongMax: " + a.getSalaryMax());
-                } else if (a.getSourceId() == 1) {
-                    Log.d("luong ", "luong api" + a.getAgreement());
-                }
-            }
+//            for (Job a : listJob) {
+//                if (a.getSourceId() == 2) {
+//                    Log.d("luong ", "luong web" + a.getAgreement() + "\nLuongMin: " +
+//                            a.getSalaryMin() + "\nLuongMax: " + a.getSalaryMax());
+//                } else if (a.getSourceId() == 1) {
+//                    Log.d("luong ", "luong api" + a.getAgreement());
+//                }
+//            }
 
 
         });
@@ -302,11 +298,11 @@ public class Home extends Fragment {
                 String selectedItem = arrayAdapter.getItem(i);
                 textViewSalary.setText(selectedItem); // Cập nhật TextView location bằng mục đã chọn
                 Toast.makeText(getActivity(), "Selected: " + selectedItem, Toast.LENGTH_SHORT).show();
-                if (selectedItem.equals("dưới 10 triệu")) {
+                if (selectedItem.equals("Dưới 10 triệu")) {
                     ArrayList<Job> filteredJobs = filterBySalaryRange("0", "10");
                     updateRecyclerView(filteredJobs);
                     dialog.dismiss();
-                } else if (selectedItem.equals("trên 50 triệu")) {
+                } else if (selectedItem.equals("Trên 50 triệu")) {
                     ArrayList<Job> filteredJobs = new ArrayList<>();
                     for (Job jobL : listJob) {
                         if (jobL.getSalaryMin() > 50) {
@@ -315,7 +311,7 @@ public class Home extends Fragment {
                     }
                     updateRecyclerView(filteredJobs);
                     dialog.dismiss();
-                } else if (selectedItem.equals("Thoa thuan")) {
+                } else if (selectedItem.equals("Thỏa thuận")) {
                     ArrayList<Job> filteredJobs = new ArrayList<>();
                     for (Job jobL : listJob) {
                         if ((jobL.getSalaryMin() == jobL.getSalaryMax()) && jobL.getAgreement() != null) {
@@ -340,7 +336,7 @@ public class Home extends Fragment {
         ArrayList<String> major = new ArrayList<>();
         String[] inforMajor = getResources().getStringArray(R.array.job_industries);
         for (String province : provincesArray) {
-            arrayList.add(province);
+            major.add(province);
         }
 
         TextView textViewMajor = binding.major;
@@ -412,23 +408,28 @@ public class Home extends Fragment {
         return null;
     }
 
-    //Hàm lọc danh sách công việc dựa trên khoảng lương
     private ArrayList<Job> filterBySalaryRange(String minSalary, String maxSalary) {
         ArrayList<Job> filteredList = new ArrayList<>();
+
         try {
-            int min = Integer.parseInt(minSalary);
-            int max = Integer.parseInt(maxSalary);
-            for (Job lismm : listJob) {
-                if (min <= lismm.getSalaryMin() && max >= lismm.getSalaryMax() && lismm.getSalaryMin() != lismm.getSalaryMax()) {
-                    filteredList.add(lismm);
+            float min = Float.parseFloat(minSalary);
+            float max = Float.parseFloat(maxSalary);
+
+            for (Job job : listJob) {
+                if(job.getSalaryMax() != -1.0f  || job.getSalaryMin() != 1.0f) {
+                    if (job.getSalaryMin() >= min && job.getSalaryMax() <= max && job.getSalaryMin() != job.getSalaryMax()) {
+                        filteredList.add(job);
+                    }
                 }
             }
 
         } catch (NumberFormatException e) {
             Log.e("SalaryFilter", "Nhập lương không hợp lệ", e);
         }
+
         return filteredList;
     }
+
 
     // Hàm loại bỏ dấu
     public static String removeDiacritics(String input) {
@@ -437,13 +438,15 @@ public class Home extends Fragment {
                         .replaceAll("\\p{M}", "");
     }
 
-    // Hàm lọc danh sách công việc dựa trên địa điểm
     private ArrayList<Job> filter(String location) {
         ArrayList<Job> filteredList = new ArrayList<>();
-        for (Job job : listJob) {
-            if (job.getLocation()!=null) {
+
+        ArrayList<Job> jobListCopy = new ArrayList<>(listJob);
+
+        for (Job job : jobListCopy) {
+            if (job.getLocation() != null) {
                 String locationNoDiacritics = removeDiacritics(job.getLocation());
-                if (locationNoDiacritics != null && locationNoDiacritics.toUpperCase().contains(location.toUpperCase())) {
+                if (locationNoDiacritics != null && locationNoDiacritics.toUpperCase().contains(removeDiacritics(location.toUpperCase()))) {
                     filteredList.add(job);
                     Log.d("locaaa", "Công việc phù hợp: " + job.getLocation());
                 }
@@ -452,25 +455,34 @@ public class Home extends Fragment {
         return filteredList;
     }
 
+
     private ArrayList<Job> filterMajor(String major) {
         ArrayList<Job> filteredList = new ArrayList<>();
+
+
         for (Job job : listJob) {
-            String locationNoDiacritics = removeDiacritics(job.getMajor());
-            if (locationNoDiacritics != null && locationNoDiacritics.toUpperCase().contains(major.toUpperCase())) {
-                filteredList.add(job);
-                Log.d("locaaa", "Công việc phù hợp: " + job.getMajor());
+            if(job.getMajor()!= null) {
+                String majorNoDiacritics = removeDiacritics(job.getMajor());
+
+                if (majorNoDiacritics != null && majorNoDiacritics.toUpperCase().contains(removeDiacritics(major.toUpperCase()))) {
+                    filteredList.add(job);
+                    // Ghi log công việc phù hợp
+                    Log.d("locaaa", "Công việc phù hợp: " + job.getMajor());
+                }
             }
         }
+        // Trả về danh sách các công việc đã lọc
         return filteredList;
     }
+
 
     // Hàm cập nhật RecyclerView
     private void updateRecyclerView(ArrayList<Job> filteredJobs) {
         MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(getActivity(), filteredJobs);
-        for (Job a : filteredJobs) {
+       // for (Job a : filteredJobs) {
 //            Log.d("luong hien thi", "Thoa thuan: " + a.getAgreement() + "\n max: " + a.getSalaryMax() + "\n min: " + a.getSalaryMin());
 //            Log.d("nganh",a.getMajor());
-        }
+       // }
         binding.jobList.setAdapter(adapter);
         adapter.notifyDataSetChanged(); // Cập nhật adapter với danh sách mới
     }

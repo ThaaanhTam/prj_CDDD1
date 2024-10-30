@@ -48,13 +48,20 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
         // Nếu avatarUrl không hợp lệ hoặc rỗng, không làm gì cả (không cần else)
         holder.binding.tvNameCompany.setText(job.getTitle());
-        holder.binding.tvNameLocation.setText(job.getAgreement());
+        holder.binding.tvNameLocation.setText(job.getLocation());
+        if(job.getSalaryMax() == -1.0f  || job.getSalaryMin() == 1.0f ){
+            holder.binding.tvSalary.setText(job.getAgreement());
+        }else {
+            holder.binding.tvSalary.setText( Math.round(job.getSalaryMin())+ " - "+ Math.round(job.getSalaryMax())+ " triệu");
+        }
+
 //        if(job.getSourceId()==1){
 //            holder.binding.backgroundItem.setBackgroundResource(R.color.API);
 //        }
 //        if(job.getSourceId()==2){
 //            holder.binding.backgroundItem.setBackgroundResource(R.color.website);
 //        }
+
 
         if (job.getSourceId() != 3) {
            // holder.binding.backgroundItem.setBackgroundResource(R.color.API);

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="start">
+
+    <!-- TextView for showing applicant's message -->
+    <TextView
+        android:id="@+id/textViewMessageLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/message_background_left"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</LinearLayout>
+

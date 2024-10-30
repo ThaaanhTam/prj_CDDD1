@@ -1,4 +1,4 @@
-package com.example.hotrovieclam;
+package com.example.hotrovieclam.Activity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -18,12 +18,11 @@ import com.example.hotrovieclam.Fragment.ManagerPostFragment;
 import com.example.hotrovieclam.Fragment.MessageFragment;
 import com.example.hotrovieclam.Fragment.Save_job;
 import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.NavigationBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Navigation extends AppCompatActivity {
 
