@@ -56,7 +56,7 @@ public class ConversationActivity extends AppCompatActivity {
         conversationRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                conversationList.clear();
+                ///conversationList.clear();
                 // Kiểm tra nếu có dữ liệu trong snapshot
                 if (snapshot.exists()) {
                     for (DataSnapshot receiverSnapshot : snapshot.getChildren()) {
