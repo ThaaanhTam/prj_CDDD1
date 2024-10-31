@@ -4,13 +4,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotrovieclam.Adapter.MessageAdapter;
-import com.example.hotrovieclam.Model.Message;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,18 +22,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Messege extends AppCompatActivity {
+public class Message extends AppCompatActivity {
 
     private RecyclerView recyclerViewMessages;
     private MessageAdapter messageAdapter;
-    private List<Message> messageList = new ArrayList<>();
+    private List<com.example.hotrovieclam.Model.Message> messageList = new ArrayList<>();
     private EditText editTextMessage;
     private ImageButton imageButtonSend;
 
     // Firebase
     private DatabaseReference usersRef;
-    private String currentUserId = "zybvCSMnPtXm1Zfs1MFKURNEHXj1";  // ID của người dùng hiện tại
-    private String recipientUserId = "qjdst4TvVIc4KiUU70OeI20fcWn2";  // ID của người nhận, bạn có thể thay đổi cho phù hợp
+    private String currentUserId = "7yRXcjnLPhfDr3OJG8FpEdSsWv83";  // ID của người dùng hiện tại
+    private String recipientUserId = "EoGaGiSQ03eBo9rsMqUD6rjcFAR2";  // ID của người nhận, bạn có thể thay đổi cho phù hợp
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,21 @@ public class Messege extends AppCompatActivity {
                 editTextMessage.setText(""); // Xóa nội dung sau khi gửi
             }
         });
+
+        imageButtonSend.setOnClickListener(view -> {
+            String content = editTextMessage.getText().toString().trim();
+
+            // Kiểm tra độ dài của tin nhắn
+            if (content.length() > 1000) {
+                Toast.makeText(Message.this, "Tin nhắn không được vượt quá 1000 ký tự", Toast.LENGTH_SHORT).show();
+            } else if (!content.isEmpty()) {
+                // Gửi tin nhắn đến Firebase
+                sendMessage(currentUserId, recipientUserId, content);
+                editTextMessage.setText(""); // Xóa nội dung sau khi gửi
+            }
+        });
     }
+
 
     // Hàm gửi tin nhắn
     private void sendMessage(String senderId, String receiverId, String content) {
@@ -107,7 +121,7 @@ public class Messege extends AppCompatActivity {
                     if ((currentUserId.equals(senderId) && recipientUserId.equals(receiverId)) ||
                             (currentUserId.equals(receiverId) && recipientUserId.equals(senderId))) {
                         // Thêm tin nhắn vào danh sách
-                        messageList.add(new Message(senderId, receiverId, content, sentAt.toString()));
+                        messageList.add(new com.example.hotrovieclam.Model.Message(senderId, receiverId, content, sentAt.toString()));
                     }
                 }
 

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">HoTroViecLam</string>
+    <string name="back_button">Quay lại</string> <!-- Mô tả cho nút trở về -->
+    <string name="avatar">Avatar</string>
 </resources>
