@@ -122,4 +122,6 @@
         <item>Yên Bái</item>
     </string-array>
 
+    <string name="back_button">Quay lại</string> <!-- Mô tả cho nút trở về -->
+    <string name="avatar">Avatar</string>
 </resources>
