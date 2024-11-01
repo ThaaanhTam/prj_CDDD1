@@ -38,7 +38,7 @@
             android:name=".Buoc.RegisterEmployer"
             android:exported="false" />
         <activity
-            android:name=".Messege"
+            android:name=".Message"
             android:exported="false" />
             
         <activity
