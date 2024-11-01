@@ -1,10 +1,23 @@
 package com.example.hotrovieclam.Model;
 
 import java.sql.Timestamp;
+import android.graphics.Color;
+
 
 public class Job {
-    private int id;
-    private String employerId; // ref to employers.user_id
+    private String id;
+    private String employerId;
+    private String avatar; // ref to employers.user_id
+   // private Source source;
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     private int jobTypeId; // ref to job_types.id
     private String title;
     private String description;
@@ -12,26 +25,50 @@ public class Job {
     private String endTime;
     private String location;
     private int sourceId; // ref to source.id
-    private String salary;
+    private float salaryMin = -1.0f;
+    private float salaryMax = -1.0f;
+
+
+    private String major;
     private String agreement;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
-
+//    public Source getSource() {
+//        return source;
+//    }
+//
+//    public void setSource(Source source) {
+//        this.source = source;
+//    }
 
     // Getters and Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     public String getEmployerId() {
         return employerId;
     }
+    public float getSalaryMin() {
+        return salaryMin;
+    }
 
+    public void setSalaryMin(float salaryMin) {
+        this.salaryMin = salaryMin;
+    }
+
+    public float getSalaryMax() {
+        return salaryMax;
+    }
+
+    public void setSalaryMax(float salaryMax) {
+        this.salaryMax = salaryMax;
+    }
     public void setEmployerId(String employerId) {
         this.employerId = employerId;
     }
@@ -42,6 +79,14 @@ public class Job {
 
     public void setJobTypeId(int jobTypeId) {
         this.jobTypeId = jobTypeId;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
     }
 
     public String getTitle() {
@@ -92,13 +137,6 @@ public class Job {
         this.sourceId = sourceId;
     }
 
-    public String getSalary() {
-        return salary;
-    }
-
-    public void setSalary(String salary) {
-        this.salary = salary;
-    }
 
     public String getAgreement() {
         return agreement;
@@ -127,7 +165,7 @@ public class Job {
     @Override
     public String toString() {
         return "Job{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", employerId='" + employerId + '\'' +
                 ", jobTypeId=" + jobTypeId +
                 ", title='" + title + '\'' +
@@ -136,11 +174,15 @@ public class Job {
                 ", endTime='" + endTime + '\'' +
                 ", location='" + location + '\'' +
                 ", sourceId=" + sourceId +
-                ", salary='" + salary + '\'' +
                 ", agreement='" + agreement + '\'' +
+                ", major='" + major + '\'' +
+                ", salaryMin='" + salaryMin + '\'' +
+                ", salaryMax='" + salaryMax + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
     }
+
+
 }
 

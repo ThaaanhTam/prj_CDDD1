@@ -5,9 +5,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.example.hotrovieclam.Model.Job;
-import com.example.hotrovieclam.Model.JobDataAPI;
-import com.example.hotrovieclam.OnDataLoadedCallback;
-import com.google.gson.Gson;
+import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,71 +18,94 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
 public class Website {
     private static final String TAG = "TopCVScraper";
-    private static final String URL = "https://www.topcv.vn/";
+    private static final String URL1 = "https://123job.vn/tuyen-dung";
+    private static final String URL2 = "https://careerviet.vn/viec-lam-noi-bat-trong-tuan-a3";
+
     private ExecutorService executorService = Executors.newFixedThreadPool(2);
-    public void loadWebsitesConcurrently() {
-        executorService.execute(() -> {
+
+    public void loadWebsitesConcurrentlySequentially(MyRecyclerViewAdapter adapter, List<Job> jobList) {
+        executorService.submit(() -> {
             try {
-                Document document = Jsoup.connect("https://www.vietnamworks.com/viec-lam-goi-y")
-                        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-                        .timeout(900000)
+                Document documentCareerviet = Jsoup.connect(URL2)
+                        .userAgent("Mozilla/5.0")
+                        .timeout(90000)
                         .get();
+                Elements jobElementsCareerviet = documentCareerviet.select("div.job-item");
 
-                // Lấy tiêu đề của trang
-                String title = document.title();
-                Elements jobElementss = document.select("div.sc-cKXybt.gCRvSm");
-//                Log.d(TAG, "oooooooo: " + title);
-//
-//                // Lấy tất cả các công việc có thể nằm trong thẻ <h3> hoặc thẻ khác
-//                Elements jobElements = document.select("strong");  // Ví dụ, chọn thẻ <h3>
-//
-//                // Duyệt qua từng thẻ để lấy tên công việc (hoặc các dữ liệu khác)
-//                for (Element job : jobElements) {
-//                    Log.d(TAG, "gg" + job.text());
-//                }
-                for (Element jobElement : jobElementss) {
-                    // Lấy tiêu đề công việc
-                    String jobTitle = jobElement.select("div.sc-dUWDJJ h2 a").text();
-                    String jobUrl = jobElement.select("div.sc-dUWDJJ h2 a").attr("href");
+                for (Element jobElement : jobElementsCareerviet) {
+                    String id = jobElement.attr("id");
+                    String image = jobElement.select("img.lazy-img").attr("data-src");
+                    String title = jobElement.select(".job_link").text();
+                    String salary = jobElement.select(".salary").text();
 
-                    // Lấy tên công ty
-                    String companyName = jobElement.select("div.sc-iLWXdy a").text();
-                    String companyUrl = jobElement.select("div.sc-iLWXdy a").attr("href");
+                    Document descriptionDoc = Jsoup.connect(jobElement.select(".job_link").attr("href")).get();
+                    String description = descriptionDoc.select("div.detail-row").text();
+                    String location = descriptionDoc.select("div.place-name").text();
 
-                    // Lấy mức lương và địa điểm
-                    String salary = jobElement.select("span.sc-enkILE").text();
-                    String location = jobElement.select("span.sc-bcSKrn").text();
+                    Job job = new Job();
+                    job.setAvatar(image);
+                    job.setId(id);
+                    job.setTitle(title);
+                    job.setDescription(description);
+                    job.setLocation(location);
+                    job.setAgreement(salary);
 
-                    // Lấy ngày cập nhật
-                    String updateDate = jobElement.select("div.sc-dBFDNq").text();
+                    jobList.add(job);
 
-                    // Lấy các kỹ năng yêu cầu
-                    Elements skillElements = jobElement.select("ul.sc-iZzKWI li label");
-                    StringBuilder skills = new StringBuilder();
-                    for (Element skill : skillElements) {
-                        skills.append(skill.text()).append(", ");
-                    }
-
-                    // In ra thông tin công việc
-                    Log.d(TAG, "Job Title: " + jobTitle);
-                    Log.d(TAG, "Job URL: " + jobUrl);
-                    Log.d(TAG, "Company: " + companyName + " (" + companyUrl + ")");
-                    Log.d(TAG, "Salary: " + salary);
-                    Log.d(TAG, "Location: " + location);
-                    Log.d(TAG, "Update Date: " + updateDate);
-                    Log.d(TAG, "Skills: " + skills.toString());
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        adapter.notifyItemInserted(jobList.size() - 1);
+                    });
                 }
-
             } catch (IOException e) {
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, "Error fetching data from URL2: " + e.getMessage());
             }
         });
-    }
+        executorService.submit(() -> {
+            try {
+                Document document123job = Jsoup.connect(URL1)
+                        .userAgent("Mozilla/5.0")
+                        .timeout(90000)
+                        .get();
+                Elements jobElements123job = document123job.select("div.job__list-item");
 
+                for (Element jobElement : jobElements123job) {
+                    String id = jobElement.attr("data-id");
+                    Element jobTitleElement = jobElement.selectFirst("h2.job__list-item-title a");
+                    String jobTitle = jobTitleElement.attr("title");
+                    String jobUrl = jobTitleElement.attr("href");
+                    Document jobDoc = Jsoup.connect(jobUrl).get();
+
+                    String description = jobDoc.select(".content-group__content").text();
+                    String imgUrl = jobDoc.select(".company-logo").attr("src");
+                    String location = jobElement.selectFirst("div.address").text();
+                    String salary = jobElement.selectFirst("div.salary").text();
+
+                    if (imgUrl == null || imgUrl.isEmpty()) {
+                        imgUrl = "https://123job.vn/images/no_company.png";
+                    }
+
+                    Job job = new Job();
+                    job.setId(id);
+                    job.setTitle(jobTitle);
+                    job.setDescription(description);
+                    job.setAvatar(imgUrl);
+                    job.setLocation(location);
+                    job.setAgreement(salary);
+
+                    jobList.add(job);
+
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        adapter.notifyItemInserted(jobList.size() - 1);
+                    });
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Error fetching data from URL1: " + e.getMessage());
+            }
+        });
+
+
+    }
 }
+

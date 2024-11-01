@@ -4,15 +4,11 @@
     <!-- Background Circle -->
     <item>
         <shape android:shape="oval">
-            <solid android:color="#E0E0E0"/> <!-- Màu xám nhạt -->
+            <solid android:color="#5EE250"/> <!-- Màu xám nhạt -->
         </shape>
     </item>
 
     <!-- Icon (nếu cần thêm) -->
-    <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/ic_person" /> <!-- Biểu tượng người -->
-    </item>
+
 
 </layer-list>

@@ -1,4 +1,4 @@
-package com.example.hotrovieclam;
+package com.example.hotrovieclam.Interface;
 
 import com.example.hotrovieclam.Model.Job;
 

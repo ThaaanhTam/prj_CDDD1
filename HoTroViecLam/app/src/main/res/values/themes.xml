@@ -6,4 +6,103 @@
     </style>
 
     <style name="Theme.HoTroViecLam" parent="Base.Theme.HoTroViecLam" />
+    <style name="myEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_marginBottom">30dp</item>
+        <item name="android:background">@drawable/customboder_edt</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+    <style name="name" parent="myEditText">
+        <item name="android:drawableLeft">@drawable/account_circle_50dp_000000_fill0_wght400_grad0_opsz48</item>
+        <item name="android:hint">Họ và tên</item>
+    </style>
+    <style name="phone" parent="myEditText">
+        <item name="android:drawableLeft">@drawable/phone_in_talk_50dp_000000_fill0_wght400_grad0_opsz48</item>
+        <item name="android:hint">Số điện thoại</item>
+    </style>
+    <style name="email" parent="myEditText">
+        <item name="android:drawableLeft">@drawable/mail</item>
+        <item name="android:hint">Email/SDT</item>
+        <item name="android:inputType">textEmailAddress</item>
+    </style>
+
+
+    <style name="password" parent="myEditText">
+        <item name="android:drawableLeft">@drawable/lock</item>
+        <item name="android:drawableRight">@drawable/eyes</item>
+        <item name="android:hint">Nhập mật khẩu hiện tại</item>
+        <item name="android:inputType">textPassword</item>
+    </style>
+    <style name="fogotpassword" parent="myEditText">
+        <item name="android:drawableLeft">@drawable/lock</item>
+        <item name="android:drawableRight">@drawable/eyes</item>
+        <item name="android:hint">Nhập lại mật khẩu mới</item>
+        <item name="android:inputType">textPassword</item>
+    </style>
+    <style name="myTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textColor">@color/xanhla</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_gravity">center</item>
+
+    </style>
+    <style name="myButton">
+
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">40dp</item>
+        <item name="android:background">@drawable/cutomboderbtn</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="lable">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">30dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">35sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="commonTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="OtpEditText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:inputType">number</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/custom_otp_input</item>
+        <item name="android:maxLength">1</item>
+
+    </style>
+    <style name="OtpEditTextend">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:inputType">number</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/custom_otp_input</item>
+        <item name="android:maxLength">1</item>
+    </style>
+    
+<!-- //   <style name=""></style>-->
 </resources>

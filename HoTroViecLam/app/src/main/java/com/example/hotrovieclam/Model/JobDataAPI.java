@@ -7,7 +7,7 @@ public class JobDataAPI {
     private List<Job> results;
 
     public static class Job {
-        private int id;
+        private String id;
         private String extId;
         private Company company;
         private String title;
@@ -26,11 +26,11 @@ public class JobDataAPI {
             this.extId = extId;
         }
 
-        public int getId() {
+        public String getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(String id) {
             this.id = id;
         }
 

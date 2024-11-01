@@ -6,68 +6,59 @@ import android.util.Log;
 
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.Model.JobDataAPI;
-import com.example.hotrovieclam.OnDataLoadedCallback;
+import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class API {
+    private static final String TAG = "API";
     private OkHttpClient okHttpClient = new OkHttpClient();
-    private ExecutorService executorService = Executors.newFixedThreadPool(2);  // 2 luồng cho việc tải
 
     private Request requestAPI = new Request.Builder()
             .url("https://jobdataapi.com/api/jobs/?country_code=VN")
             .build();
 
-    public void loadAPIsConcurrently(OnDataLoadedCallback callback) {
-        executorService.execute(() -> {
+    public void loadAPIsConcurrently(MyRecyclerViewAdapter adapter, List<Job> jobList) {
+        new Thread(() -> {
             try {
                 Response response = okHttpClient.newCall(requestAPI).execute();
                 if (response.isSuccessful() && response.body() != null) {
                     String jsonResponse = response.body().string();
-                    // Sử dụng Gson để parse chuỗi JSON thành đối tượng JobDataAPI
                     Log.d("jsonResponse", jsonResponse);
                     Gson gson = new Gson();
                     JobDataAPI jobDataAPI = gson.fromJson(jsonResponse, JobDataAPI.class);
 
-                    // Lấy danh sách công việc mới từ jobDataAPI
-                    List<Job> newJobList = new ArrayList<>();
                     for (JobDataAPI.Job jobData : jobDataAPI.getResults()) {
                         Job job = new Job();
                         job.setId(jobData.getId());
                         job.setTitle(jobData.getTitle());
                         String rawDescription = jobData.getDescription();
-                        String cleanDescription = Jsoup.parse(rawDescription).text(); // Loại bỏ thẻ HTML
+                        String cleanDescription = Jsoup.parse(rawDescription).text();
                         job.setDescription(cleanDescription);
                         job.setLocation(jobData.getLocation());
-                        job.setAgreement("Thoa thuan");
-                        newJobList.add(job);
+                        job.setAvatar(jobData.getCompany().getLogo());
+                        job.setSourceId(1);
+                        job.setAgreement("Thỏa thuận");
+
+                        jobList.add(job);
                     }
-
-                    Log.d("newJobList", newJobList.size()+"");
-
-                    // Cập nhật UI trên main thread
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        callback.onDataLoaded(newJobList);  // Gọi callback để cập nhật giao diện
-                    });
+                    // Cập nhật toàn bộ dữ liệu sau khi thêm tất cả các job
+                    new Handler(Looper.getMainLooper()).post(adapter::notifyDataSetChanged);
+              //      Log.d("newJobList", jobList.size() + "");
                 } else {
-                    Log.e("APIconnect", "Response not successful: " + response.message());
+                    Log.e(TAG, "Response not successful: " + response.message());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                // Gọi callback với danh sách rỗng trong trường hợp có lỗi
-                new Handler(Looper.getMainLooper()).post(() -> callback.onDataLoaded(new ArrayList<>()));
             }
-        });
+        }).start();
     }
+
 }
