@@ -20,6 +20,14 @@
             style="@style/lable"
             android:text="Đăng ký tài khoản" />
 
+        <ProgressBar
+            android:id="@+id/progressBar_res"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
         <EditText
             android:id="@+id/name"
             style="@style/name" />
@@ -29,9 +37,9 @@
             style="@style/email" />
 
         <EditText
-            android:inputType="number"
             android:id="@+id/phone"
-            style="@style/phone" />
+            style="@style/phone"
+            android:inputType="number" />
 
         <EditText
             android:id="@+id/password"
@@ -60,16 +68,13 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/dangnhapngay"
                 style="@style/myTextView"
 
                 android:text="Đăng nhập ngay" />
         </LinearLayout>
 
-        <TextView
-            style="@style/myTextView"
-            android:text="Trải nghiệm mà không cần đăng nhập"
 
-            />
     </LinearLayout>
 
 

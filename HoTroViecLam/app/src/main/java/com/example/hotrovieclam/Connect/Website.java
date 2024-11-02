@@ -26,7 +26,42 @@ public class Website {
     private ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     public void loadWebsitesConcurrentlySequentially(MyRecyclerViewAdapter adapter, List<Job> jobList) {
-        // Tải dữ liệu từ URL1
+        executorService.submit(() -> {
+            try {
+                Document documentCareerviet = Jsoup.connect(URL2)
+                        .userAgent("Mozilla/5.0")
+                        .timeout(90000)
+                        .get();
+                Elements jobElementsCareerviet = documentCareerviet.select("div.job-item");
+
+                for (Element jobElement : jobElementsCareerviet) {
+                    String id = jobElement.attr("id");
+                    String image = jobElement.select("img.lazy-img").attr("data-src");
+                    String title = jobElement.select(".job_link").text();
+                    String salary = jobElement.select(".salary").text();
+
+                    Document descriptionDoc = Jsoup.connect(jobElement.select(".job_link").attr("href")).get();
+                    String description = descriptionDoc.select("div.detail-row").text();
+                    String location = descriptionDoc.select("div.place-name").text();
+
+                    Job job = new Job();
+                    job.setAvatar(image);
+                    job.setId(id);
+                    job.setTitle(title);
+                    job.setDescription(description);
+                    job.setLocation(location);
+                    job.setAgreement(salary);
+
+                    jobList.add(job);
+
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        adapter.notifyItemInserted(jobList.size() - 1);
+                    });
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Error fetching data from URL2: " + e.getMessage());
+            }
+        });
         executorService.submit(() -> {
             try {
                 Document document123job = Jsoup.connect(URL1)
@@ -70,41 +105,7 @@ public class Website {
             }
         });
 
-        executorService.submit(() -> {
-            try {
-                Document documentCareerviet = Jsoup.connect(URL2)
-                        .userAgent("Mozilla/5.0")
-                        .timeout(90000)
-                        .get();
-                Elements jobElementsCareerviet = documentCareerviet.select("div.job-item");
 
-                for (Element jobElement : jobElementsCareerviet) {
-                    String id = jobElement.attr("id");
-                    String image = jobElement.select("img.lazy-img").attr("data-src");
-                    String title = jobElement.select(".job_link").text();
-                    String salary = jobElement.select(".salary").text();
-
-                    Document descriptionDoc = Jsoup.connect(jobElement.select(".job_link").attr("href")).get();
-                    String description = descriptionDoc.select("div.detail-row").text();
-                    String location = descriptionDoc.select("div.place-name").text();
-
-                    Job job = new Job();
-                    job.setAvatar(image);
-                    job.setId(id);
-                    job.setTitle(title);
-                    job.setDescription(description);
-                    job.setLocation(location);
-                    job.setAgreement(salary);
-
-                    jobList.add(job);
-
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        adapter.notifyItemInserted(jobList.size() - 1);
-                    });
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "Error fetching data from URL2: " + e.getMessage());
-            }
-        });
     }
 }
+

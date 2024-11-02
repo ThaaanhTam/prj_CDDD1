@@ -10,12 +10,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotrovieclam.Model.User;
+import com.example.hotrovieclam.Nam.login.Login;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityRegisterBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,6 +55,7 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Vô hiệu hóa nút đăng ký
+                binding.progressBarRes.setVisibility(View.VISIBLE);
                 binding.buttonRegister.setEnabled(false);
 
                 String name = binding.name.getText().toString().trim();
@@ -63,6 +66,7 @@ public class Register extends AppCompatActivity {
 
                 // Kiểm tra trường rỗng
                 if (name.isEmpty()) {
+                    binding.progressBarRes.setVisibility(View.GONE);
                     Toast.makeText(Register.this, "Vui lòng nhập tên", Toast.LENGTH_SHORT).show();
                     binding.name.requestFocus();
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
@@ -70,6 +74,8 @@ public class Register extends AppCompatActivity {
                 }
 
                 if (email.isEmpty()) {
+                    binding.progressBarRes.setVisibility(View.GONE);
+
                     Toast.makeText(Register.this, "Vui lòng nhập email", Toast.LENGTH_SHORT).show();
                     binding.email.requestFocus();
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
@@ -77,6 +83,7 @@ public class Register extends AppCompatActivity {
                 }
 
                 if (sdt.isEmpty()) {
+                    binding.progressBarRes.setVisibility(View.GONE);
                     Toast.makeText(Register.this, "Vui lòng nhập số điện thoại", Toast.LENGTH_SHORT).show();
                     binding.phone.requestFocus();
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
@@ -84,6 +91,7 @@ public class Register extends AppCompatActivity {
                 }
 
                 if (pass.isEmpty()) {
+                    binding.progressBarRes.setVisibility(View.GONE);
                     Toast.makeText(Register.this, "Vui lòng nhập mật khẩu", Toast.LENGTH_SHORT).show();
                     binding.password.requestFocus();
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
@@ -91,6 +99,7 @@ public class Register extends AppCompatActivity {
                 }
 
                 if (passAgain.isEmpty()) {
+                    binding.progressBarRes.setVisibility(View.GONE);
                     Toast.makeText(Register.this, "Vui lòng nhập lại mật khẩu", Toast.LENGTH_SHORT).show();
                     binding.passwordAgain.requestFocus();
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
@@ -99,6 +108,7 @@ public class Register extends AppCompatActivity {
 
                 // Kiểm tra mật khẩu khớp
                 if (!pass.equals(passAgain)) {
+                    binding.progressBarRes.setVisibility(View.GONE);
                     Toast.makeText(Register.this, "Mật khẩu không khớp!", Toast.LENGTH_SHORT).show();
                     binding.passwordAgain.requestFocus();
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
@@ -107,6 +117,7 @@ public class Register extends AppCompatActivity {
 
                 // Kiểm tra độ dài mật khẩu
                 if (pass.length() < 6) {
+                    binding.progressBarRes.setVisibility(View.GONE);
                     Toast.makeText(Register.this, "Mật khẩu phải tối thiểu 6 kí tự", Toast.LENGTH_SHORT).show();
                     binding.password.requestFocus();
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
@@ -114,14 +125,30 @@ public class Register extends AppCompatActivity {
                 }
 
                 if (!isValidEmail(email)) {
+                    binding.progressBarRes.setVisibility(View.GONE);
                     Toast.makeText(Register.this, "Email phải đúng định dạng Abc@gmail.com", Toast.LENGTH_SHORT).show();
                     binding.email.requestFocus();
+                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
+                    return;
+                }
+                if (sdt.length() <= 10){
+                    binding.progressBarRes.setVisibility(View.GONE);
+                    Toast.makeText(Register.this, "Số điện thoại phải là 10 số", Toast.LENGTH_SHORT).show();
+                    binding.phone.requestFocus();
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
 
                 // Gọi phương thức tạo tài khoản
                 createAccount(name, email, sdt, pass);
+            }
+        });
+        binding.progressBarRes.setVisibility(View.GONE);
+        binding.dangnhapngay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Register.this, Login.class);
+                startActivity(intent);
             }
         });
 
@@ -179,41 +206,75 @@ public class Register extends AppCompatActivity {
                             // Nếu email đã tồn tại
                             Toast.makeText(Register.this, "Email đã tồn tại!", Toast.LENGTH_SHORT).show();
                             binding.email.requestFocus();
+                            binding.progressBarRes.setVisibility(View.GONE);
+
                         } else {
                             // Nếu email chưa tồn tại, tiếp tục tạo tài khoản
                             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, authTask -> {
                                 if (authTask.isSuccessful()) {
-                                    // Đăng ký thành công, lưu thông tin người dùng vào Firestore
+                                    // Đăng ký thành công, gửi email xác thực
                                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
                                     if (firebaseUser != null) {
-                                        User user = new User(firebaseUser.getUid(), name, email, // Lưu mật khẩu đã hash thay vì pass trực tiếp
-                                                phone, 1, // user_type_id (ví dụ: 1 cho người dùng thông thường)
-                                                null, // avatar chưa có lúc này
-                                                new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
+                                        // Tạo đối tượng User
+                                        User user = new User(firebaseUser.getUid(), name, email, phone, 1, null,null,null,null, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
+
+                                        // Lưu thông tin người dùng vào Firestore
                                         saveUserToFirestore(user);
+
+                                        // Gửi email xác thực
+                                        firebaseUser.sendEmailVerification().addOnCompleteListener(verificationTask -> {
+                                            if (verificationTask.isSuccessful()) {
+                                                // Hiển thị AlertDialog thông báo người dùng kiểm tra email
+                                                new AlertDialog.Builder(Register.this)
+                                                        .setTitle("Xác nhận tài khoản")
+                                                        .setMessage("Vui lòng kiểm tra email để xác nhận tài khoản của bạn!")
+                                                        .setPositiveButton("OK", (dialog, which) -> {
+                                                            clearInputFields(); // Xóa các trường nhập
+                                                            mAuth.signOut(); // Đăng xuất sau khi gửi mail xác nhận
+                                                            binding.progressBarRes.setVisibility(View.GONE);
+                                                        })
+                                                        .setCancelable(false) // Không cho phép đóng dialog khi bấm ngoài
+                                                        .show();
+
+
+                                            } else {
+                                                // Gửi email xác thực thất bại.
+
+                                                Toast.makeText(Register.this, "Lỗi khi gửi email xác thực: " + verificationTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                binding.progressBarRes.setVisibility(View.GONE);
+
+                                            }
+                                        });
                                     }
-                                    Toast.makeText(Register.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                                    clearInputFields();
                                 } else {
                                     // Đăng ký thất bại
                                     Toast.makeText(Register.this, "Đăng ký thất bại: " + authTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    binding.progressBarRes.setVisibility(View.GONE);
+
                                 }
                             });
                         }
                     } else {
                         Toast.makeText(Register.this, "Lỗi khi kiểm tra email: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        binding.progressBarRes.setVisibility(View.GONE);
+
                     }
                 });
     }
 
-    private void saveUserToFirestore(User user) {
-        // Lưu thông tin người dùng vào Firestore
-        db.collection("users").document(user.getId()).set(user).addOnSuccessListener(aVoid -> {
-            Toast.makeText(Register.this, "Thông tin người dùng đã được lưu vào Firestore", Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(Register.this, "Lỗi khi lưu thông tin người dùng", Toast.LENGTH_SHORT).show();
-        });
-    }
+
+        private void saveUserToFirestore(User user) {
+            // Lưu thông tin người dùng vào Firestore
+            db.collection("users").document(user.getId()).set(user).addOnSuccessListener(aVoid -> {
+                //Toast.makeText(Register.this, "Thông tin người dùng đã được lưu vào Firestore", Toast.LENGTH_SHORT).show();
+                binding.progressBarRes.setVisibility(View.GONE);
+
+            }).addOnFailureListener(e -> {
+                Toast.makeText(Register.this, "Lỗi khi lưu thông tin người dùng", Toast.LENGTH_SHORT).show();
+                binding.progressBarRes.setVisibility(View.GONE);
+
+            });
+        }
     private void clearInputFields() {
         binding.buttonRegister.setEnabled(true);
         binding.name.setText("");

@@ -25,7 +25,11 @@ public class Job {
     private String endTime;
     private String location;
     private int sourceId; // ref to source.id
-    private String salary;
+    private float salaryMin = -1.0f;
+    private float salaryMax = -1.0f;
+
+
+    private String major;
     private String agreement;
     private Timestamp createdAt;
     private Timestamp updatedAt;
@@ -50,7 +54,21 @@ public class Job {
     public String getEmployerId() {
         return employerId;
     }
+    public float getSalaryMin() {
+        return salaryMin;
+    }
 
+    public void setSalaryMin(float salaryMin) {
+        this.salaryMin = salaryMin;
+    }
+
+    public float getSalaryMax() {
+        return salaryMax;
+    }
+
+    public void setSalaryMax(float salaryMax) {
+        this.salaryMax = salaryMax;
+    }
     public void setEmployerId(String employerId) {
         this.employerId = employerId;
     }
@@ -61,6 +79,14 @@ public class Job {
 
     public void setJobTypeId(int jobTypeId) {
         this.jobTypeId = jobTypeId;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
     }
 
     public String getTitle() {
@@ -111,13 +137,6 @@ public class Job {
         this.sourceId = sourceId;
     }
 
-    public String getSalary() {
-        return salary;
-    }
-
-    public void setSalary(String salary) {
-        this.salary = salary;
-    }
 
     public String getAgreement() {
         return agreement;
@@ -146,7 +165,7 @@ public class Job {
     @Override
     public String toString() {
         return "Job{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", employerId='" + employerId + '\'' +
                 ", jobTypeId=" + jobTypeId +
                 ", title='" + title + '\'' +
@@ -155,12 +174,15 @@ public class Job {
                 ", endTime='" + endTime + '\'' +
                 ", location='" + location + '\'' +
                 ", sourceId=" + sourceId +
-                ", salary='" + salary + '\'' +
                 ", agreement='" + agreement + '\'' +
+                ", major='" + major + '\'' +
+                ", salaryMin='" + salaryMin + '\'' +
+                ", salaryMax='" + salaryMax + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
     }
+
 
 }
 

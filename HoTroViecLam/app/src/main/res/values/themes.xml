@@ -35,13 +35,13 @@
     <style name="password" parent="myEditText">
         <item name="android:drawableLeft">@drawable/lock</item>
         <item name="android:drawableRight">@drawable/eyes</item>
-        <item name="android:hint">Mật khẩu</item>
+        <item name="android:hint">Nhập mật khẩu hiện tại</item>
         <item name="android:inputType">textPassword</item>
     </style>
     <style name="fogotpassword" parent="myEditText">
         <item name="android:drawableLeft">@drawable/lock</item>
         <item name="android:drawableRight">@drawable/eyes</item>
-        <item name="android:hint">Nhập lại mật khẩu</item>
+        <item name="android:hint">Nhập lại mật khẩu mới</item>
         <item name="android:inputType">textPassword</item>
     </style>
     <style name="myTextView">
@@ -103,4 +103,6 @@
         <item name="android:background">@drawable/custom_otp_input</item>
         <item name="android:maxLength">1</item>
     </style>
+    
+<!-- //   <style name=""></style>-->
 </resources>
