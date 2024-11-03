@@ -82,6 +82,7 @@ private FragmentChangPassWordBinding binding;
                                     });
                         } else {
                             Toast.makeText(getContext(), "Mật khẩu hiện tại không đúng.", Toast.LENGTH_SHORT).show();
+                            binding.progressBar.setVisibility(View.GONE);
                         }
                     });
         } else {
@@ -137,6 +138,7 @@ private FragmentChangPassWordBinding binding;
             }
             if (!newPassword.equals(confirmPassword)) {
                 Toast.makeText(getContext(), "Mật khẩu mới không khớp", Toast.LENGTH_SHORT).show();
+                binding.progressBar.setVisibility(View.GONE);
                 return;
             }
 

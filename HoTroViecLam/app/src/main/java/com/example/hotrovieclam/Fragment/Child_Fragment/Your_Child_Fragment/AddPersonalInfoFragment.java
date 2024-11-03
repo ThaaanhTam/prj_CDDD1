@@ -38,13 +38,7 @@ public class AddPersonalInfoFragment extends Fragment {
         binding.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getParentFragmentManager().getBackStackEntryCount() > 0) {
-                    getParentFragmentManager().popBackStack();
-                    BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
-                    if (bottomNav != null) {
-                        bottomNav.setVisibility(View.GONE);
-                    }
-                }
+                back();
             }
         });
         Bundle bundle = getArguments();
@@ -64,12 +58,13 @@ public class AddPersonalInfoFragment extends Fragment {
                     String title = binding.edtGioithieu.getText().toString().trim();
                     if (!title.isEmpty()) {
                         isBottonClicked = true;
-                        AddAndUpdateInfoPersonal(getUid, title);
+                        addOrUpdateUserInfo(getUid, title);
                         Log.d("GGG", "onClick: " + getUid + title);
                         binding.btnUpdateProfile.setEnabled(false);
                         int grayColor = ContextCompat.getColor(getContext(), R.color.gray);
                         binding.btnUpdateProfile.setBackgroundColor(grayColor);
                         binding.loadding.setVisibility(View.VISIBLE);
+
                     } else {
                         Toast.makeText(getContext(), "Vui lòng điền đẩy đủ thông tin", Toast.LENGTH_SHORT).show();
                     }
@@ -100,32 +95,48 @@ public class AddPersonalInfoFragment extends Fragment {
         return binding.getRoot();
     }
 
-    private void AddAndUpdateInfoPersonal(String uid, String introduction) {
-        // Tạo dữ liệu để thêm vào Firestore
+    private void addOrUpdateUserInfo(String uid, String introduction) {
+        // Tạo dữ liệu cho document trong subcollection "role/profile" của "users"
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("uid", uid);
         userInfo.put("introduction", introduction);
 
-        // Thêm dữ liệu vào bảng "Introduces"
-        firestore.collection("Introduces").document(uid)
-                .set(userInfo)
+        // Thêm hoặc cập nhật document vào subcollection "role/profile" trong "users"
+        firestore.collection("users").document(uid)
+                .collection("role").document("candidate")
+                .collection("introduction").document("introductdata").set(userInfo)
                 .addOnSuccessListener(aVoid -> {
                     // Hiển thị Toast khi cập nhật thành công
                     Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                     binding.loadding.setVisibility(View.GONE);
                     binding.edtGioithieu.setText("");
                     Log.d("Firestore", "DocumentSnapshot successfully written!");
+
+                    // Gửi kết quả cập nhật đến fragment trước đó
+                    Bundle result = new Bundle();
+                    result.putBoolean("isUpdated", true);
+                    getParentFragmentManager().setFragmentResult("updateResult", result);
+
+                    // Trở lại fragment trước đó
+                    getParentFragmentManager().popBackStack();
                 })
-                .addOnFailureListener(e -> Log.d("Firestore", "Error writing document: ", e));
+                .addOnFailureListener(e -> {
+                    Log.d("Firestore", "Error writing document: ", e);
+                    Toast.makeText(getContext(), "Lỗi khi cập nhật thông tin", Toast.LENGTH_SHORT).show();
+                });
     }
+
 
     private void GetData(String uid) {
         // Khởi tạo Firestore
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
-        // Tham chiếu đến document với UID trong bảng "Introduces"
-        DocumentReference docRef = firestore.collection("Introduces").document(uid);
+        // Tham chiếu đến document "introductdata" trong "users/{uid}/role/candidate/introduction"
+        DocumentReference docRef = firestore.collection("users").document(uid)
+                .collection("role").document("candidate")
+                .collection("introduction").document("introductdata");
 
+        // Lấy dữ liệu từ document
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -141,12 +152,22 @@ public class AddPersonalInfoFragment extends Fragment {
                         Log.d("Firestore", "Không có data trong trường introduction");
                     }
                 } else {
-                    Log.d("Firestore", "Không có document với UID này trong bảng Introduces");
+                    Log.d("Firestore", "Không có document 'introductdata' trong đường dẫn đã chỉ định");
                 }
             } else {
                 Log.d("Firestore", "Lỗi khi truy xuất document", task.getException());
             }
         });
+    }
+
+    public void back(){
+        if (getParentFragmentManager().getBackStackEntryCount() > 0) {
+            getParentFragmentManager().popBackStack();
+            BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
+            if (bottomNav != null) {
+                bottomNav.setVisibility(View.GONE);
+            }
+        }
     }
 
 }

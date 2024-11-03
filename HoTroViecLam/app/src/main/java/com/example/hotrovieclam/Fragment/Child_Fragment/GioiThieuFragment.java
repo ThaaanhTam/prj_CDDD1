@@ -34,7 +34,16 @@ public class GioiThieuFragment extends Fragment {
         View view = binding.getRoot();
         userSessionManager = new UserSessionManager();
         String i = userSessionManager.getUserUid();
+        //lấy kết quả trả về của Bunble bên kia
+        getParentFragmentManager().setFragmentResultListener("updateResult", this, (requestKey, bundle) -> {
+            boolean isUpdated = bundle.getBoolean("isUpdated");
+            if (isUpdated) {
+                ReadData(i); // Tải lại dữ liệu mới  khi cập nhật thành công
+            }
+        });
+//tai lai du lieu khi truyen uid qua
         ReadData(i);
+
         binding.btnCapnhatProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,7 +72,9 @@ public class GioiThieuFragment extends Fragment {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
         // Tham chiếu đến document với UID trong bảng "Introduces"
-        DocumentReference docRef = firestore.collection("Introduces").document(uid);
+        DocumentReference docRef = firestore.collection("users").document(uid)
+                .collection("role").document("candidate")
+                .collection("introduction").document("introductdata");
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -74,11 +85,13 @@ public class GioiThieuFragment extends Fragment {
                         binding.gioithiebanthan.setText(introduction);
                         //nếu có data thì ẩn nút thêm thông tin giới thiệu bản thân và hiện nút và ngược lại
                         binding.editGioiThieu.setVisibility(View.VISIBLE);
+                        binding.btnCapnhatProfile.setVisibility(View.GONE);
                         Log.d("Firestore", "Đã có data: " + introduction);
                     }
                 } else {
                     Log.d("Firestore", "Không có document với UID này trong bảng Introduces");
                     binding.btnCapnhatProfile.setVisibility(View.VISIBLE);
+                    binding.editGioiThieu.setVisibility(View.GONE);
                 }
             } else {
                 // Xử lý khi bảng "Introduces" không tồn tại hoặc lỗi kết nối Firestore

@@ -119,6 +119,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_text_input_update_info"
                 android:hint="Nhập Email"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:padding="10dp" />
 
         </LinearLayout>
@@ -142,6 +144,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_text_input_update_info"
                 android:hint="Nhập số điện thoại"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:padding="10dp" />
 
         </LinearLayout>
