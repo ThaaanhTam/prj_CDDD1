@@ -1,26 +1,34 @@
-package com.example.hotrovieclam.Fragment;
+package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
+import com.example.hotrovieclam.Adapter.JobManagementAdapter;
+import com.example.hotrovieclam.Adapter.ViewPagerAdapter_recruiterManagement;
+import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.R;
+import com.example.hotrovieclam.databinding.FragmentRecuiterManagementBinding;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ManagerPostFragment#newInstance} factory method to
+ * Use the {@link Recruiter_Management#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ManagerPostFragment extends Fragment {
+public class Recruiter_Management extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-
 
 
     private static final String ARG_PARAM2 = "param2";
@@ -29,7 +37,7 @@ public class ManagerPostFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public ManagerPostFragment() {
+    public Recruiter_Management() {
         // Required empty public constructor
     }
 
@@ -42,8 +50,8 @@ public class ManagerPostFragment extends Fragment {
      * @return A new instance of fragment ManagerPostFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ManagerPostFragment newInstance(String param1, String param2) {
-        ManagerPostFragment fragment = new ManagerPostFragment();
+    public static Recruiter_Management newInstance(String param1, String param2) {
+        Recruiter_Management fragment = new Recruiter_Management();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -60,10 +68,39 @@ public class ManagerPostFragment extends Fragment {
         }
     }
 
+    FragmentRecuiterManagementBinding binding;
+    private ArrayList<Job> listJob;
+    private JobManagementAdapter adapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_manager_post, container, false);
+        binding = FragmentRecuiterManagementBinding.inflate(inflater, container, false);
+
+        ViewPagerAdapter_recruiterManagement adapter = new ViewPagerAdapter_recruiterManagement((FragmentActivity) getContext());
+        if (getActivity() != null) {
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.title));
+        }
+        binding.viewPager.setAdapter(adapter);
+        new TabLayoutMediator(binding.tabLayout, binding.viewPager,
+                (tab, position) -> {
+                    switch (position) {
+                        case 0:
+                            tab.setText("Thông tin");
+                            break;
+                        case 1:
+                            tab.setText("Quản lý");
+                            break;
+                    }
+                }).attach();
+
+
+
+
+
+
+
+        return binding.getRoot();
     }
 }

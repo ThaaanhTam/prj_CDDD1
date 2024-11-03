@@ -15,10 +15,13 @@ import com.example.hotrovieclam.Model.CompanyInfo;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.databinding.RegisterEmployerBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class RegisterEmployer extends AppCompatActivity {
@@ -118,33 +121,40 @@ public class RegisterEmployer extends AppCompatActivity {
     }
 
     // Lưu thông tin vào Firestore
-    private void saveToFirestore(String logoFileName, String frontFileName, String backFileName, String certFileName) {
-        UserSessionManager userSessionManager = new UserSessionManager();
-        String uid = userSessionManager.getUserUid();
+        private void saveToFirestore(String logoFileName, String frontFileName, String backFileName, String certFileName) {
+            UserSessionManager userSessionManager = new UserSessionManager();
+            String uid = userSessionManager.getUserUid();
 
-        CompanyInfo companyInfo = new CompanyInfo(
-                uid,
-                binding.etRecruiterName.getText().toString().trim(),
-                binding.etPhoneNumber.getText().toString().trim(),
-                binding.etCompanyMail.getText().toString().trim(),
-                binding.etCompanyName.getText().toString().trim(),
-                binding.etLocation.getText().toString().trim(),
-                binding.etWebsite.getText().toString().trim(),
-                frontFileName, backFileName, certFileName, logoFileName,
-                "dang cho duyet"
-        );
+            // Tạo đối tượng thông tin công ty
+            Map<String, Object> companyInfo = new HashMap<>();
+            companyInfo.put("companyName", binding.etCompanyName.getText().toString().trim());
+            companyInfo.put("contactPerson", binding.etRecruiterName.getText().toString().trim());
+            companyInfo.put("companyPhone", binding.etPhoneNumber.getText().toString().trim());
+            companyInfo.put("companyEmail", binding.etCompanyMail.getText().toString().trim());
+            companyInfo.put("address", binding.etLocation.getText().toString().trim());
+            companyInfo.put("website", binding.etWebsite.getText().toString().trim());
+            companyInfo.put("logo", logoFileName);
+            companyInfo.put("legalDocumentFront", frontFileName);
+            companyInfo.put("legalDocumentBack", backFileName);
+            companyInfo.put("certificationDocument", certFileName);
+            companyInfo.put("statusId", "1");
+            companyInfo.put("createdAt", FieldValue.serverTimestamp());
+            companyInfo.put("updatedAt", FieldValue.serverTimestamp());
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("employer")
-                .add(companyInfo)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Lưu dữ liệu thành công", Toast.LENGTH_SHORT).show();
-                    clearInputs();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Lưu dữ liệu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
-    }
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+            db.collection("users").document(uid)
+                    .collection("roles").document("employer")
+                    .set(companyInfo)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Lưu dữ liệu thành công", Toast.LENGTH_SHORT).show();
+                        clearInputs(); // Xóa các input sau khi lưu thành công
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Lưu dữ liệu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        }
 
     // Tải ảnh lên Firebase Storage
     private void uploadImage(Uri uri, String path, OnSuccessListener<String> onSuccess) {

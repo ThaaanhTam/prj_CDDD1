@@ -1,0 +1,14 @@
+<!-- res/drawable/left_border.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent"/> <!-- Nền trong suốt -->
+        </shape>
+    </item>
+    <item android:left="0dp" android:right="0dp" android:top="0dp" android:bottom="0dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#00FF00"/> <!-- Màu viền bên trái -->
+            <size android:width="4dp" /> <!-- Độ dày viền -->
+        </shape>
+    </item>
+</layer-list>
