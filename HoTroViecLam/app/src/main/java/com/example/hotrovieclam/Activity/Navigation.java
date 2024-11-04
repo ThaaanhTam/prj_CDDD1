@@ -15,7 +15,7 @@ import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.example.hotrovieclam.Fragment.AcountFragment;
 import com.example.hotrovieclam.Fragment.Home;
 import com.example.hotrovieclam.Fragment.ManagerPostFragment;
-import com.example.hotrovieclam.Fragment.MessageFragment;
+
 import com.example.hotrovieclam.Fragment.Save_job;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.R;
@@ -62,9 +62,8 @@ public class Navigation extends AppCompatActivity {
                 } else if (id == R.id.managerPost) {
                     selectedFragment = new ManagerPostFragment();
 
-                } else if (id == R.id.message) {
-                    selectedFragment = new MessageFragment();
-                } else if (id == R.id.accout) {
+                }
+                 else if (id == R.id.accout) {
                     selectedFragment = new AcountFragment();
                 }
                 if (selectedFragment != null) {
