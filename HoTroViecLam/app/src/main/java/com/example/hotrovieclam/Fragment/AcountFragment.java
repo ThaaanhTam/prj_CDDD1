@@ -4,7 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,11 +21,6 @@ import com.example.hotrovieclam.Fragment.Child_Fragment.MyProFileFragment;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.Nam.ChangePassword.ChangePassWord;
 import com.example.hotrovieclam.Nam.login.Login;
-
-import com.example.hotrovieclam.Buoc.RegisterEmployer;
-import com.example.hotrovieclam.Fragment.Child_Fragment.MyProFileFragment;
-import com.example.hotrovieclam.Model.UserSessionManager;
-import com.example.hotrovieclam.Nam.register.Register;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentAcountBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,38 +31,59 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
 public class AcountFragment extends Fragment {
 
-    // Binding giúp liên kết các view với mã Java.
     private FragmentAcountBinding binding;
 
-    // Phương thức này được gọi để tạo giao diện cho Fragment.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Tìm và hiển thị thanh điều hướng dưới cùng (nếu tồn tại).
         BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
         if (bottomNav != null) {
             bottomNav.setVisibility(View.VISIBLE);
         }
-
-        // Khởi tạo binding và liên kết giao diện.
+        // Inflate the layout for this fragment
         binding = FragmentAcountBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
-        // Xử lý sự kiện khi người dùng nhấn vào nút "Profile".
         binding.profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Chuyển sang `MyProFileFragment`.
                 MyProFileFragment myProFileFragment = new MyProFileFragment();
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, myProFileFragment)
-                        .addToBackStack("null")
-                        .commit();
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, myProFileFragment).addToBackStack("null").commit();
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
+                if (bottomNav != null) {
+                    bottomNav.setVisibility(View.GONE);
+                }
 
-                // Ẩn thanh điều hướng dưới cùng.
+            }
+        });
+        binding.logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Đăng xuất người dùng khỏi Firebase
+                FirebaseAuth.getInstance().signOut();
+
+                // Xóa UID khỏi SharedPreferences
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_prefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("user_uid");
+                editor.apply();
+
+                // Chuyển về màn hình đăng nhập
+                Intent intent = new Intent(getActivity(),Login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                getActivity().finish();
+
+                Toast.makeText(getContext(), "log out ok l", Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.doipassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChangPassWordFragment changePassWord = new ChangPassWordFragment();
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, changePassWord).addToBackStack("null").commit();
                 BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
                 if (bottomNav != null) {
                     bottomNav.setVisibility(View.GONE);
@@ -76,58 +91,36 @@ public class AcountFragment extends Fragment {
             }
         });
 
-        // Xử lý sự kiện khi người dùng nhấn vào nút "Acount".
-        binding.acount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Chuyển sang màn hình đăng ký nhà tuyển dụng.
-                Intent i = new Intent(getActivity(), RegisterEmployer.class);
-                startActivity(i);
-            }
-        });
-
-        // Gọi hàm hiển thị thông tin người dùng.
         HienThiThongTin();
         return view;
-    }
 
-    /**
-     * Phương thức HienThiThongTin() dùng để lấy và hiển thị thông tin người dùng từ Firestore.
-     */
-    public void HienThiThongTin() {
-        // Tạo session để lấy UID người dùng hiện tại.
+    }
+    public void HienThiThongTin(){
         UserSessionManager sessionManager = new UserSessionManager();
         String uid = sessionManager.getUserUid();
 
-        // Lấy tham chiếu đến tài liệu người dùng trong Firestore dựa trên UID.
+        // Dùng UID để truy vấn Firestore hoặc hiển thị thông tin người dùng
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(uid);
-
-        // Truy vấn thông tin người dùng và xử lý kết quả.
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) { // Kiểm tra nếu truy vấn thành công.
+                if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    if (document.exists()) { // Kiểm tra nếu tài liệu tồn tại.
-                        // Lấy thông tin người dùng từ tài liệu.
+                    if (document.exists()) {
                         String name = document.getString("name");
                         String email = document.getString("email");
-                        String phonenumber = document.getString("phoneNumber");
+                        String phoneNumber = document.getString("phoneNumber");
 
-                        // Hiển thị thông tin người dùng trên giao diện.
+                        // Hiển thị thông tin người dùng
                         binding.name.setText(name);
                         binding.email.setText(email);
-                        binding.sdt.setText(phonenumber);
-
-                        // Ghi log thông tin người dùng để kiểm tra.
-                        Log.d("PPPP", "onComplete: " + email + name);
+                        binding.sdt.setText(phoneNumber);
+                        Log.d("PPPP", "onComplete: "+email+name);
                     } else {
-                        // Thông báo nếu không tìm thấy dữ liệu người dùng.
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
                     }
                 } else {
-                    // Thông báo nếu có lỗi khi truy vấn Firestore.
                     Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
                 }
             }

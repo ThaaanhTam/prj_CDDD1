@@ -283,36 +283,6 @@ public class Register extends AppCompatActivity {
         });
     }
 
-    private void createEmptyProfile(String userId) {
-        // Tạo đối tượng Map cho document "gioiThieu"
-        Map<String, Object> gioiThieu = new HashMap<>();
-        gioiThieu.put("birthday", null);
-        gioiThieu.put("address", null);
-        gioiThieu.put("gioitinh", null);
-        gioiThieu.put("introduction", null);
-
-        // Lưu document "gioiThieu" vào subcollection "Profile"
-        db.collection("users").document(userId).collection("Profile")
-                .document("gioiThieu").set(gioiThieu)
-                .addOnSuccessListener(aVoid -> {
-                    // Khi lưu "gioiThieu" thành công, tiếp tục lưu "TruongHoc"
-                    TruongHoc truongHoc = new TruongHoc(null, userId, null, null, null, null, null, null);
-                    db.collection("users").document(userId).collection("Profile")
-                            .document("TruongHoc").set(truongHoc)
-                            .addOnSuccessListener(aVoid2 -> {
-                                binding.progressBarRes.setVisibility(View.GONE);
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(Register.this, "Lỗi khi tạo document TruongHoc", Toast.LENGTH_SHORT).show();
-                                binding.progressBarRes.setVisibility(View.GONE);
-                            });
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(Register.this, "Lỗi khi tạo document gioiThieu", Toast.LENGTH_SHORT).show();
-                    binding.progressBarRes.setVisibility(View.GONE);
-                });
-    }
-
 
     private void clearInputFields() {
         binding.buttonRegister.setEnabled(true);

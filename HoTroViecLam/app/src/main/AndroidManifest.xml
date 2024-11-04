@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-<<<<<<< HEAD
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 =======
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
->>>>>>> Nam
+
 
     <application
         android:allowBackup="true"
@@ -51,7 +51,7 @@
             android:name=".Buoc.RegisterEmployer"
             android:exported="false" />
         <activity
-            android:name=".Messege"
+            android:name=".Message"
             android:exported="false" />
         <activity
             android:name=".Nam.login.Login"
