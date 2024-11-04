@@ -45,15 +45,18 @@ public Register register = new Register();
         binding.buttonForgotpass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                binding.progressBarRes.setVisibility(View.VISIBLE);
                 String email = binding.email.getText().toString().trim();
 
                 if (email.isEmpty()) {
                     Toast.makeText(ForgotPassWord.this, "Vui lòng nhập email", Toast.LENGTH_SHORT).show();
+                    binding.progressBarRes.setVisibility(View.GONE);
                     return;
                 }
                 if (!register.isValidEmail(email)){
                     Toast.makeText(ForgotPassWord.this, "Email phải đúng định dạng @gmail.com", Toast.LENGTH_SHORT).show();
                     binding.email.requestFocus();
+                    binding.progressBarRes.setVisibility(View.GONE);
                     return;
                 }
 
@@ -61,6 +64,7 @@ public Register register = new Register();
                 checkEmailExistsAndSendResetEmail(email);
             }
         });
+        binding.progressBarRes.setVisibility(View.GONE);
     }
     private void sendPasswordResetEmail(String email) {
         mAuth.sendPasswordResetEmail(email)
@@ -105,10 +109,12 @@ public Register register = new Register();
                         } else {
                             // Email không tồn tại
                             Toast.makeText(ForgotPassWord.this, "Email không tồn tại!", Toast.LENGTH_SHORT).show();
+                            binding.progressBarRes.setVisibility(View.GONE);
                         }
                     } else {
                         // Lỗi khi kiểm tra email
                         Toast.makeText(ForgotPassWord.this, "Lỗi khi kiểm tra email: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        binding.progressBarRes.setVisibility(View.GONE);
                     }
                 });
     }

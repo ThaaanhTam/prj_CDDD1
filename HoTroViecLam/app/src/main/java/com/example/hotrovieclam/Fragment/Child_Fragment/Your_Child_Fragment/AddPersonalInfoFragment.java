@@ -8,13 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.hotrovieclam.Fragment.Child_Fragment.ChangPassWordFragment;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentAddPersonalInfoBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class AddPersonalInfoFragment extends Fragment {
     private FragmentAddPersonalInfoBinding binding;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
