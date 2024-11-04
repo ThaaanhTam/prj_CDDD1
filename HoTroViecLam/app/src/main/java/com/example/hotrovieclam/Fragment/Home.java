@@ -177,6 +177,7 @@ public class Home extends Fragment {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     Job job = document.toObject(Job.class);
                     job.setSourceId(3);
+              //        Log.d("oo", job.getId());
                     listJob.add(job);
                 }
                 adapter.notifyDataSetChanged();
