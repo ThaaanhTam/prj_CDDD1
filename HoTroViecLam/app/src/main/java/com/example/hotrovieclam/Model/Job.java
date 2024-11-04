@@ -1,5 +1,6 @@
 package com.example.hotrovieclam.Model;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import android.graphics.Color;
 
@@ -31,7 +32,7 @@ public class Job {
 
     private String major;
     private String agreement;
-    private Timestamp createdAt;
+    private com.google.firebase.Timestamp createdAt;
     private Timestamp updatedAt;
 
 //    public Source getSource() {
@@ -146,11 +147,11 @@ public class Job {
         this.agreement = agreement;
     }
 
-    public Timestamp getCreatedAt() {
+    public com.google.firebase.Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(com.google.firebase.Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Fragment.RecruiterManagement.PostJob">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/title"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/lvGoBack"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/title"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Back"
+                android:src="@drawable/ic_back" />
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tin tuyển dụng"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:background="@color/title"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:drawableRight="@drawable/baseline_north_east_24"
+                android:text="Đăng"
+                android:padding="3dp"
+                android:textColor="@color/title"
+                app:cornerRadius="5dp" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/PostJob"
+                android:text="Tiêu đề" />
+
+            <EditText
+                android:id="@+id/edtTitle"
+                android:layout_width="match_parent"
+                android:minLines="2"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/edittext_background"
+                android:layout_height="wrap_content" />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="20dp"
+    android:orientation="horizontal">
+    <TextView
+        style="@style/PostJob"
+        android:layout_height="wrap_content"
+        android:text="Địa điểm: " />
+
+    <Spinner
+        android:id="@+id/spLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+
+
+            <TextView
+                style="@style/PostJob"
+                android:text="Mức lương" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="5dp">
+
+                <TextView
+                    style="@style/PostJob"
+                    android:layout_height="match_parent"
+                    android:text="Từ:" />
+
+                <EditText
+                    android:id="@+id/edtSalaryMin"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittext_background"
+                    android:baselineAligned="false"
+                    android:inputType="number" />
+
+                <TextView
+                    style="@style/PostJob"
+                    android:layout_height="match_parent"
+                    android:text="Đến" />
+
+                <EditText
+                    android:id="@+id/edtSalaryMax"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittext_background"
+                    android:inputType="number" />
+
+                <TextView
+                    style="@style/PostJob"
+                    android:layout_height="match_parent"
+                    android:text="Triệu/Tháng" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/PostJob"
+                android:text="Thời gian" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/PostJob"
+                        android:text="Từ:" />
+
+                    <EditText
+                        android:id="@+id/etDateStart"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_background"
+                        android:focusable="false"
+                        android:hint="dd/MM/yyyy"
+                        android:inputType="none"
+                        android:padding="8dp" />
+                    <TextView
+                        style="@style/PostJob"
+                        android:layout_height="match_parent"
+                        android:text=" đến " />
+
+                    <EditText
+                        android:id="@+id/etDateEnd"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_background"
+                        android:focusable="false"
+                        android:hint="dd/MM/yyyy"
+                        android:inputType="none"
+                        android:padding="8dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <TextView
+        style="@style/PostJob"
+        android:text="Chọn lĩnh vực: " />
+
+    <Spinner
+        android:id="@+id/edtField"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
+
+
+            <TextView
+              android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="3dp"
+                android:text="Mô tả" />
+
+            <EditText
+                android:id="@+id/edtDescription"
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_background"
+                android:hint="Mô tả công việc"
+                android:padding="12dp"
+                android:textColor="#333333"
+                android:textColorHint="#9E9E9E"
+                android:textSize="16sp"
+                android:inputType="textMultiLine"
+                android:minLines="8" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
