@@ -168,7 +168,7 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:drawableRight="@drawable/vitri"
+                android:drawableRight="@drawable/vitrii"
                 android:id="@+id/editTextDC"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
