@@ -88,15 +88,15 @@
                         android:textColor="@color/xanhdatroi"
                         android:textSize="16dp" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@color/navigation"
-                        android:text="Nhà tuyển dụng"
-                        android:textAlignment="center"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
+<!--                    <TextView-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:background="@color/navigation"-->
+<!--                        android:text="Nhà tuyển dụng"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:textSize="16dp"-->
+<!--                        android:textStyle="bold" />-->
                 </LinearLayout>
 
             </LinearLayout>

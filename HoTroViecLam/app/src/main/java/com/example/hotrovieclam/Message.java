@@ -32,8 +32,8 @@ public class Message extends AppCompatActivity {
 
     // Firebase
     private DatabaseReference usersRef;
-    private String currentUserId = "7yRXcjnLPhfDr3OJG8FpEdSsWv83";  // ID của người dùng hiện tại
-    private String recipientUserId = "EoGaGiSQ03eBo9rsMqUD6rjcFAR2";  // ID của người nhận, bạn có thể thay đổi cho phù hợp
+    private String currentUserId = "EoGaGiSQ03eBo9rsMqUD6rjcFAR2";  // ID của người dùng hiện tại
+    private String recipientUserId = "7yRXcjnLPhfDr3OJG8FpEdSsWv83  ";  // ID của người nhận, bạn có thể thay đổi cho phù hợp
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
