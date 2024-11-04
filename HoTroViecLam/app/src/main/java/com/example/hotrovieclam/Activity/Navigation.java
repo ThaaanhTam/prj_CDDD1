@@ -12,10 +12,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
+import com.example.hotrovieclam.ConvestationFrament;
 import com.example.hotrovieclam.Fragment.AcountFragment;
 import com.example.hotrovieclam.Fragment.Home;
-import com.example.hotrovieclam.Fragment.ManagerPostFragment;
-import com.example.hotrovieclam.Fragment.MessageFragment;
+import com.example.hotrovieclam.Fragment.RecruiterManagement.Recruiter_Management;
 import com.example.hotrovieclam.Fragment.Save_job;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.R;
@@ -60,10 +60,10 @@ public class Navigation extends AppCompatActivity {
                 } else if (id == R.id.saved) {
                     selectedFragment = new Save_job();
                 } else if (id == R.id.managerPost) {
-                    selectedFragment = new ManagerPostFragment();
+                    selectedFragment = new Recruiter_Management();
 
                 } else if (id == R.id.message) {
-                    selectedFragment = new MessageFragment();
+                    selectedFragment = new ConvestationFrament();
                 } else if (id == R.id.accout) {
                     selectedFragment = new AcountFragment();
                 }

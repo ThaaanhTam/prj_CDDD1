@@ -4,6 +4,7 @@
     <string name="SaveJob">Danh sách việc làm đã lưu</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_quanlytuyendung">Quản lý nhà tuyển dụng</string>
     <string-array name="location_options">
         <item>Hà Nội</item>
         <item>Hồ Chí Minh</item>
