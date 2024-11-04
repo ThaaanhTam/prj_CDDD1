@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -320,8 +321,8 @@ public class RegisterEmployer extends AppCompatActivity {
 
                         // Hiển thị thông tin người dùng trên giao diện.
                         binding.etRecruiterName.setText(name);
-                        binding.etPhoneNumber.setText(email);
-                        binding.etCompanyMail.setText(phonenumber);
+                        binding.etPhoneNumber.setText(phonenumber);
+                        binding.etCompanyMail.setText(email);
 
                         // Ghi log thông tin người dùng để kiểm tra.
                         Log.d("PPPP", "onComplete: " + email + name);
