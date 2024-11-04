@@ -1,5 +1,7 @@
 package com.example.hotrovieclam.Connect;
 
+import static androidx.constraintlayout.widget.Constraints.TAG;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -50,8 +52,24 @@ public class Website {
                     job.setTitle(title);
                     job.setDescription(description);
                     job.setLocation(location);
-                    job.setAgreement(salary);
+                 //   job.setAgreement(salary);
+                    job.setSourceId(2);
+                    try {
+                        String[] salaryParts = salary.split("-");
+                        if (salaryParts.length == 2) {
+                            int salaryMin = Integer.parseInt(salaryParts[0].replaceAll("[^\\d]", "").trim());
+                            int salaryMax = Integer.parseInt(salaryParts[1].replaceAll("[^\\d]", "").trim());
+                            //return new int[]{salaryMin, salaryMax};
+                            job.setSalaryMax(salaryMax);
+                            job.setSalaryMin(salaryMin);
+                        }
+                        else {
+                            job.setAgreement(salary);
+                        }
 
+                    } catch (NumberFormatException e) {
+                        Log.e(TAG, "Error parsing salary range: " + e.getMessage());
+                    }
                     jobList.add(job);
 
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -92,8 +110,22 @@ public class Website {
                     job.setDescription(description);
                     job.setAvatar(imgUrl);
                     job.setLocation(location);
-                    job.setAgreement(salary);
+                //    job.setAgreement(salary);
+                    try {
+                        String[] salaryParts = salary.split("-");
+                        if (salaryParts.length == 2) {
+                            int salaryMin = Integer.parseInt(salaryParts[0].replaceAll("[^\\d]", "").trim());
+                            int salaryMax = Integer.parseInt(salaryParts[1].replaceAll("[^\\d]", "").trim());
+                            //return new int[]{salaryMin, salaryMax};
+                            job.setSalaryMax(salaryMax);
+                            job.setSalaryMin(salaryMin);
+                        }   else {
+                            job.setAgreement(salary);
+                        }
 
+                    } catch (NumberFormatException e) {
+                        Log.e(TAG, "Error parsing salary range: " + e.getMessage());
+                    }
                     jobList.add(job);
 
                     new Handler(Looper.getMainLooper()).post(() -> {
