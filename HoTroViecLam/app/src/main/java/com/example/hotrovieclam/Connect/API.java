@@ -1,43 +1,40 @@
 package com.example.hotrovieclam.Connect;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.Model.JobDataAPI;
-import com.example.hotrovieclam.Interface.OnDataLoadedCallback;
+import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class API {
+    private static final String TAG = "API";
     private OkHttpClient okHttpClient = new OkHttpClient();
-
 
     private Request requestAPI = new Request.Builder()
             .url("https://jobdataapi.com/api/jobs/?country_code=VN")
             .build();
 
-    public List<Job> loadAPIsConcurrently() {
-
-            List<Job> newJobList = new ArrayList<>();
+    public void loadAPIsConcurrently(MyRecyclerViewAdapter adapter, List<Job> jobList) {
+        new Thread(() -> {
             try {
                 Response response = okHttpClient.newCall(requestAPI).execute();
                 if (response.isSuccessful() && response.body() != null) {
                     String jsonResponse = response.body().string();
-                    // Sử dụng Gson để parse chuỗi JSON thành đối tượng JobDataAPI
                     Log.d("jsonResponse", jsonResponse);
                     Gson gson = new Gson();
                     JobDataAPI jobDataAPI = gson.fromJson(jsonResponse, JobDataAPI.class);
 
-                    // Lấy danh sách công việc mới từ jobDataAPI
                     for (JobDataAPI.Job jobData : jobDataAPI.getResults()) {
                         Job job = new Job();
                         job.setId(jobData.getId());
@@ -48,16 +45,20 @@ public class API {
                         job.setLocation(jobData.getLocation());
                         job.setAvatar(jobData.getCompany().getLogo());
                         job.setSourceId(1);
-                        job.setAgreement("Thoa thuan");
-                        newJobList.add(job);
+                        job.setAgreement("Thỏa thuận");
+
+                        jobList.add(job);
                     }
-                    Log.d("newJobList", newJobList.size()+"");
+                    // Cập nhật toàn bộ dữ liệu sau khi thêm tất cả các job
+                    new Handler(Looper.getMainLooper()).post(adapter::notifyDataSetChanged);
+              //      Log.d("newJobList", jobList.size() + "");
                 } else {
-                    Log.e("APIconnect", "Response not successful: " + response.message());
+                    Log.e(TAG, "Response not successful: " + response.message());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return newJobList;
+        }).start();
     }
+
 }

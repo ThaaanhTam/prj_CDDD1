@@ -1,35 +1,34 @@
-package com.example.hotrovieclam.Fragment;
+package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.hotrovieclam.R;
+import androidx.fragment.app.Fragment;
+
+import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.databinding.FragmentInformationManagementBinding;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MessageFragment#newInstance} factory method to
+ * Use the {@link Information_management#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MessageFragment extends Fragment {
+public class Information_management extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-
-
-
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    public MessageFragment() {
+    public Information_management() {
         // Required empty public constructor
     }
 
@@ -39,11 +38,11 @@ public class MessageFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment MessageFragment.
+     * @return A new instance of fragment Information_management.
      */
     // TODO: Rename and change types and number of parameters
-    public static MessageFragment newInstance(String param1, String param2) {
-        MessageFragment fragment = new MessageFragment();
+    public static Information_management newInstance(String param1, String param2) {
+        Information_management fragment = new Information_management();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -60,10 +59,18 @@ public class MessageFragment extends Fragment {
         }
     }
 
+    FragmentInformationManagementBinding binding;
+    Job_Management adapter;
+    ArrayList<Job> jobs = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_message, container, false);
+        binding = FragmentInformationManagementBinding.inflate(inflater, container, false);
+
+
+        return binding.getRoot();
+
     }
 }

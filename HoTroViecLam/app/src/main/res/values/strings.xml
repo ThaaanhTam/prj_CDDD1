@@ -4,23 +4,59 @@
     <string name="SaveJob">Danh sách việc làm đã lưu</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_quanlytuyendung">Quản lý nhà tuyển dụng</string>
     <string-array name="location_options">
         <item>Hà Nội</item>
         <item>Hồ Chí Minh</item>
         <item>Đà Nẵng</item>
         <item>Cần Thơ</item>
     </string-array>
+
     <string-array name="source_options">
         <item>API</item>
         <item>Website</item>
         <item>Firestore</item>
         <item>Tất cả</item> <!-- Tùy chọn để hiển thị tất cả các nguồn -->
     </string-array>
+
+    <string-array name="salary">
+        <item>Dưới 10 triệu</item>
+        <item>10-20 triệu</item>
+        <item>20-30 triệu</item>
+        <item>30-40 triệu</item>
+        <item>40-50 triệu</item>
+        <item>Trên 50 triệu</item>
+        <item>Thỏa thuận</item>
+    </string-array>
+
+    <string-array name="job_industries">
+        <item>Công nghệ thông tin</item>
+        <item>Kỹ thuật phần mềm</item>
+        <item>Quản trị kinh doanh</item>
+        <item>Marketing</item>
+        <item>Tài chính - Ngân hàng</item>
+        <item>Nhân sự</item>
+        <item>Logistics và chuỗi cung ứng</item>
+        <item>Du lịch và khách sạn</item>
+        <item>Y tế</item>
+        <item>Kỹ thuật xây dựng</item>
+        <item>Thiết kế đồ họa</item>
+        <item>Truyền thông đa phương tiện</item>
+        <item>Giáo dục và đào tạo</item>
+        <item>Ngành luật</item>
+        <item>Kỹ thuật điện - điện tử</item>
+        <item>Ngoại ngữ</item>
+        <item>Khoa học dữ liệu</item>
+        <item>An toàn thông tin</item>
+        <item>Thể dục thể thao</item>
+    </string-array>
+
     <string-array name="salary_options">
         <item>Dưới 5 triệu</item>
         <item>5 triệu - 10 triệu</item>
         <item>Trên 10 triệu</item>
     </string-array>
+
     <string-array name="provinces">
         <item>An Giang</item>
         <item>Bà Rịa - Vũng Tàu</item>
@@ -79,7 +115,7 @@
         <item>Thanh Hóa</item>
         <item>Thừa Thiên Huế</item>
         <item>Tiền Giang</item>
-        <item>TP Hồ Chí Minh</item>
+        <item>Hồ Chí Minh</item>
         <item>Trà Vinh</item>
         <item>Tuyên Quang</item>
         <item>Vĩnh Long</item>
@@ -87,4 +123,6 @@
         <item>Yên Bái</item>
     </string-array>
 
+    <string name="back_button">Quay lại</string> <!-- Mô tả cho nút trở về -->
+    <string name="avatar">Avatar</string>
 </resources>

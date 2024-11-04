@@ -12,10 +12,12 @@ public class CompanyInfo {
     private String companyCertUrl;
     private String logo;
     private String status;
+    private String id;
 
 
     // Constructor có tham số
-    public CompanyInfo(String recruiterName, String phoneNumber, String companyMail, String companyName, String location, String website, String frontCCCDUrl, String backCCCDUrl, String companyCertUrl, String logo, String status) {
+    public CompanyInfo(String id, String recruiterName, String phoneNumber, String companyMail, String companyName, String location, String website, String frontCCCDUrl, String backCCCDUrl, String companyCertUrl, String logo, String status) {
+        this.id = id;
         this.recruiterName = recruiterName;
         this.phoneNumber = phoneNumber;
         this.companyMail = companyMail;
@@ -121,4 +123,12 @@ public class CompanyInfo {
     public void setCompanyCertUrl(String companyCertUrl) {
         this.companyCertUrl = companyCertUrl;
     }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 }

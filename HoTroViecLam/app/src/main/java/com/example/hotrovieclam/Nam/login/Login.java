@@ -157,7 +157,9 @@ public class Login extends AppCompatActivity {
                             String uid = user.getUid();
                             // Lưu UID vào UserSessionManager
                             UserSessionManager sessionManager = new UserSessionManager();
-                            sessionManager.setUserUid(uid);  // Lưu UID vào session
+                            sessionManager.setUserUid(uid);
+                            String i= sessionManager.getUserUid();
+                            Log.d("UUU", "signIn: "+i);// Lưu UID vào session
                             // Chuyển đến MainActivity
                             Intent intent = new Intent(Login.this, Navigation.class);
                             startActivity(intent);
