@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="👤 Họ và tên người tuyển dụng:"
+                android:text="@string/tennguoituyendung"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:background="@android:drawable/edit_text"
-                android:hint="Họ và tên"
+                android:hint="@string/tennguoituyendung"
                 android:padding="10dp" />
 
             <!-- Số điện thoại công ty -->
@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Số điện thoại công ty:"
+                android:text="@string/sdtct"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:background="@android:drawable/edit_text"
-                android:hint="Số điện thoại"
+                android:hint="@string/sdtct"
                 android:inputType="phone"
                 android:padding="10dp" />
 
@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Mail công ty:"
+                android:text="@string/emailct"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:background="@android:drawable/edit_text"
-                android:hint="Địa chỉ mail"
+                android:hint="@string/emailct"
                 android:inputType="textEmailAddress"
                 android:padding="10dp" />
 
@@ -100,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="🏢 Tên công ty:"
+                android:text="@string/tencongty"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:background="@android:drawable/edit_text"
-                android:hint="Tên công ty"
+                android:hint="@string/tencongty"
                 android:padding="10dp" />
 
             <!-- Địa điểm -->
@@ -118,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="🏥 Địa điểm:"
+                android:text="@string/diachi"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
@@ -128,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:background="@android:drawable/edit_text"
-                android:hint="Chọn tỉnh/thành phố"
+                android:hint="@string/tp"
                 android:padding="10dp" />
 
             <!-- Website -->
@@ -136,7 +136,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="🏥 Website (nếu có):"
+                android:text="@string/web"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
@@ -146,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:background="@android:drawable/edit_text"
-                android:hint="Link website"
+                android:hint="@string/website"
                 android:inputType="textUri"
                 android:padding="10dp" />
 
@@ -154,7 +154,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Logo công ty"
+                android:text="@string/logo"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
@@ -191,7 +191,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Giấy phép chứng minh:"
+                android:text="@string/giayphep"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
@@ -199,7 +199,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CCCD mặt trước" />
+                android:text="@string/ccmattruoc" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -225,13 +225,12 @@
                     android:padding="10dp">
 
                 </TextView>
-
             </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CCCD mặt sau" />
+                android:text="@string/ccmatsau" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -263,7 +262,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Giấy phép kinh doanh" />
+                android:text="@string/kinhdoanh" />
 
             <LinearLayout
                 android:layout_width="match_parent"
