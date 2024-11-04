@@ -16,6 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.Model.User;
 import com.example.hotrovieclam.Nam.login.Login;
 import com.example.hotrovieclam.R;
@@ -131,9 +132,15 @@ public class Register extends AppCompatActivity {
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
                 }
-                if (sdt.length() <= 10){
+                if (sdt.length() > 10) {
+                    sdt = sdt.substring(0, 10);
+                    binding.phone.setText(sdt);
+                }
+
+// Kiểm tra lại độ dài để đảm bảo số điện thoại có đúng 10 ký tự
+                if (sdt.length() != 10) {
                     binding.progressBarRes.setVisibility(View.GONE);
-                    Toast.makeText(Register.this, "Số điện thoại phải là 10 số", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Register.this, "Số điện thoại phải có đúng 10 số", Toast.LENGTH_SHORT).show();
                     binding.phone.requestFocus();
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
                     return;
@@ -158,7 +165,6 @@ public class Register extends AppCompatActivity {
         String emailPattern = "[a-zA-Z0-9._%+-]+@gmail\\.com";
         return email.matches(emailPattern);
     }
-
 
 
     private void setupPasswordToggle() {
@@ -216,7 +222,7 @@ public class Register extends AppCompatActivity {
                                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
                                     if (firebaseUser != null) {
                                         // Tạo đối tượng User
-                                        User user = new User(firebaseUser.getUid(), name, email, phone, 1, null,null,null,null, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
+                                        User user = new User(firebaseUser.getUid(), name, email, phone, 1, null, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
 
                                         // Lưu thông tin người dùng vào Firestore
                                         saveUserToFirestore(user);
@@ -263,18 +269,51 @@ public class Register extends AppCompatActivity {
     }
 
 
-        private void saveUserToFirestore(User user) {
-            // Lưu thông tin người dùng vào Firestore
-            db.collection("users").document(user.getId()).set(user).addOnSuccessListener(aVoid -> {
-                //Toast.makeText(Register.this, "Thông tin người dùng đã được lưu vào Firestore", Toast.LENGTH_SHORT).show();
-                binding.progressBarRes.setVisibility(View.GONE);
+    private void saveUserToFirestore(User user) {
+        // Lưu thông tin người dùng vào Firestore
+        db.collection("users").document(user.getId()).set(user).addOnSuccessListener(aVoid -> {
+            //Toast.makeText(Register.this, "Thông tin người dùng đã được lưu vào Firestore", Toast.LENGTH_SHORT).show();
+            binding.progressBarRes.setVisibility(View.GONE);
+            //createEmptyProfile(user.getId());
 
-            }).addOnFailureListener(e -> {
-                Toast.makeText(Register.this, "Lỗi khi lưu thông tin người dùng", Toast.LENGTH_SHORT).show();
-                binding.progressBarRes.setVisibility(View.GONE);
+        }).addOnFailureListener(e -> {
+            Toast.makeText(Register.this, "Lỗi khi lưu thông tin người dùng", Toast.LENGTH_SHORT).show();
+            binding.progressBarRes.setVisibility(View.VISIBLE);
 
-            });
-        }
+        });
+    }
+
+    private void createEmptyProfile(String userId) {
+        // Tạo đối tượng Map cho document "gioiThieu"
+        Map<String, Object> gioiThieu = new HashMap<>();
+        gioiThieu.put("birthday", null);
+        gioiThieu.put("address", null);
+        gioiThieu.put("gioitinh", null);
+        gioiThieu.put("introduction", null);
+
+        // Lưu document "gioiThieu" vào subcollection "Profile"
+        db.collection("users").document(userId).collection("Profile")
+                .document("gioiThieu").set(gioiThieu)
+                .addOnSuccessListener(aVoid -> {
+                    // Khi lưu "gioiThieu" thành công, tiếp tục lưu "TruongHoc"
+                    TruongHoc truongHoc = new TruongHoc(null, userId, null, null, null, null, null, null);
+                    db.collection("users").document(userId).collection("Profile")
+                            .document("TruongHoc").set(truongHoc)
+                            .addOnSuccessListener(aVoid2 -> {
+                                binding.progressBarRes.setVisibility(View.GONE);
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(Register.this, "Lỗi khi tạo document TruongHoc", Toast.LENGTH_SHORT).show();
+                                binding.progressBarRes.setVisibility(View.GONE);
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(Register.this, "Lỗi khi tạo document gioiThieu", Toast.LENGTH_SHORT).show();
+                    binding.progressBarRes.setVisibility(View.GONE);
+                });
+    }
+
+
     private void clearInputFields() {
         binding.buttonRegister.setEnabled(true);
         binding.name.setText("");
