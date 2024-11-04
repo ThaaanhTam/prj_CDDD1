@@ -1,20 +1,27 @@
 package com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+
 import com.example.hotrovieclam.Model.Profile;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentThongTinCaNhanBinding;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -22,25 +29,37 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 public class ThongTinCaNhanFragment extends Fragment {
-
+    private FusedLocationProviderClient fusedLocationClient;
     private FragmentThongTinCaNhanBinding binding;
-    String a = null;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
+    String uid = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = FragmentThongTinCaNhanBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+
+        // Khởi tạo FusedLocationProviderClient
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
+        // Nhận UID từ bundle
         Bundle bundle = getArguments();
         if (bundle != null) {
-            a = bundle.getString("uid");
-            Log.d("TTT", "onCreateView: " + a);
+            uid = bundle.getString("uid");
+            Log.d("TTT", "onCreateView: " + uid);
         }
-        HienThiThongTin(a);
+
+        // Hiển thị thông tin
+        HienThiThongTin(uid);
+
+        // Xử lý sự kiện nhấn nút back
         binding.back.setOnClickListener(v -> {
             if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                 getParentFragmentManager().popBackStack();
@@ -51,145 +70,142 @@ public class ThongTinCaNhanFragment extends Fragment {
             }
         });
 
-        binding.editTextDate.setOnClickListener(v -> showDatePickerDialog()); // Sử dụng onClick thay vì onTouch
-        binding.btnUpdateInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("uid", "onClick: " + a);
-                String ngaysinh = binding.editTextDate.getText().toString().trim();
-                String diachi = binding.editTextDC.getText().toString().trim();
-                int gioitinh = 0; // Khởi tạo biến giới tính
+        // Xử lý chọn ngày sinh
+        binding.editTextDate.setOnClickListener(v -> showDatePickerDialog());
 
-                if (binding.rdNam.isChecked()) {
-                    gioitinh = 1; // Gán "Nam"
-                } else if (binding.rdNu.isChecked()) {
-                    gioitinh = 2; // Gán "Nữ"
-                } else {
-                    Log.d("tttt", "onClick: Không có giới tính được chọn");
-                }
+        // Xử lý cập nhật thông tin người dùng
+        binding.btnUpdateInfo.setOnClickListener(v -> {
+            binding.loadding.setVisibility(View.VISIBLE);
+            Log.d("uid", "onClick: " + uid);
+            String ngaysinh = binding.editTextDate.getText().toString().trim();
+            String diachi = binding.editTextDC.getText().toString().trim();
+            int gioitinh = 0;
 
-                Log.d("tttt", "onClick: " + ngaysinh + ", " + diachi + ", Giới tính: " + gioitinh);
-                Profile profile = new Profile(ngaysinh, diachi, gioitinh);
-
-                // Tạo đối tượng Profile với dữ liệu
-                addProfile(a,profile);
-
+            if (binding.rdNam.isChecked()) {
+                gioitinh = 1;
+            } else if (binding.rdNu.isChecked()) {
+                gioitinh = 2;
             }
+
+            // Kiểm tra dữ liệu
+            if (ngaysinh.isEmpty() || diachi.isEmpty() || gioitinh == 0) {
+                binding.loadding.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Profile profile = new Profile(ngaysinh, diachi, gioitinh);
+            addProfile(uid, profile);
         });
 
+        // Sự kiện khi nhấn vào biểu tượng vị trí trong EditText
+        binding.editTextDC.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (binding.editTextDC.getRight() - binding.editTextDC.getCompoundDrawables()[2].getBounds().width())) {
+                    Toast.makeText(getContext(), "Bạn đã nhấn vào biểu tượng vị trí!", Toast.LENGTH_SHORT).show();
+                    getLastLocation();
+                    return true;
+                }
+            }
+            return false;
+        });
 
         return view;
     }
 
+    // Hàm hiển thị DatePickerDialog
     public void showDatePickerDialog() {
-        // Lấy ngày hiện tại
         final Calendar calendar = Calendar.getInstance();
-
-        // Lấy năm, tháng, ngày hiện tại
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Hiển thị DatePickerDialog với kiểu Spinner
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                getContext(),
-                android.R.style.Theme_Holo_Light_Dialog_NoActionBar, // Sử dụng style Spinner
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    // Khi người dùng chọn ngày, hiển thị ngày đã chọn vào EditText
                     String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
                     binding.editTextDate.setText(selectedDate);
                 }, year, month, day);
 
-        // Xử lý sự kiện khi người dùng bấm nút Cancel
-        datePickerDialog.setOnCancelListener(dialog -> {
-            // Xử lý khi người dùng bấm hủy
-            Toast.makeText(getContext(), "Bạn đã hủy chọn ngày", Toast.LENGTH_SHORT).show();
-        });
-
-        // Hiển thị DatePickerDialog
+        datePickerDialog.setOnCancelListener(dialog ->
+                Toast.makeText(getContext(), "Bạn đã hủy chọn ngày", Toast.LENGTH_SHORT).show());
         datePickerDialog.show();
     }
-
+    // Hàm hiển thị thông tin từ Firestore
     public void HienThiThongTin(String uid) {
-
-        // Dùng UID để truy vấn Firestore hoặc hiển thị thông tin người dùng
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(uid);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document != null && document.exists()) {
+                    binding.editTextEmail.setText(document.getString("email"));
+                    binding.editTextsdt.setText(document.getString("phoneNumber"));
 
-                        String email = document.getString("email");
-                        String phone = document.getString("phoneNumber");
-                        // Hiển thị thông tin người dùng
-                        binding.editTextEmail.setText(email);
-                        binding.editTextsdt.setText(phone);
-
-                        Log.d("PPPP", "onComplete: " + email);
-                        DocumentReference profileRef = db.collection("users").document(uid)
-                                .collection("role").document("candidate")
-                                .collection("profile").document(uid);
-                        profileRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot profileDocument = task.getResult();
-                                    if (profileDocument.exists()) {
-                                        String ngaysinh = profileDocument.getString("birthday"); // Lấy ngày sinh
-                                        String diachi = profileDocument.getString("address"); // Lấy địa chỉ
-                                        int gioitinh = profileDocument.getLong("gioitinh").intValue(); // Lấy giới tính dưới dạng số
-
-                                        // Hiển thị thông tin profile
-                                        binding.editTextDate.setText(ngaysinh); // Hiển thị ngày sinh
-                                        binding.editTextDC.setText(diachi); // Hiển thị địa chỉ
-
-                                        // Kiểm tra giới tính và cập nhật trạng thái RadioButton
-                                        if (gioitinh == 1) {
-                                            binding.rdNam.setChecked(true); // Kiểm tra giới tính Nam
-                                        } else if (gioitinh == 2) {
-                                            binding.rdNu.setChecked(true); // Kiểm tra giới tính Nữ
-                                        }
-                                    } else {
-                                        Log.d("Firestore", "Không tìm thấy dữ liệu profile.");
-                                    }
-                                } else {
-                                    Log.d("Firestore", "Lỗi khi truy vấn dữ liệu profile.", task.getException());
-                                }
+                    DocumentReference profileRef = db.collection("users").document(uid)
+                            .collection("role").document("candidate")
+                            .collection("profile").document(uid);
+                    profileRef.get().addOnCompleteListener(profileTask -> {
+                        if (profileTask.isSuccessful() && profileTask.getResult() != null) {
+                            DocumentSnapshot profileDocument = profileTask.getResult();
+                            if (profileDocument.exists()) {
+                                binding.editTextDate.setText(profileDocument.getString("birthday"));
+                                binding.editTextDC.setText(profileDocument.getString("address"));
+                                int gioitinh = profileDocument.getLong("gioitinh").intValue();
+                                if (gioitinh == 1) binding.rdNam.setChecked(true);
+                                else if (gioitinh == 2) binding.rdNu.setChecked(true);
                             }
-                        });
-                    } else {
-                        Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
-                    }
-                } else {
-                    Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
+                        }
+                    });
                 }
             }
         });
     }
-
-    public void addProfile(String uid,Profile profile) {
-
+    // Hàm cập nhật thông tin profile vào Firestore
+    public void addProfile(String uid, Profile profile) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-       // Giả sử 'a' là UID của người dùng
-
-        // Lưu dữ liệu vào Firestore với ID cụ thể
         db.collection("users").document(uid)
                 .collection("role").document("candidate")
-                .collection("profile")
-                .document(uid) // Sử dụng UID làm ID tài liệu
-                .set(profile) // Sử dụng set() để lưu dữ liệu
+                .collection("profile").document(uid)
+                .set(profile)
                 .addOnSuccessListener(aVoid -> {
-                    // Cập nhật thành công
                     Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + uid);
                     Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                    Bundle result = new Bundle();
+                    result.putBoolean("update", true);
+                    getParentFragmentManager().setFragmentResult("isupdate", result);
+                    getParentFragmentManager().popBackStack();
                 })
                 .addOnFailureListener(e -> {
-                    // Xử lý lỗi khi lưu dữ liệu
                     Log.e("Firestore", "Lỗi khi lưu dữ liệu", e);
                     Toast.makeText(getContext(), "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                });
+    }
+    private void getLastLocation() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            return;
+        }
+
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                        try {
+                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                            if (addresses != null && !addresses.isEmpty()) {
+                                Address address = addresses.get(0);
+                                String addressString = address.getAddressLine(0);
+                                binding.editTextDC.setText(addressString);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), "Không thể lấy địa chỉ", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Không thể lấy vị trí hiện tại", Toast.LENGTH_SHORT).show();
+                    }
                 });
     }
 }

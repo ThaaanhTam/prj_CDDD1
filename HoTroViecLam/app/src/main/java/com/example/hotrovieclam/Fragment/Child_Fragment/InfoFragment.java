@@ -45,6 +45,13 @@ public class InfoFragment extends Fragment {
                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, thongTinCaNhanFragment).addToBackStack(null).commit();
            }
        });
+     getParentFragmentManager().setFragmentResultListener("isupdate",this,(requestKey, result) -> {
+         boolean key = result.getBoolean("update");
+         if (key){
+             HienThiThongTin();
+         }
+     });
+
         HienThiThongTin();
        return  view;
     }

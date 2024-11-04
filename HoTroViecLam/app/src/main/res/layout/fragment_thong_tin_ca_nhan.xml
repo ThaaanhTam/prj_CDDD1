@@ -37,6 +37,11 @@
         android:orientation="vertical"
         android:background="@drawable/boder_info_linealayout"
         android:padding="20dp">
+        <ProgressBar
+            android:id="@+id/loadding"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -163,6 +168,7 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:drawableRight="@drawable/vitri"
                 android:id="@+id/editTextDC"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
