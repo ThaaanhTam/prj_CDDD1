@@ -3,64 +3,72 @@ package com.example.hotrovieclam.Fragment.Child_Fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.hotrovieclam.Adapter.ExperienceAdapter;
+import com.example.hotrovieclam.Adapter.TruongHocAdapter;
+import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.EducationFragment;
+import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.ExperienceFragment;
+import com.example.hotrovieclam.Model.Experience;
+import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.R;
+import com.example.hotrovieclam.databinding.FragmentHocVanBinding;
+import com.example.hotrovieclam.databinding.FragmentKinhNghiemBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link KinhNghiemFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class KinhNghiemFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public KinhNghiemFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment KinhNghiemFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static KinhNghiemFragment newInstance(String param1, String param2) {
-        KinhNghiemFragment fragment = new KinhNghiemFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private FragmentKinhNghiemBinding binding;
+    private ExperienceAdapter experienceAdapter;
+    private List<Experience> experiences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_kinh_nghiem, container, false);
+        binding = FragmentKinhNghiemBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        //set up va hien thi
+        setupRecyclerView();
+        addInitialData();
+        binding.themkn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ExperienceFragment experienceFragment = new ExperienceFragment();
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, experienceFragment).addToBackStack(null).commit();
+            }
+        });
+        return view;
+    }
+
+
+    // Hàm thiết lập RecyclerView và Adapter
+    private void setupRecyclerView() {
+        experiences = new ArrayList<>();
+        experienceAdapter = new ExperienceAdapter(experiences);
+        binding.recycelViewItemKinhnghiem.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recycelViewItemKinhnghiem.setAdapter(experienceAdapter);
+    }
+
+    // Hàm thêm dữ liệu ban đầu
+    private void addInitialData() {
+//        truongHocs.add(new TruongHoc("Đại học A", "Công nghệ thông tin", "2018", "2022", "Học tại thành phố X", 0));
+        experiences.add(new Experience());
+
+        // Notify the adapter that the data has changed
+        experienceAdapter.notifyDataSetChanged();
+    }
+
+    // Hàm để gọi lại bất cứ khi nào bạn cần cập nhật dữ liệu mới
+    public void updateData(List<Experience> newExperiences) {
+        experiences.clear();  // Clear the old data
+        experiences.addAll(newExperiences);  // Add the new data
+        experienceAdapter.notifyDataSetChanged();  // Notify the adapter of the change
     }
 }

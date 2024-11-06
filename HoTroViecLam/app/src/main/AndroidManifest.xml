@@ -48,9 +48,9 @@
         <activity
             android:name=".Buoc.RegisterEmployer"
             android:exported="false" />
-        <activity
-            android:name=".Messege"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".Messege"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".Nam.login.Login"
             android:exported="true">

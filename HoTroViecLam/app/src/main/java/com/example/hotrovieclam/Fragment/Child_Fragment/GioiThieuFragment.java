@@ -22,28 +22,29 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class GioiThieuFragment extends Fragment {
     private UserSessionManager userSessionManager;
-private FragmentGioiThieuBinding binding;
+    private FragmentGioiThieuBinding binding;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-      binding = FragmentGioiThieuBinding.inflate(inflater,container,false);
-      View view = binding.getRoot();
-      userSessionManager= new UserSessionManager();
-     String i =  userSessionManager.getUserUid();
-     binding.gioithiebanthan.setText(i);
-binding.btnCapnhatProfile.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        AddPersonalInfoFragment  addPersonalInfoFragment = new AddPersonalInfoFragment();
-        getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, addPersonalInfoFragment).addToBackStack(null).commit();
+        binding = FragmentGioiThieuBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        userSessionManager = new UserSessionManager();
+        String i = userSessionManager.getUserUid();
+        binding.gioithiebanthan.setText(i);
+        binding.btnCapnhatProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddPersonalInfoFragment addPersonalInfoFragment = new AddPersonalInfoFragment();
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, addPersonalInfoFragment).addToBackStack(null).commit();
+            }
+        });
+        return view;
     }
-});
-      return  view;
-    }
-    public void HienThiThongTin(){
+
+    public void HienThiThongTin() {
         UserSessionManager sessionManager = new UserSessionManager();
         String uid = sessionManager.getUserUid();
 
@@ -62,7 +63,7 @@ binding.btnCapnhatProfile.setOnClickListener(new View.OnClickListener() {
 
                         // Hiển thị thông tin người dùng
 
-                        Log.d("PPPP", "onComplete: "+email+name);
+                        Log.d("PPPP", "onComplete: " + email + name);
                     } else {
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
                     }

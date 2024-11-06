@@ -17,7 +17,8 @@ import com.example.hotrovieclam.databinding.FragmentInfoBinding;
  * Use the {@link InfoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InfoFragment extends Fragment {
+public class
+InfoFragment extends Fragment {
     private FragmentInfoBinding binding;
 
     // TODO: Rename parameter arguments, choose names that match
