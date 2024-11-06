@@ -37,6 +37,11 @@
         android:orientation="vertical"
         android:background="@drawable/boder_info_linealayout"
         android:padding="20dp">
+        <ProgressBar
+            android:id="@+id/loadding"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -119,6 +124,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_text_input_update_info"
                 android:hint="Nhập Email"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:padding="10dp" />
 
         </LinearLayout>
@@ -142,6 +149,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_text_input_update_info"
                 android:hint="Nhập số điện thoại"
+                android:textColor="@color/black"
+                android:enabled="false"
                 android:padding="10dp" />
 
         </LinearLayout>
@@ -159,6 +168,7 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:drawableRight="@drawable/vitrii"
                 android:id="@+id/editTextDC"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

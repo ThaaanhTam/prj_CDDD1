@@ -39,6 +39,7 @@
         <EditText
             android:id="@+id/phone"
             style="@style/phone"
+            android:maxLength="10"
             android:inputType="number" />
 
         <EditText
