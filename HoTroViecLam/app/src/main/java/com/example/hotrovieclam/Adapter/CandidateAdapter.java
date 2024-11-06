@@ -2,6 +2,8 @@ package com.example.hotrovieclam.Adapter;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -19,6 +21,15 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
 
     private Activity context;
     private ArrayList<User> users;
+    private OnItemClickListener editListener;
+
+    public interface OnItemClickListener {
+        void onClick(String id_candidate);
+    }
+
+    public void setClickIem(OnItemClickListener listener) {
+        this.editListener = listener;
+    }
 
     @NonNull
     @Override
@@ -40,7 +51,7 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
 
         if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
             uri = Uri.parse(user.getAvatar());
-        }else {
+        } else {
             uri = Uri.parse("https://123job.vn/images/no_company.png");
         }
         Glide.with(context).load(uri).into(holder.binding.ivAvatar);
@@ -49,6 +60,12 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
         holder.binding.tvNameCadidate.setText(user.getName());
 
 
+        holder.binding.backgroundItem.setOnClickListener(v -> {
+            if (editListener != null) {
+                Log.d("UU", "onBindViewHolder: "+user.getId());
+                editListener.onClick(user.getId());
+            }
+        });
 
 
     }
@@ -57,9 +74,11 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
     public int getItemCount() {
         return users.size();
     }
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         public int position;
         ListItemCadidateBinding binding;
+
         public MyViewHolder(@NonNull ListItemCadidateBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;

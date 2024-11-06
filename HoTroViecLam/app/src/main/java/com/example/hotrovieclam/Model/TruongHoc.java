@@ -81,4 +81,10 @@ public class TruongHoc {
     public void setType(Integer type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return nameSchool + "\n" + nganhHoc + "\n" + timeStart + "-" + timeEnd;
+    }
+
 }

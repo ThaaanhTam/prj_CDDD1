@@ -1,5 +1,6 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,12 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.hotrovieclam.Adapter.CandidateAdapter;
 import com.example.hotrovieclam.Model.User;
+import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentCandidateListBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -61,6 +65,29 @@ public class Candidate_List extends Fragment {
 
         // Fetch candidates in real-time
         fetchCandidatesRealtime();
+        adapter.setClickIem(new CandidateAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(String id_candidate) {
+                // Tạo một instance của Fragment
+                Profile_Candidate_Fragment profileCandidateFragment = new Profile_Candidate_Fragment();
+
+                // Tạo Bundle để truyền dữ liệu
+                Bundle bundle = new Bundle();
+                bundle.putString("id_candidate", id_candidate);
+
+                // Thiết lập arguments cho Fragment
+                profileCandidateFragment.setArguments(bundle);
+
+                // Thay thế Fragment
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main, profileCandidateFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+
 
         return binding.getRoot();
     }
@@ -84,7 +111,7 @@ public class Candidate_List extends Fragment {
                         users.clear();
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             String candidateId = document.getString("candidateId");
-
+                            Log.d("TRT", "fetchCandidatesRealtime: "+candidateId);
                             if (candidateId != null) {
                                 fetchUserDetails(candidateId);
                             }
@@ -109,7 +136,14 @@ public class Candidate_List extends Fragment {
                        // if (user != null) {
                             user.setName(userDocument.getString("name"));
                             user.setAvatar(userDocument.getString("avatar"));
-                            users.add(user);
+                            String email = userDocument.getString("email");
+                        String sdt = userDocument.getString("phoneNumber");
+                        String id = userDocument.getString("id");
+                        user.setEmail(email);
+                        user.setPhoneNumber(sdt);
+                        user.setId(id);
+
+                        users.add(user);
                             adapter.notifyDataSetChanged();
                      //   }
                     } else {
