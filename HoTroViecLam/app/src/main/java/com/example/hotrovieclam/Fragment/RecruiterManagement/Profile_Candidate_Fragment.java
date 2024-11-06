@@ -206,7 +206,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                 // Hiển thị thông báo nếu không có dữ liệu
                                                 experiences.add(new Experiences(null, "", "", "", "Chưa cập nhật kinh nghiệm", "", null));
                                                 kinhnghiemAdater.notifyDataSetChanged();
-                                                //binding.lisviewHocVan.setVisibility(View.VISIBLE); // Hiển thị ListView
+                                                //binding.lisviewHocVan.setVisibility(View.VISIBLE); // Hiển thị ListView 
                                             } else {
                                                 for (DocumentSnapshot document : task.getResult()) {
                                                     // Lấy dữ liệu từ document và chuyển vào đối tượng TruongHoc
