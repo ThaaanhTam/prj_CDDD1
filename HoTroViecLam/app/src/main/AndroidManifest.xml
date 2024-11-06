@@ -44,7 +44,7 @@
             android:name=".Buoc.RegisterEmployer"
             android:exported="false" />
         <activity
-            android:name=".Message"
+            android:name=".Fragment.MessageFrament"
             android:exported="false" />
         <activity
             android:name=".Nam.login.Login"

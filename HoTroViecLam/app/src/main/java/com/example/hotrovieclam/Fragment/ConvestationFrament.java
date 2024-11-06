@@ -3,126 +3,154 @@ package com.example.hotrovieclam.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.hotrovieclam.Adapter.ConversationAdapter;
-import com.example.hotrovieclam.Model.Conversation;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import java.util.ArrayList;
-import java.util.List;
+import com.example.hotrovieclam.Model.Message;
+import com.example.hotrovieclam.Model.UserSessionManager;
+import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityConversationBinding;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 public class ConvestationFrament extends Fragment {
 
+
     private ActivityConversationBinding binding;
-    private List<Conversation> conversationList = new ArrayList<>();
-    private ConversationAdapter conversationAdapter;
-    private String currentUserId = "7yRXcjnLPhfDr3OJG8FpEdSsWv83"; // ID người dùng hiện tại
-    private DatabaseReference conversationRef;
+    private ArrayList<Message> conversationList = new ArrayList<>();
+    private String currentUserId;
+   private  FirebaseFirestore db;
+    ConversationAdapter adapter;
+
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = ActivityConversationBinding.inflate(inflater, container, false);
 
-        // Kết nối đến Firebase Realtime Database
-        conversationRef = FirebaseDatabase.getInstance().getReference("conversations");
-        setupRecyclerView();
-        loadConversations();
+        UserSessionManager sessionManager = new UserSessionManager();
+        currentUserId = sessionManager.getUserUid();
 
-        return binding.getRoot();
-    }
 
-    private void setupRecyclerView() {
-        binding.recyclerViewConversations.setLayoutManager(new LinearLayoutManager(requireContext()));
-        conversationAdapter = new ConversationAdapter(conversationList, requireContext());
-        binding.recyclerViewConversations.setAdapter(conversationAdapter);
-    }
+        adapter = new ConversationAdapter(conversationList, (FragmentActivity) getContext());
+        binding.recyclerViewConversations.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewConversations.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
-    private void loadConversations() {
-        // Lấy các cuộc hội thoại của người dùng hiện tại
-        conversationRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
+        fetchJobsFromFirestore();
+
+
+        // Lắng nghe sự kiện nhấn vào các mục trong RecyclerView
+        binding.recyclerViewConversations.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                conversationList.clear();
-                if (snapshot.exists()) {
-                    for (DataSnapshot receiverSnapshot : snapshot.getChildren()) {
-                        String receiverId = receiverSnapshot.getKey();
-                        String userName = receiverSnapshot.child("userName").getValue(String.class);
-                        String avatar = receiverSnapshot.child("avatar").getValue(String.class);
-                        String content = receiverSnapshot.child("content").getValue(String.class);
-                        Long sentAt = receiverSnapshot.child("sentAt").getValue(Long.class);
-                        Boolean seen = receiverSnapshot.child("seen").getValue(Boolean.class);
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
+                View childView = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+                if (childView != null && motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    int position = recyclerView.getChildAdapterPosition(childView);
+                    Message message = conversationList.get(position);
 
-                        if (receiverId != null && content != null && sentAt != null) {
-                            Conversation conversation = new Conversation(
-                                    receiverId,
-                                    currentUserId,
-                                    content,
-                                    sentAt,
-                                    seen != null && seen,
-                                    userName,
-                                    avatar
-                            );
-                            conversationList.add(conversation);
-                        } else {
-                            Log.w("ConversationFragment", "Thiếu dữ liệu trong cuộc hội thoại: " + receiverId);
+                    // Lấy ID người gửi và người nhận
+                    String senderId = currentUserId;  // ID người dùng hiện tại
+                    String receiverId = message.getReceiver_id();  // ID người nhận từ cuộc hội thoại
+
+                    // Chuyển sang MessageFragment
+                    openMessageFragment(senderId, receiverId);
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
+                // Không cần xử lý gì ở đây
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+                // Không cần xử lý nếu không cần tắt sự kiện
+            }
+        });
+        return binding.getRoot();
+
+    }
+
+
+    private void openMessageFragment(String senderId, String receiverId) {
+        // Tạo MessageFragment và truyền dữ liệu vào
+        MessageFrament messageFragment = new MessageFrament();
+
+        // Sử dụng Bundle để truyền dữ liệu
+        Bundle bundle = new Bundle();
+        bundle.putString("senderId", senderId);
+        bundle.putString("receiverId", receiverId);
+        messageFragment.setArguments(bundle);
+
+        // Chuyển fragment bằng FragmentTransaction
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, messageFragment); // R.id.fragment_container là nơi chứa các fragment
+        transaction.addToBackStack(null);  // Thêm vào back stack nếu muốn quay lại
+        transaction.commit();
+    }
+
+    private void fetchJobsFromFirestore() {
+        db = FirebaseFirestore.getInstance();
+        db.collection("messages").addSnapshotListener((snapshots, error) -> {
+            if (error != null) {
+                Log.w("zz", "Listen failed.", error);
+                return;
+            }
+
+            if (snapshots != null && !snapshots.isEmpty()) {
+                Log.w("zz", "Ldd");
+                conversationList.clear();
+
+                // Tạo một Set để theo dõi các receiver_id đã tồn tại trong conversationList
+                Set<String> existingReceiverIds = new HashSet<>();
+                Set<String> existingSenderIds = new HashSet<>();
+                for (QueryDocumentSnapshot document : snapshots) {
+                    Message message = document.toObject(Message.class);
+//
+
+
+                    if (message.getSender_id() != null && message.getSender_id().equals(currentUserId)||message.getReceiver_id() != null && message.getReceiver_id().equals(currentUserId)) {
+                        String receiverId = message.getReceiver_id();
+                        String senderId = message.getSender_id();
+                        // Kiểm tra receiver_id không null và chưa tồn tại trong Set
+                        if (senderId != null && receiverId != null && !existingReceiverIds.contains(receiverId)&&!existingSenderIds.contains(senderId)) {
+                            conversationList.add(message);
+                            existingReceiverIds.add(receiverId);
+                            existingSenderIds.add(senderId);
                         }
                     }
-                } else {
-                    Log.w("ConversationFragment", "Không có cuộc hội thoại nào.");
                 }
-                conversationAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("ConversationFragment", "Lỗi khi tải cuộc hội thoại: " + error.getMessage());
+// Chỉ gọi notifyDataSetChanged một lần sau khi xử lý tất cả các tin nhắn
+                adapter.notifyDataSetChanged();
+
+
+            } else {
+                Log.d("zz", "No current data in the collection");
             }
         });
     }
-
-    private void addConversation(String receiverId, String userName, String avatar, String content) {
-        Long sentAt = System.currentTimeMillis();
-        boolean seen = false;
-
-        DatabaseReference newConversationRef = conversationRef.child(currentUserId).child(receiverId);
-        Conversation conversation = new Conversation(receiverId, currentUserId, content, sentAt, seen, userName, avatar);
-
-        newConversationRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    newConversationRef.setValue(conversation).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d("ConversationFragment", "Thêm cuộc hội thoại thành công");
-                        } else {
-                            Log.e("ConversationFragment", "Lỗi khi thêm cuộc hội thoại: " + task.getException().getMessage());
-                        }
-                    });
-                } else {
-                    Log.w("ConversationFragment", "Cuộc hội thoại đã tồn tại với ID: " + receiverId);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("ConversationFragment", "Lỗi khi kiểm tra cuộc hội thoại: " + databaseError.getMessage());
-            }
-        });
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Giải phóng binding khi view bị hủy
+        binding = null;
     }
 }
