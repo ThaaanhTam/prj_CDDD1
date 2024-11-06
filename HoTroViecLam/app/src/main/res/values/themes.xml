@@ -32,7 +32,7 @@
     </style>
     <style name="email" parent="myEditText">
         <item name="android:drawableLeft">@drawable/mail</item>
-        <item name="android:hint">Email/SDT</item>
+        <item name="android:hint">Email</item>
         <item name="android:inputType">textEmailAddress</item>
     </style>
 
