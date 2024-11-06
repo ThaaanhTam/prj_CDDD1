@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Trạng thái khi nhấn -->
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <gradient
+                        android:startColor="#620606"
+                        android:endColor="#D32F2F"
+                        android:angle="45"/>
+                    <corners android:radius="8dp"/>
+                    <stroke android:width="1dp" android:color="#C7C7C7"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- Trạng thái mặc định -->
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <gradient
+                        android:startColor="#51DC05"
+                        android:endColor="#17610A"
+                        android:angle="45"/>
+                    <corners android:radius="8dp"/>
+                    <stroke android:width="1dp" android:color="#C7C7C7"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>
