@@ -17,6 +17,8 @@ import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.databinding.FragmentInformationManagementBinding;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -94,14 +96,27 @@ public class Information_management extends Fragment {
                 binding.tvLegalDocumentBack.setText(documentSnapshot.getString("legalDocumentBack"));
                 binding.tvCertificationDocument.setText(documentSnapshot.getString("certificationDocument"));
 
-                // Tải và hiển thị logo công ty bằng Glide
-                String logoUrl = documentSnapshot.getString("logo");
-                if (logoUrl != null) {
-                    Glide.with(this)
-                            .load(logoUrl)
-                            .into(binding.companyLogo);
-                }
-                else {
+                // Lấy tên hoặc đường dẫn của logo từ Firestore
+                String logoPath = "images/"+documentSnapshot.getString("logo");
+
+                if (logoPath != null) {
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference storageRef = storage.getReference();
+                    // Tham chiếu đến ảnh trong Firebase Storage
+                    StorageReference logoRef = storageRef.child(logoPath);
+
+                    // Lấy URL của ảnh
+                    logoRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        // Tải ảnh lên ImageView với Glide
+                        Glide.with(this)
+                                .load(uri.toString())
+                                .into(binding.companyLogo);
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
+                    });
+                } else {gs://findwork-c1286.appspot.com/images/back_cccd_0a2da2d0-c748-438d-a5ea-2bdc4fb737f4
+                    // Nếu không có ảnh logo, hiển thị ảnh mặc định
+
                     Glide.with(this)
                             .load("https://123job.vn/images/no_company.png")
                             .into(binding.companyLogo);
@@ -113,5 +128,10 @@ public class Information_management extends Fragment {
             Toast.makeText(getContext(), "Lỗi khi đọc dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+
+
+
+
+
 
 }
