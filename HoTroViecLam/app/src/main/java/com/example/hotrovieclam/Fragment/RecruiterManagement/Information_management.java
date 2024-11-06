@@ -24,11 +24,6 @@ import java.util.ArrayList;
 
 public class Information_management extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
 
     FragmentInformationManagementBinding binding;
     Job_Management adapter;
@@ -42,8 +37,7 @@ public class Information_management extends Fragment {
     public static Information_management newInstance(String param1, String param2) {
         Information_management fragment = new Information_management();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,10 +45,7 @@ public class Information_management extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        loadCompanyInformation();
     }
 
     @Override
@@ -114,9 +105,8 @@ public class Information_management extends Fragment {
                     }).addOnFailureListener(e -> {
                         Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
                     });
-                } else {gs://findwork-c1286.appspot.com/images/back_cccd_0a2da2d0-c748-438d-a5ea-2bdc4fb737f4
+                } else {
                     // Nếu không có ảnh logo, hiển thị ảnh mặc định
-
                     Glide.with(this)
                             .load("https://123job.vn/images/no_company.png")
                             .into(binding.companyLogo);
