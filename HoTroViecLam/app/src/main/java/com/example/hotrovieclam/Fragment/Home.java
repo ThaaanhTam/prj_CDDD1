@@ -3,6 +3,7 @@ package com.example.hotrovieclam.Fragment;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -28,9 +29,12 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.hotrovieclam.Activity.JobDetailMain;
+import com.example.hotrovieclam.Adapter.JobManagementAdapter;
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.example.hotrovieclam.Connect.API;
 import com.example.hotrovieclam.Connect.Website;
+import com.example.hotrovieclam.Fragment.RecruiterManagement.Detail_Job;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentHomeBinding;
@@ -91,6 +95,19 @@ public class Home extends Fragment {
         apiLoader.loadAPIsConcurrently(adapter, listJob);
         // Lấy dữ liệu từ Firestore
         fetchJobsFromFirestore();
+
+        adapter.setRecycleClick(new MyRecyclerViewAdapter.OnItemClick() {
+            @Override
+            public void DetailClick(View view, String jobID,Job job) {
+           //     Log.d("Click", "DetailClick: " + "jodID" + jobID);
+                //Detail_Job detailJob = new Detail_Job();
+                Intent intent = new Intent(getContext(), JobDetailMain.class);
+                intent.putExtra("jobID", jobID);
+                Log.d(TAG, "DetailClick: "+job);
+               // intent.putExtra("job_data", (CharSequence) job);
+                startActivity(intent);
+            }
+        });
 
         binding.sourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -177,7 +194,7 @@ public class Home extends Fragment {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     Job job = document.toObject(Job.class);
                     job.setSourceId(3);
-              //        Log.d("oo", job.getId());
+                    //        Log.d("oo", job.getId());
                     listJob.add(job);
                 }
                 adapter.notifyDataSetChanged();
@@ -417,7 +434,7 @@ public class Home extends Fragment {
             float max = Float.parseFloat(maxSalary);
 
             for (Job job : listJob) {
-                if(job.getSalaryMax() != -1.0f  || job.getSalaryMin() != 1.0f) {
+                if (job.getSalaryMax() != -1.0f || job.getSalaryMin() != 1.0f) {
                     if (job.getSalaryMin() >= min && job.getSalaryMax() <= max && job.getSalaryMin() != job.getSalaryMax()) {
                         filteredList.add(job);
                     }
@@ -462,7 +479,7 @@ public class Home extends Fragment {
 
 
         for (Job job : listJob) {
-            if(job.getMajor()!= null) {
+            if (job.getMajor() != null) {
                 String majorNoDiacritics = removeDiacritics(job.getMajor());
 
                 if (majorNoDiacritics != null && majorNoDiacritics.toUpperCase().contains(removeDiacritics(major.toUpperCase()))) {
@@ -480,10 +497,10 @@ public class Home extends Fragment {
     // Hàm cập nhật RecyclerView
     private void updateRecyclerView(ArrayList<Job> filteredJobs) {
         MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(getActivity(), filteredJobs);
-       // for (Job a : filteredJobs) {
+        // for (Job a : filteredJobs) {
 //            Log.d("luong hien thi", "Thoa thuan: " + a.getAgreement() + "\n max: " + a.getSalaryMax() + "\n min: " + a.getSalaryMin());
 //            Log.d("nganh",a.getMajor());
-       // }
+        // }
         binding.jobList.setAdapter(adapter);
         adapter.notifyDataSetChanged(); // Cập nhật adapter với danh sách mới
     }

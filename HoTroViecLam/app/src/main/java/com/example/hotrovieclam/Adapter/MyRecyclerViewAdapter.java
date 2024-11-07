@@ -3,6 +3,7 @@ package com.example.hotrovieclam.Adapter;
 import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     private Activity context;
     private ArrayList<Job> jobs;
+    private OnItemClick recycleClick;
+
+
+    public void setRecycleClick(OnItemClick recycleClick) {
+        this.recycleClick = recycleClick;
+    }
+
 
     @NonNull
     @Override
@@ -70,6 +78,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         else {
             holder.binding.logoApp.setVisibility(ViewGroup.VISIBLE);
         }
+        holder.jobID = jobs.get(position).getId();
+        holder.job = jobs.get(position);
 
     }
 
@@ -80,9 +90,20 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public int position;
         ListItemBinding binding;
+        public String jobID = "";
+       public Job job = new Job();
         public MyViewHolder(@NonNull ListItemBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
+
+            binding.btnThongTinMain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (recycleClick != null){
+                        recycleClick.DetailClick(view, jobID,job );
+                    }
+                }
+            });
 
         }
     }
@@ -91,5 +112,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         jobs.clear(); // Xóa danh sách cũ
         jobs.addAll(newJobs); // Thêm danh sách mới
         notifyDataSetChanged(); // Cập nhật RecyclerView
+    }
+    public interface OnItemClick {
+        void DetailClick(View view,  String jobID,Job job);
+
+
     }
 }

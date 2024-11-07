@@ -8,6 +8,7 @@
     android:maxHeight="500dp"
     app:cardCornerRadius="5dp"
     app:cardElevation="5dp"
+    android:id="@+id/btnThongTinMain"
     app:cardUseCompatPadding="true">
 
     <LinearLayout
