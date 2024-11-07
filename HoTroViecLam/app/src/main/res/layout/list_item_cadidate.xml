@@ -18,11 +18,15 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView android:layout_marginTop="10dp"
+            android:layout_width="100dp"
             android:id="@+id/ivAvatar"
-            android:layout_width="90dp"
             android:layout_height="100dp"
-            android:layout_margin="5dp" />
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/anhdemo"
+            app:shapeAppearanceOverlay="@style/customImg" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,7 +48,7 @@
                     android:id="@+id/tvNameCadidate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="10"
+                    android:layout_weight="1"
                     android:text="name"
                     android:textColor="@color/black"
                     android:textSize="16dp"

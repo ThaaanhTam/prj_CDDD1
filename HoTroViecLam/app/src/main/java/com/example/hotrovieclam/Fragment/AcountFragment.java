@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Activity.Navigation;
 import com.example.hotrovieclam.Fragment.Child_Fragment.ChangPassWordFragment;
+import com.example.hotrovieclam.Fragment.Child_Fragment.DialogFragmentAvatar;
 import com.example.hotrovieclam.Fragment.Child_Fragment.MyProFileFragment;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.Nam.ChangePassword.ChangePassWord;
@@ -92,6 +93,23 @@ public class AcountFragment extends Fragment {
             }
         });
 
+        binding.avt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("000", "calll: ");
+                DialogFragmentAvatar avatar= new DialogFragmentAvatar();
+                avatar.show(getParentFragmentManager(),"ChangeAvatarDialog");
+            }
+        });
+        getParentFragmentManager().setFragmentResultListener("updateSuccess",this,(req,keyvalue)->{
+            boolean update = keyvalue.getBoolean("update");
+            if (update){
+                binding.avt.setVisibility(View.GONE);
+                HienThiThongTin();
+
+            }
+        });
+        binding.load.setVisibility(View.GONE);
         HienThiThongTin();
         return view;
 
@@ -100,7 +118,7 @@ public class AcountFragment extends Fragment {
     public void HienThiThongTin() {
         UserSessionManager sessionManager = new UserSessionManager();
         String uid = sessionManager.getUserUid();
-
+binding.load.setVisibility(View.VISIBLE);
         // Dùng UID để truy vấn Firestore hoặc hiển thị thông tin người dùng
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(uid);
@@ -123,12 +141,16 @@ public class AcountFragment extends Fragment {
                         binding.email.setText(email);
                         binding.sdt.setText(phoneNumber);
                         String avatarUrl = document.getString("avatar");
+
                         if (avatarUrl != null && !avatarUrl.isEmpty()) {
+
                             // Dùng Glide để tải ảnh từ URL và hiển thị vào ImageView
                             Glide.with(getContext())
                                     .load(avatarUrl)
                                     .centerCrop()
-                                    .into(binding.avt); // imageView là ImageView của bạn
+                                    .into(binding.avt);
+                            binding.avt.setVisibility(View.VISIBLE);
+                            binding.load.setVisibility(View.GONE);
                             Log.d("ii", "onComplete: lay dc anh vs uid" + uid);
                         }
                         Log.d("PPPP", "onComplete: " + email + name);
