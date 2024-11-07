@@ -59,7 +59,7 @@ public class KinhNghiemFragment extends Fragment {
     // Hàm thêm dữ liệu ban đầu
     private void addInitialData() {
 //        truongHocs.add(new TruongHoc("Đại học A", "Công nghệ thông tin", "2018", "2022", "Học tại thành phố X", 0));
-        experiences.add(new Experience());
+        experiences.add(new Experience("sss","sss","sss","sss","sss","sss","sss"));
 
         // Notify the adapter that the data has changed
         experienceAdapter.notifyDataSetChanged();
