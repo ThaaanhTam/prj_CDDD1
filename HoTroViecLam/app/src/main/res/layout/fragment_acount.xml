@@ -29,11 +29,13 @@
                 android:layout_gravity="center"
                 android:layout_weight="3">
 
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/avt"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/img_1" />
+                    android:src="@drawable/img_1"
+                    app:shapeAppearanceOverlay="@style/customImg" />
 
             </LinearLayout>
 
@@ -88,15 +90,17 @@
                         android:textColor="@color/xanhdatroi"
                         android:textSize="16dp" />
 
-<!--                    <TextView-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:background="@color/navigation"-->
-<!--                        android:text="Nhà tuyển dụng"-->
-<!--                        android:textAlignment="center"-->
-<!--                        android:textSize="16dp"-->
-<!--                        android:textStyle="bold" />-->
+                    <TextView
+                        android:id="@+id/mucNhaTuynDung"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@color/navigation"
+                        android:text="Nhà tuyển dụng"
+                        android:textAlignment="center"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
             </LinearLayout>

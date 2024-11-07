@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Model.Experiences;
+import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentProfileCandidateBinding;
@@ -31,8 +33,10 @@ public class Profile_Candidate_Fragment extends Fragment {
     String id_candidate = null;
     ArrayList<TruongHoc> truonghoc = new ArrayList<>();
     ArrayList<Experiences> experiences = new ArrayList<>();
+    ArrayList<KiNang>kiNangs= new ArrayList<>();
     ArrayAdapter<TruongHoc> truongHocAdapter;
     ArrayAdapter<Experiences> kinhnghiemAdater;
+    ArrayAdapter<KiNang>kiNangArrayAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,10 +46,14 @@ public class Profile_Candidate_Fragment extends Fragment {
 //
 
         truongHocAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, truonghoc);
-        // Inflate the layout for this fragment
         binding.lisviewHocVan.setAdapter(truongHocAdapter);
+
         kinhnghiemAdater = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, experiences);
         binding.kinhnghiem.setAdapter(kinhnghiemAdater);
+
+        kiNangArrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1,kiNangs);
+        binding.kinang.setAdapter(kiNangArrayAdapter);
+
         Bundle bundle = getArguments();
         if (bundle != null) {
             id_candidate = bundle.getString("id_candidate");
@@ -191,6 +199,8 @@ public class Profile_Candidate_Fragment extends Fragment {
                                         }
                                     }
                                 });
+
+
                         CollectionReference getKinhNghiem = db.collection("users")
                                 .document(id_candidate)
                                 .collection("role")
@@ -227,6 +237,59 @@ public class Profile_Candidate_Fragment extends Fragment {
                                         }
                                     }
                                 });
+                        CollectionReference getSkill = db.collection("users")
+                                .document(id_candidate)
+                                .collection("role")
+                                .document("candidate")
+                                .collection("skills");
+                        getSkill.get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            kiNangs.clear(); // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
+                                            if (task.getResult().isEmpty()) {
+                                                // Hiển thị thông báo nếu không có dữ liệu
+                                                kiNangs.add(new KiNang(null, null, "Chưa cập nhật kĩ năng", null));
+                                                kiNangArrayAdapter.notifyDataSetChanged();
+                                                //binding.lisviewHocVan.setVisibility(View.VISIBLE); // Hiển thị ListView
+                                            } else {
+                                                for (DocumentSnapshot document : task.getResult()) {
+                                                    // Lấy dữ liệu từ document và chuyển vào đối tượng TruongHoc
+                                                    String name = document.getString("name");
+
+
+                                                    KiNang kiNang = new KiNang( null, null,name,null);
+
+                                                    kiNangs.add(kiNang); // Thêm vào danh sách
+                                                }
+                                            }
+
+                                            kiNangArrayAdapter.notifyDataSetChanged(); // Cập nhật adapter sau khi thêm dữ liệu mới
+                                        } else {
+                                            Log.d("Firestore", "Error getting documents: ", task.getException());
+                                        }
+                                    }
+                                });
+                        db.collection("users").document(id_candidate).get()
+                                .addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists()) {
+                                        String avatarUrl = documentSnapshot.getString("avatar");
+                                        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                                            // Dùng Glide để tải ảnh từ URL và hiển thị vào ImageView
+                                            Glide.with(getContext())
+                                                    .load(avatarUrl)
+                                                    .centerCrop()
+                                                    .into(binding.imageProfile); // imageView là ImageView của bạn
+                                            Log.d("ii", "onComplete: lay dc anh vs uid"+id_candidate );
+                                        }
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Xử lý lỗi nếu có
+                                    Log.e("FirestoreError", "Lỗi khi lấy dữ liệu", e);
+                                });
+
                     } else {
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
                     }

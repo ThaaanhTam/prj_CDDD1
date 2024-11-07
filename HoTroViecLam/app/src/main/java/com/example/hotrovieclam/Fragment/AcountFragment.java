@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Activity.Navigation;
 import com.example.hotrovieclam.Fragment.Child_Fragment.ChangPassWordFragment;
 import com.example.hotrovieclam.Fragment.Child_Fragment.MyProFileFragment;
@@ -71,7 +72,7 @@ public class AcountFragment extends Fragment {
                 editor.apply();
 
                 // Chuyển về màn hình đăng nhập
-                Intent intent = new Intent(getActivity(),Login.class);
+                Intent intent = new Intent(getActivity(), Login.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 getActivity().finish();
@@ -95,7 +96,8 @@ public class AcountFragment extends Fragment {
         return view;
 
     }
-    public void HienThiThongTin(){
+
+    public void HienThiThongTin() {
         UserSessionManager sessionManager = new UserSessionManager();
         String uid = sessionManager.getUserUid();
 
@@ -107,16 +109,29 @@ public class AcountFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+
                     if (document.exists()) {
                         String name = document.getString("name");
                         String email = document.getString("email");
                         String phoneNumber = document.getString("phoneNumber");
-
+                        Long typeuser = document.getLong("userTypeId");
+                        if (typeuser == 2) {
+                            binding.mucNhaTuynDung.setVisibility(View.VISIBLE);
+                        }
                         // Hiển thị thông tin người dùng
                         binding.name.setText(name);
                         binding.email.setText(email);
                         binding.sdt.setText(phoneNumber);
-                        Log.d("PPPP", "onComplete: "+email+name);
+                        String avatarUrl = document.getString("avatar");
+                        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                            // Dùng Glide để tải ảnh từ URL và hiển thị vào ImageView
+                            Glide.with(getContext())
+                                    .load(avatarUrl)
+                                    .centerCrop()
+                                    .into(binding.avt); // imageView là ImageView của bạn
+                            Log.d("ii", "onComplete: lay dc anh vs uid" + uid);
+                        }
+                        Log.d("PPPP", "onComplete: " + email + name);
                     } else {
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
                     }
@@ -125,5 +140,6 @@ public class AcountFragment extends Fragment {
                 }
             }
         });
+
     }
 }
