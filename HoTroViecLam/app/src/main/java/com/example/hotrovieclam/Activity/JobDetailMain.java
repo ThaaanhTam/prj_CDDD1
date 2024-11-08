@@ -20,11 +20,17 @@ import com.example.hotrovieclam.databinding.ActivityJobDetailMainBinding;
 import com.example.hotrovieclam.databinding.FragmentDetailinfoJobBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 public class JobDetailMain extends AppCompatActivity {
 
     private static final String ARG_JOB_ID = "jobID";
-    private String jobID,sourceId;
+    private String jobID;
+    private int sourceId;
     private FirebaseFirestore db;
+    private ArrayList<Job> listJob = new ArrayList<>(); // Khởi tạo listJob
+
+
     private ActivityJobDetailMainBinding binding;
 
     @Override
@@ -36,14 +42,13 @@ public class JobDetailMain extends AppCompatActivity {
         // Lấy jobID từ Intent
         Intent intent = getIntent();
         jobID = intent.getStringExtra(ARG_JOB_ID);
-        //sourceId = intent.getStringExtra("sourceId");
-        Job job = (Job) intent.getSerializableExtra("job_data");
+        sourceId = intent.getIntExtra("sourceId",0);
+        Intent i = getIntent();
+        Job job = (Job) i.getSerializableExtra("KEY_NAME");
 
-// Sử dụng đối tượng job
-        if (job != null) {
-            Log.d("Job", "Job Title: " + job.getTitle());
-        }
-        Log.e("JobDetailMain", "Received jobIDdddddddddddddddddddddddddddddd: " + jobID+   job.getDescription());
+       Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaa",job.toString());
+
+        //Log.e("JobDetailMain", "Received jobIDdddddddddddddddddddddddddddddd: " + jobID);
         if (jobID == null) {
             Log.e("JobDetailMain", "jobID is null. Please provide a valid jobID.");
             finish(); // Đóng Activity nếu jobID không hợp lệ
@@ -61,11 +66,20 @@ public class JobDetailMain extends AppCompatActivity {
 
 
         // Gọi phương thức để lấy chi tiết công việc
-        fetchJobDetails();
+        fỉebaseJobDetails();
+        if (sourceId==1){
+            Log.d("sourceIdddddddddddd","1");
+        }else if (sourceId==2){
+            Log.d("sourceIdddddddddddd","2");
+        }else {
+            Log.d("sourceIdddddddddddd","3");
+
+        }
+       //displayJobDetails();
     }
 
-    private void fetchJobDetails() {
-
+    private void fỉebaseJobDetails() {
+        binding.tvDescription.setText(jobID != null ? jobID : "N/A");
         // Thay "jobs" bằng tên của collection trong Firestore
         db.collection("jobs").document(jobID)
                 .addSnapshotListener((documentSnapshot, e) -> {
@@ -130,6 +144,9 @@ public class JobDetailMain extends AppCompatActivity {
 
 
                 });
+    }
+    private void Web_APIJobDetails() {
+
     }
 
     @Override

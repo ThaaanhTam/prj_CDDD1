@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.Model.Source;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ListItemBinding;
 
@@ -81,6 +82,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         holder.jobID = jobs.get(position).getId();
         holder.job = jobs.get(position);
 
+
     }
 
     @Override
@@ -90,7 +92,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public int position;
         ListItemBinding binding;
-        public String jobID = "";
+        public String jobID = "",SourceId = "";
        public Job job = new Job();
         public MyViewHolder(@NonNull ListItemBinding itemView) {
             super(itemView.getRoot());
@@ -100,7 +102,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                 @Override
                 public void onClick(View view) {
                     if (recycleClick != null){
-                        recycleClick.DetailClick(view, jobID,job );
+                        recycleClick.DetailClick(SourceId, jobID,job );
                     }
                 }
             });
@@ -114,7 +116,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         notifyDataSetChanged(); // Cập nhật RecyclerView
     }
     public interface OnItemClick {
-        void DetailClick(View view,  String jobID,Job job);
+        void DetailClick(String SourceId,  String jobID,Job job);
 
 
     }

@@ -67,6 +67,7 @@ public class Home extends Fragment {
         db = FirebaseFirestore.getInstance();
         arrayList = new ArrayList<>();
 
+
     }
 
 
@@ -74,7 +75,6 @@ public class Home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         return binding.getRoot();
-
     }
 
     @Override
@@ -96,18 +96,6 @@ public class Home extends Fragment {
         // Lấy dữ liệu từ Firestore
         fetchJobsFromFirestore();
 
-        adapter.setRecycleClick(new MyRecyclerViewAdapter.OnItemClick() {
-            @Override
-            public void DetailClick(View view, String jobID,Job job) {
-           //     Log.d("Click", "DetailClick: " + "jodID" + jobID);
-                //Detail_Job detailJob = new Detail_Job();
-                Intent intent = new Intent(getContext(), JobDetailMain.class);
-                intent.putExtra("jobID", jobID);
-                Log.d(TAG, "DetailClick: "+job);
-               // intent.putExtra("job_data", (CharSequence) job);
-                startActivity(intent);
-            }
-        });
 
         binding.sourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -140,36 +128,50 @@ public class Home extends Fragment {
                     default:
                         filteredJobs.addAll(listJob);
                         break;
+
                 }
 
                 adapter = new MyRecyclerViewAdapter(getActivity(), filteredJobs);
                 binding.jobList.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
+                setRecycleClick();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
+
         });
 
         binding.btnTim.setOnClickListener(v -> {
+
             binding.line1.setVisibility(View.VISIBLE);
             String searchText = binding.searchBar.getText().toString();
             Log.d("SearchInput", "Search text: " + searchText);
             adapter = new MyRecyclerViewAdapter(getActivity(), performSearch(searchText));
             binding.jobList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
+            setRecycleClick();
 
-//            for (Job a : listJob) {
-//                if (a.getSourceId() == 2) {
-//                    Log.d("luong ", "luong web" + a.getAgreement() + "\nLuongMin: " +
-//                            a.getSalaryMin() + "\nLuongMax: " + a.getSalaryMax());
-//                } else if (a.getSourceId() == 1) {
-//                    Log.d("luong ", "luong api" + a.getAgreement());
-//                }
-//            }
+        });
+        setRecycleClick();
 
+    }
+    private void setRecycleClick(){
+        adapter.setRecycleClick(new MyRecyclerViewAdapter.OnItemClick() {
+            @Override
+            public void DetailClick(String SourceID, String jobID,Job job) {
+                //     Log.d("Click", "DetailClick: " + "jodID" + jobID);
+                //Detail_Job detailJob = new Detail_Job();
+                Intent intent = new Intent(getContext(), JobDetailMain.class);
 
+                intent.putExtra("jobID", jobID);
+                intent.putExtra("sourceId", job.getSourceId());
+
+                Log.d(TAG, "DetailClick: "+job);
+                intent.putExtra("KEY_NAME", job);
+                startActivity(intent);
+            }
         });
     }
 
@@ -185,6 +187,7 @@ public class Home extends Fragment {
                 filteredList.add(job);
             }
         }
+
         return filteredList;
     }
 
@@ -349,6 +352,7 @@ public class Home extends Fragment {
             });
 
 
+
         });
 
         ArrayList<String> major = new ArrayList<>();
@@ -496,13 +500,14 @@ public class Home extends Fragment {
 
     // Hàm cập nhật RecyclerView
     private void updateRecyclerView(ArrayList<Job> filteredJobs) {
-        MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(getActivity(), filteredJobs);
+         adapter = new MyRecyclerViewAdapter(getActivity(), filteredJobs);
         // for (Job a : filteredJobs) {
 //            Log.d("luong hien thi", "Thoa thuan: " + a.getAgreement() + "\n max: " + a.getSalaryMax() + "\n min: " + a.getSalaryMin());
 //            Log.d("nganh",a.getMajor());
         // }
         binding.jobList.setAdapter(adapter);
         adapter.notifyDataSetChanged(); // Cập nhật adapter với danh sách mới
+        setRecycleClick();
     }
 }
 
