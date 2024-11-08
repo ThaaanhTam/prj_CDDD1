@@ -29,7 +29,7 @@ public class JobDetailMain extends AppCompatActivity {
     private int sourceId;
     private FirebaseFirestore db;
     private ArrayList<Job> listJob = new ArrayList<>(); // Khởi tạo listJob
-
+    private Job job;
 
     private ActivityJobDetailMainBinding binding;
 
@@ -44,7 +44,7 @@ public class JobDetailMain extends AppCompatActivity {
         jobID = intent.getStringExtra(ARG_JOB_ID);
         sourceId = intent.getIntExtra("sourceId",0);
         Intent i = getIntent();
-        Job job = (Job) i.getSerializableExtra("KEY_NAME");
+        job = (Job) i.getSerializableExtra("KEY_NAME");
 
        Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaa",job.toString());
 
@@ -66,7 +66,7 @@ public class JobDetailMain extends AppCompatActivity {
 
 
         // Gọi phương thức để lấy chi tiết công việc
-        fỉebaseJobDetails();
+//        fỉebaseJobDetails();
         if (sourceId==1){
             Log.d("sourceIdddddddddddd","1");
         }else if (sourceId==2){
@@ -75,11 +75,10 @@ public class JobDetailMain extends AppCompatActivity {
             Log.d("sourceIdddddddddddd","3");
 
         }
-       //displayJobDetails();
+     Web_APIJobDetails();
     }
 
     private void fỉebaseJobDetails() {
-        binding.tvDescription.setText(jobID != null ? jobID : "N/A");
         // Thay "jobs" bằng tên của collection trong Firestore
         db.collection("jobs").document(jobID)
                 .addSnapshotListener((documentSnapshot, e) -> {
@@ -146,8 +145,40 @@ public class JobDetailMain extends AppCompatActivity {
                 });
     }
     private void Web_APIJobDetails() {
+        if (job != null) {
+            // Thiết lập tiêu đề công việc
+            binding.tvTitle.setText(job.getTitle() != null ? job.getTitle() : "N/A");
 
+            // Thiết lập lĩnh vực công việc
+            binding.tvField.setText(job.getMajor() != null ? job.getMajor() : "N/A");
+
+            // Thiết lập mô tả công việc
+            binding.tvDescription.setText(job.getDescription() != null ? job.getDescription() : "N/A");
+
+            // Thiết lập mức lương tối thiểu
+            if (job.getSalaryMin() != -1.0f) {
+                binding.tvSalaryMin.setText(String.valueOf(job.getSalaryMin()));
+            } else {
+                binding.tvSalaryMin.setText("Thỏa thuận");
+            }
+
+            // Thiết lập mức lương tối đa
+            if (job.getSalaryMax() != -1.0f) {
+                binding.tvSalaryMax.setText(String.valueOf(job.getSalaryMax()+"  triệu"));
+            } else {
+                binding.tvSalaryMax.setText("");
+            }
+        } else {
+            Log.e("Web_APIJobDetails", "Job object is null.");
+            // Thiết lập các giá trị mặc định nếu job không tồn tại
+            binding.tvTitle.setText("N/A");
+            binding.tvField.setText("N/A");
+            binding.tvDescription.setText("N/A");
+            binding.tvSalaryMin.setText("Thỏa thuận");
+            binding.tvSalaryMax.setText("N/A");
+        }
     }
+
 
     @Override
     protected void onDestroy() {
