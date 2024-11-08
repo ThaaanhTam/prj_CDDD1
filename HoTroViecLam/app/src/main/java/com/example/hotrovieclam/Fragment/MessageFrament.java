@@ -1,6 +1,5 @@
 package com.example.hotrovieclam.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,11 +18,7 @@ import com.example.hotrovieclam.Adapter.MessageAdapter;
 import com.example.hotrovieclam.Model.Message;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -41,7 +36,6 @@ public class MessageFrament extends Fragment {
     private EditText editTextMessage;
     private ImageButton imageButtonSend;
 
-    private DatabaseReference messagesRef;
     private String currentUserId;
     private String senderId;
     private String receiverId;
@@ -52,10 +46,12 @@ public class MessageFrament extends Fragment {
         View view = inflater.inflate(R.layout.activity_messege, container, false);
 
         // Lấy dữ liệu senderId và receiverId từ Bundle
-        if (getArguments() != null) {
-            senderId = getArguments().getString("senderId");
-            receiverId = getArguments().getString("receiverId");
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            senderId = arguments.getString("senderId", "");
+            receiverId = arguments.getString("receiverId", "");
         }
+
 
         UserSessionManager sessionManager = new UserSessionManager();
         currentUserId = sessionManager.getUserUid();
@@ -65,12 +61,12 @@ public class MessageFrament extends Fragment {
         imageButtonSend = view.findViewById(R.id.imageButtonSend);
 
         setupRecyclerView();
-        loadMessages(senderId, receiverId);
+        loadMessages();
 
         imageButtonSend.setOnClickListener(view1 -> {
             String content = editTextMessage.getText().toString().trim();
             if (!content.isEmpty()) {
-                sendMessage(senderId, receiverId, content);
+                sendMessage(content);
                 editTextMessage.setText("");
             }
         });
@@ -84,7 +80,7 @@ public class MessageFrament extends Fragment {
         recyclerViewMessages.setLayoutManager(new LinearLayoutManager(requireContext()));
     }
 
-    private void sendMessage(String senderId, String receiverId, String content) {
+    private void sendMessage(String content) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Tạo ID cho tin nhắn mới
@@ -104,17 +100,19 @@ public class MessageFrament extends Fragment {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d("ChatApp", "Tin nhắn đã được gửi.");
+                        loadMessages();
                     } else {
                         Log.e("ChatApp", "Lỗi gửi tin nhắn: " + task.getException().getMessage());
                     }
                 });
+
+
     }
 
-
-    private void loadMessages(String senderId, String receiverId) {
+    private void loadMessages() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Truy vấn tin nhắn từ Firestore giữa hai người dùng và lắng nghe thay đổi theo thời gian thực
+        // Lắng nghe tin nhắn theo thời gian thực
         db.collection("messages")
                 .whereIn("sender_id", Arrays.asList(senderId, receiverId))
                 .whereIn("receiver_id", Arrays.asList(senderId, receiverId))
@@ -126,34 +124,24 @@ public class MessageFrament extends Fragment {
                     }
 
                     if (querySnapshot != null) {
-                        messageList.clear();
-                        boolean isInitialLoad = messageList.isEmpty();// Xóa danh sách cũ để cập nhật lại từ đầu
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             String msgSenderId = document.getString("sender_id");
                             String msgReceiverId = document.getString("receiver_id");
                             String content = document.getString("content");
-                           // long sentAt = document.getLong("sent_at");
 
-                            // Thêm tin nhắn vào danh sách
                             Message message = new Message();
                             message.setContent(content);
                             message.setReceiver_id(msgReceiverId);
                             message.setSender_id(msgSenderId);
 
-                            // Kiểm tra tin nhắn mới dựa trên thời gian gửi
+                            // Chỉ thêm tin nhắn mới vào danh sách nếu chưa tồn tại
                             if (!messageList.contains(message)) {
-                                messageList.add(message); // Thêm tin nhắn mới vào danh sách
+                                messageList.add(message);
+                                messageAdapter.notifyItemInserted(messageList.size() - 1);
+                                recyclerViewMessages.scrollToPosition(messageList.size() - 1); // Cuộn xuống tin nhắn mới nhất
                             }
-                        }
-                        messageAdapter.notifyDataSetChanged();
-                        // Chỉ cuộn xuống cuối nếu đang tải lần đầu hoặc có tin nhắn mới
-                        if (isInitialLoad || querySnapshot.size() > messageList.size()) {
-                            recyclerViewMessages.scrollToPosition(messageList.size() - 1); // Cuộn xuống tin nhắn mới nhất
                         }
                     }
                 });
     }
-
-
-
 }

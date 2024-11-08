@@ -24,19 +24,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConvestationFrament extends Fragment {
-
 
     private ActivityConversationBinding binding;
     private ArrayList<Message> conversationList = new ArrayList<>();
     private String currentUserId;
-   private  FirebaseFirestore db;
-    ConversationAdapter adapter;
-
-
+    private FirebaseFirestore db;
+    private ConversationAdapter adapter;
 
     @Nullable
     @Override
@@ -46,14 +43,12 @@ public class ConvestationFrament extends Fragment {
         UserSessionManager sessionManager = new UserSessionManager();
         currentUserId = sessionManager.getUserUid();
 
-
         adapter = new ConversationAdapter(conversationList, (FragmentActivity) getContext());
         binding.recyclerViewConversations.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerViewConversations.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
 
+        // Gọi hàm để tải các tin nhắn từ Firestore
         fetchJobsFromFirestore();
-
 
         // Lắng nghe sự kiện nhấn vào các mục trong RecyclerView
         binding.recyclerViewConversations.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
@@ -64,12 +59,21 @@ public class ConvestationFrament extends Fragment {
                     int position = recyclerView.getChildAdapterPosition(childView);
                     Message message = conversationList.get(position);
 
-                    // Lấy ID người gửi và người nhận
-                    String senderId = currentUserId;  // ID người dùng hiện tại
-                    String receiverId = message.getReceiver_id();  // ID người nhận từ cuộc hội thoại
+                    String senderId;
+                    String receiverId;
 
-                    // Chuyển sang MessageFragment
+                    // Kiểm tra để xác định đúng vai trò của senderId và receiverId
+                    if (message.getSender_id().equals(currentUserId)) {
+                        senderId = currentUserId;
+                        receiverId = message.getReceiver_id();
+                    } else {
+                        senderId = message.getSender_id();
+                        receiverId = currentUserId;
+                    }
+
+                    // Chuyển sang MessageFragment với senderId và receiverId đã xác định đúng
                     openMessageFragment(senderId, receiverId);
+                    Log.d("Conversation", "Sender ID: " + senderId + " | Receiver ID: " + receiverId);
                     return true;
                 }
                 return false;
@@ -77,33 +81,29 @@ public class ConvestationFrament extends Fragment {
 
             @Override
             public void onTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
-                // Không cần xử lý gì ở đây
+                // Không cần xử lý ở đây
             }
 
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-                // Không cần xử lý nếu không cần tắt sự kiện
+                // Không cần xử lý ở đây
             }
         });
-        return binding.getRoot();
 
+
+        return binding.getRoot();
     }
 
-
     private void openMessageFragment(String senderId, String receiverId) {
-        // Tạo MessageFragment và truyền dữ liệu vào
         MessageFrament messageFragment = new MessageFrament();
-
-        // Sử dụng Bundle để truyền dữ liệu
         Bundle bundle = new Bundle();
         bundle.putString("senderId", senderId);
         bundle.putString("receiverId", receiverId);
         messageFragment.setArguments(bundle);
 
-        // Chuyển fragment bằng FragmentTransaction
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, messageFragment); // R.id.fragment_container là nơi chứa các fragment
-        transaction.addToBackStack(null);  // Thêm vào back stack nếu muốn quay lại
+        transaction.replace(R.id.fragment_container, messageFragment);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -116,38 +116,45 @@ public class ConvestationFrament extends Fragment {
             }
 
             if (snapshots != null && !snapshots.isEmpty()) {
-                Log.w("zz", "Ldd");
                 conversationList.clear();
 
-                // Tạo một Set để theo dõi các receiver_id đã tồn tại trong conversationList
-                Set<String> existingReceiverIds = new HashSet<>();
-                Set<String> existingSenderIds = new HashSet<>();
                 for (QueryDocumentSnapshot document : snapshots) {
                     Message message = document.toObject(Message.class);
-//
 
+                    // Kiểm tra nếu người dùng hiện tại là người gửi hoặc người nhận
+                    if ((message.getSender_id() != null && message.getSender_id().equals(currentUserId)) ||
+                            (message.getReceiver_id() != null && message.getReceiver_id().equals(currentUserId))) {
 
-                    if (message.getSender_id() != null && message.getSender_id().equals(currentUserId)||message.getReceiver_id() != null && message.getReceiver_id().equals(currentUserId)) {
-                        String receiverId = message.getReceiver_id();
-                        String senderId = message.getSender_id();
-                        // Kiểm tra receiver_id không null và chưa tồn tại trong Set
-                        if (senderId != null && receiverId != null && !existingReceiverIds.contains(receiverId)&&!existingSenderIds.contains(senderId)) {
+                        // Xác định ID của đối tác trò chuyện
+                        String chatPartnerId = message.getSender_id().equals(currentUserId)
+                                ? message.getReceiver_id() : message.getSender_id();
+
+                        // Kiểm tra xem conversationList đã chứa cuộc hội thoại với đối tác này chưa
+                        boolean exists = false;
+                        for (Message existingMessage : conversationList) {
+                            String existingPartnerId = existingMessage.getSender_id().equals(currentUserId)
+                                    ? existingMessage.getReceiver_id() : existingMessage.getSender_id();
+                            if (existingPartnerId.equals(chatPartnerId)) {
+                                exists = true;
+                                break;
+                            }
+                        }
+
+                        // Nếu chưa có, thêm vào danh sách conversationList
+                        if (!exists) {
                             conversationList.add(message);
-                            existingReceiverIds.add(receiverId);
-                            existingSenderIds.add(senderId);
                         }
                     }
                 }
 
-// Chỉ gọi notifyDataSetChanged một lần sau khi xử lý tất cả các tin nhắn
+                // Cập nhật adapter
                 adapter.notifyDataSetChanged();
-
-
             } else {
                 Log.d("zz", "No current data in the collection");
             }
         });
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
