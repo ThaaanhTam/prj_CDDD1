@@ -49,9 +49,14 @@
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/loading"
+                android:visibility="gone"/>
 
             <EditText
-
+                android:id="@+id/nameToChuc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_text_input_truong_hoc"
@@ -69,7 +74,7 @@
 
 
             <EditText
-                android:id="@+id/editTextEmail"
+                android:id="@+id/editTextCongViec"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_text_input_truong_hoc"
@@ -137,6 +142,7 @@ việc"
                 android:scrollbars="vertical" />
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnxoaKN"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -150,7 +156,7 @@ việc"
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_update_education"
+        android:id="@+id/btn_update_experience"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"

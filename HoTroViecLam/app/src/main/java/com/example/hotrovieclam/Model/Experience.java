@@ -3,25 +3,25 @@ package com.example.hotrovieclam.Model;
 public class Experience {
 
     // ID của người dùng, là mã định danh duy nhất của người dùng trong hệ thống
-    private String id_uid = "user12345";
+    private String id_uid ;
 
     // ID của kinh nghiệm, là mã định danh duy nhất của kinh nghiệm đó (có thể là UUID hoặc mã riêng)
-    private String idExperiences = "exp67890";
+    private String idExperiences ;
 
     // Tên tổ chức nơi người dùng đã từng làm việc
-    private String name_organization = "ABC Corp";
+    private String name_organization;
 
     // Vị trí công việc mà người dùng đã đảm nhiệm tại tổ chức đó
-    private String position = "Software Engineer";
+    private String position ;
 
     // Thời gian bắt đầu làm việc (định dạng yyyy-MM-dd)
-    private String time_start = "2022-06-01";
+    private String time_start ;
 
     // Thời gian kết thúc làm việc (định dạng yyyy-MM-dd, hoặc "Present" nếu vẫn đang làm việc tại đây)
-    private String time_end = "2023-08-31";
+    private String time_end ;
 
     // Mô tả công việc hoặc nhiệm vụ chính trong vai trò này
-    private String description = "Developed Android applications using Java. Collaborated with team to improve user experience and optimized application performance by reducing load times by 20%.";
+    private String description ;
 
     public Experience() {
     }
