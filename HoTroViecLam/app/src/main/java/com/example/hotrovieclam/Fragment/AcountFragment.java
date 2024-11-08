@@ -153,6 +153,7 @@ binding.load.setVisibility(View.VISIBLE);
                             binding.load.setVisibility(View.GONE);
                             Log.d("ii", "onComplete: lay dc anh vs uid" + uid);
                         }
+
                         Log.d("PPPP", "onComplete: " + email + name);
                     } else {
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
