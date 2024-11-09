@@ -1,8 +1,6 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +29,6 @@ public class Candidate_List extends Fragment {
     private FragmentCandidateListBinding binding;
     private CandidateAdapter adapter;
     private ArrayList<User> users = new ArrayList<>();
-
 
     public Candidate_List() {
         // Required empty public constructor
@@ -80,6 +77,20 @@ public class Candidate_List extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
+        getParentFragmentManager().setFragmentResultListener("deleteSuccess", this, (req, keyvalue) -> {
+            // Lấy giá trị "delete" từ kết quả
+            boolean update = keyvalue.getBoolean("delete");
+
+            // Kiểm tra nếu có yêu cầu cập nhật
+            if (update) {
+                // Lấy lại dữ liệu từ Firestore
+                users.clear();
+                fetchCandidatesRealtime();
+                Log.d("ff", "onCreateView: Cập nhật thành công");
+
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         // Fetch candidates in real-time
         fetchCandidatesRealtime();
@@ -110,7 +121,7 @@ public class Candidate_List extends Fragment {
         return binding.getRoot();
     }
 
-    public void fetchCandidatesRealtime() {
+    private void fetchCandidatesRealtime() {
         if (jobID == null) {
             Log.e("Candidate_List", "Job ID is null, cannot fetch candidates.");
             return;
@@ -131,6 +142,7 @@ public class Candidate_List extends Fragment {
 
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             String candidateId = document.getString("candidateId");
+
                             if (candidateId != null) {
                                 fetchUserDetails(candidateId);  // Fetch user details for each candidate
                             }
@@ -164,9 +176,9 @@ public class Candidate_List extends Fragment {
                         // Notify adapter to refresh the list
                         adapter.notifyDataSetChanged();
                     } else {
+
                         Log.d("Candidate_List", "No such user document for candidate ID: " + candidateId);
                     }
                 });
     }
-
 }
