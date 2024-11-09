@@ -13,4 +13,15 @@
     <color name="xanhlexanhlet">#486544</color>
     <color name="dennhat">#202120</color>
     <color name="title">#2FAB22</color>
+
+
+
+    <color name="primary_text">#333333</color>
+    <color name="secondary_text">#555555</color>
+    <color name="gray">#9E9E9E</color>
+    <color name="light_gray">#F5F5F5</color>
+    <color name="background">#FAFAFA</color>
+    <color name="highlight">#2196F3</color> <!-- Highlight color for buttons and icons -->
+    <color name="button_text">#FFFFFF</color>
+    <color name="title_background">#1976D2</color>
 </resources>

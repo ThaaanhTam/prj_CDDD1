@@ -41,6 +41,8 @@ public class Website {
                     String salary = jobElement.select(".salary").text();
 
                     Document descriptionDoc = Jsoup.connect(jobElement.select(".job_link").attr("href")).get();
+                    String jobUrl = jobElement.select(".job_link").attr("href");
+                    Log.d("mm", jobUrl);
                     String description = descriptionDoc.select("div.detail-row").text();
                     String location = descriptionDoc.select("div.place-name").text();
 
