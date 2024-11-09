@@ -1,11 +1,12 @@
 package com.example.hotrovieclam.Model;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 import android.graphics.Color;
 
 
-public class Job {
+public class Job  implements Serializable {
     private String id;
     private String employerId;
     private String avatar; // ref to employers.user_id
@@ -32,7 +33,7 @@ public class Job {
 
     private String major;
     private String agreement;
-    private com.google.firebase.Timestamp createdAt;
+    //private com.google.firebase.Timestamp createdAt;
     private Timestamp updatedAt;
 
 //    public Source getSource() {
@@ -147,13 +148,13 @@ public class Job {
         this.agreement = agreement;
     }
 
-    public com.google.firebase.Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(com.google.firebase.Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public com.google.firebase.Timestamp getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(com.google.firebase.Timestamp createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     public Timestamp getUpdatedAt() {
         return updatedAt;
@@ -179,7 +180,7 @@ public class Job {
                 ", major='" + major + '\'' +
                 ", salaryMin='" + salaryMin + '\'' +
                 ", salaryMax='" + salaryMax + '\'' +
-                ", createdAt=" + createdAt +
+              //  ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
     }

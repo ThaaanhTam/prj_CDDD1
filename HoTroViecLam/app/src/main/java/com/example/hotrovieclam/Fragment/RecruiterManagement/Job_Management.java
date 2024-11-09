@@ -113,7 +113,6 @@ adapter.setRecycleClick(new JobManagementAdapter.OnItemClick() {
                         jobs.add(job);
 
                     }
-
                 }
                 adapter.notifyDataSetChanged();
             } else {
