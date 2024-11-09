@@ -1,5 +1,7 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,20 +12,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Model.Experiences;
 import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.TruongHoc;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentProfileCandidateBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -31,6 +38,7 @@ import java.util.ArrayList;
 public class Profile_Candidate_Fragment extends Fragment {
     private FragmentProfileCandidateBinding binding;
     String id_candidate = null;
+    String id_Job=null;
     ArrayList<TruongHoc> truonghoc = new ArrayList<>();
     ArrayList<Experiences> experiences = new ArrayList<>();
     ArrayList<KiNang>kiNangs= new ArrayList<>();
@@ -57,11 +65,92 @@ public class Profile_Candidate_Fragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             id_candidate = bundle.getString("id_candidate");
+            id_Job = bundle.getString("ID_JOB");
         }
+        Log.d("KOK", "yyyyyyyyy "+id_Job);
         LoadDataToFireBase(id_candidate);
+        binding.deleteCandidate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteCandidate(id_Job, id_candidate);
+            }
+        });
 
         return view;
     }
+
+    private void deleteCandidate(String idJob, String candidateId) {
+        // Hiển thị hộp thoại xác nhận
+        new AlertDialog.Builder(getContext())
+                .setTitle("Xác nhận xóa")
+                .setMessage("Bạn có chắc chắn muốn xóa ứng viên này không?")
+                .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Nếu người dùng chọn "Xóa", tiến hành xóa ứng viên và tài liệu người dùng
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                        // Bước 1: Truy vấn và lấy tài liệu ứng viên trong collection "application"
+                        db.collection("jobs")
+                                .document(idJob)  // ID của công việc
+                                .collection("application")
+                                .whereEqualTo("candidateId", candidateId)  // Tìm ứng viên theo candidateId
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            QuerySnapshot querySnapshot = task.getResult();
+
+                                            // Kiểm tra nếu có tài liệu ứng viên cần xóa
+                                            if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                                // Lấy id của tài liệu trong collection "application"
+                                                for (QueryDocumentSnapshot document : querySnapshot) {
+                                                    String documentId = document.getId(); // Lấy id của tài liệu trong application
+
+                                                    // Xóa tài liệu ứng viên dựa trên documentId
+                                                    db.collection("jobs")
+                                                            .document(idJob)
+                                                            .collection("application")
+                                                            .document(documentId)
+                                                            .delete()
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    // Xóa thành công tài liệu ứng viên
+                                                                    Toast.makeText(getContext(), "Xóa ứng viên thành công!", Toast.LENGTH_SHORT).show();
+                                                                    Candidate_List candidateList = new Candidate_List();
+                                                                    candidateList.fetchCandidatesRealtime();
+                                                                    Bundle bundle = new Bundle();
+                                                                    bundle.putBoolean("delete", true);  // Đảm bảo tên khóa là "delete"
+                                                                    getParentFragmentManager().setFragmentResult("deleteSuccess", bundle);
+                                                                    getParentFragmentManager().popBackStack();  // Đóng Fragment
+
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Toast.makeText(getContext(), "Lỗi khi xóa ứng viên: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            });
+                                                }
+                                            } else {
+                                                // Nếu không tìm thấy tài liệu ứng viên
+                                                Toast.makeText(getContext(), "Không tìm thấy ứng viên với id: " + candidateId, Toast.LENGTH_SHORT).show();
+                                            }
+                                        } else {
+                                            // Trường hợp lỗi khi truy vấn
+                                            Toast.makeText(getContext(), "Lỗi khi truy vấn Firestore: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton("Hủy", null) // Nếu chọn "Hủy", không làm gì cả
+                .show();
+    }
+
 
     public void LoadDataToFireBase(String id_candidate) {
         //Log.d("EEE", "LoadDataToFireBase: "+id_candidate);

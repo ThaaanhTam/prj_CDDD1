@@ -25,7 +25,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="20dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/anhdemo"
+            android:src="@drawable/no_company"
             app:shapeAppearanceOverlay="@style/customImg" />
 
         <LinearLayout

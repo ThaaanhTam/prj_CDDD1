@@ -97,40 +97,26 @@ public class Dialog_address extends DialogFragment {
         binding.xacnhan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Lấy dữ liệu địa chỉ
                 String a = binding.diachicuthe.getText().toString().trim();
-                if (a.isEmpty()){
-                    Toast.makeText(getContext(), "Vui lòng nhập địa chỉ cụ thể", Toast.LENGTH_SHORT).show();
-                    binding.diachicuthe.requestFocus();
-                    return;
-                }
                 String b = binding.nameTinhThanh.getSelectedItem().toString().trim();
                 String c = binding.quanHuyen.getSelectedItem().toString();
                 String d = binding.phuongxa.getSelectedItem().toString();
                 String diachhi = a + ", " + d + ", " + c + ", " + b;
 
-                if (thongTinCaNhanFragment == null) {
-                    thongTinCaNhanFragment = new ThongTinCaNhanFragment();
-                    Bundle args = new Bundle();
-                    args.putString("diachi", diachhi);
-                    thongTinCaNhanFragment.setArguments(args);
-                } else {
-                    Bundle args = new Bundle();
-                    args.putString("diachi", diachhi);
-                    thongTinCaNhanFragment.setArguments(args);
+                // Tìm ThongTinCaNhanFragment và gọi phương thức updateAddress
+                ThongTinCaNhanFragment thongTinCaNhanFragment =
+                        (ThongTinCaNhanFragment) getParentFragmentManager().findFragmentById(R.id.fragment_container);
+
+                if (thongTinCaNhanFragment != null) {
+                    thongTinCaNhanFragment.updateAddress(diachhi);
                 }
 
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, thongTinCaNhanFragment)
-                        .addToBackStack(null)
-                        .commit();
-
-                Log.d("sss", diachhi);
-
-                // Đóng dialog hiện tại
+                // Đóng dialog
                 dismiss();
             }
         });
+
 
 
         return view;

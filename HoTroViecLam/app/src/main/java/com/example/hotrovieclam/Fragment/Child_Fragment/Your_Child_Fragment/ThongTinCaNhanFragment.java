@@ -207,31 +207,38 @@ public class ThongTinCaNhanFragment extends Fragment {
                 });
     }
 
-    private void getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-            return;
+//    private void getLastLocation() {
+//        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(requireActivity(),
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+//            return;
+//        }
+//
+//        fusedLocationClient.getLastLocation()
+//                .addOnSuccessListener(location -> {
+//                    if (location != null) {
+//                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+//                        try {
+//                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+//                            if (addresses != null && !addresses.isEmpty()) {
+//                                Address address = addresses.get(0);
+//                                String addressString = address.getAddressLine(0);
+//                                binding.editTextDC.setText(addressString);
+//                            }
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                            Toast.makeText(getContext(), "Không thể lấy địa chỉ", Toast.LENGTH_SHORT).show();
+//                        }
+//                    } else {
+//                        Toast.makeText(getContext(), "Không thể lấy vị trí hiện tại", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
+    public void updateAddress(String diachi) {
+        // Kiểm tra nếu binding đã được khởi tạo
+        if (binding != null) {
+            binding.editTextDC.setText(diachi);
         }
-
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(location -> {
-                    if (location != null) {
-                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-                        try {
-                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                            if (addresses != null && !addresses.isEmpty()) {
-                                Address address = addresses.get(0);
-                                String addressString = address.getAddressLine(0);
-                                binding.editTextDC.setText(addressString);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Không thể lấy địa chỉ", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(getContext(), "Không thể lấy vị trí hiện tại", Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
+
 }

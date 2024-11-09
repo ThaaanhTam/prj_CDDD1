@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/anhdemo"
+        android:src="@drawable/no_company"
         android:stateListAnimator="@drawable/animation_press_images"
         app:shapeAppearanceOverlay="@style/customImg" />
 

@@ -2,6 +2,7 @@ package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ public class Candidate_List extends Fragment {
     private FragmentCandidateListBinding binding;
     private CandidateAdapter adapter;
     private ArrayList<User> users = new ArrayList<>();
+
 
     public Candidate_List() {
         // Required empty public constructor
@@ -62,6 +64,22 @@ public class Candidate_List extends Fragment {
         binding.candidateList.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         binding.candidateList.setAdapter(adapter);
+        getParentFragmentManager().setFragmentResultListener("deleteSuccess", this, (req, keyvalue) -> {
+            // Lấy giá trị "delete" từ kết quả
+            boolean update = keyvalue.getBoolean("delete");
+
+            // Kiểm tra nếu có yêu cầu cập nhật
+            if (update) {
+                // Lấy lại dữ liệu từ Firestore
+                users.clear();
+                fetchCandidatesRealtime();
+                Log.d("ff", "onCreateView: Cập nhật thành công");
+
+                // Sau khi lấy lại dữ liệu, làm mới danh sách
+                // (Lưu ý: Dữ liệu đã được cập nhật trong fetchCandidatesRealtime)
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         // Fetch candidates in real-time
         fetchCandidatesRealtime();
@@ -74,6 +92,7 @@ public class Candidate_List extends Fragment {
                 // Tạo Bundle để truyền dữ liệu
                 Bundle bundle = new Bundle();
                 bundle.putString("id_candidate", id_candidate);
+                bundle.putString("ID_JOB", jobID);
 
                 // Thiết lập arguments cho Fragment
                 profileCandidateFragment.setArguments(bundle);
@@ -88,11 +107,10 @@ public class Candidate_List extends Fragment {
         });
 
 
-
         return binding.getRoot();
     }
 
-    private void fetchCandidatesRealtime() {
+    public void fetchCandidatesRealtime() {
         if (jobID == null) {
             Log.e("Candidate_List", "Job ID is null, cannot fetch candidates.");
             return;
@@ -108,12 +126,13 @@ public class Candidate_List extends Fragment {
                     }
 
                     if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                        // Clear the local users list before adding new data
                         users.clear();
+
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             String candidateId = document.getString("candidateId");
-                            Log.d("TRT", "fetchCandidatesRealtime: "+candidateId);
                             if (candidateId != null) {
-                                fetchUserDetails(candidateId);
+                                fetchUserDetails(candidateId);  // Fetch user details for each candidate
                             }
                         }
                     } else {
@@ -133,23 +152,21 @@ public class Candidate_List extends Fragment {
 
                     if (userDocument != null && userDocument.exists()) {
                         User user = new User();
-                       // if (user != null) {
-                            user.setName(userDocument.getString("name"));
-                            user.setAvatar(userDocument.getString("avatar"));
-                            String email = userDocument.getString("email");
-                        String sdt = userDocument.getString("phoneNumber");
-                        String id = userDocument.getString("id");
-                        user.setEmail(email);
-                        user.setPhoneNumber(sdt);
-                        user.setId(id);
+                        user.setName(userDocument.getString("name"));
+                        user.setAvatar(userDocument.getString("avatar"));
+                        user.setEmail(userDocument.getString("email"));
+                        user.setPhoneNumber(userDocument.getString("phoneNumber"));
+                        user.setId(userDocument.getString("id"));
 
+                        // Add the user to the list
                         users.add(user);
-                            adapter.notifyDataSetChanged();
-                     //   }
-                    } else {
 
+                        // Notify adapter to refresh the list
+                        adapter.notifyDataSetChanged();
+                    } else {
                         Log.d("Candidate_List", "No such user document for candidate ID: " + candidateId);
                     }
                 });
     }
+
 }

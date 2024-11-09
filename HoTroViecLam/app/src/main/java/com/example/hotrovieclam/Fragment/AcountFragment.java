@@ -97,20 +97,20 @@ public class AcountFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d("000", "calll: ");
-                DialogFragmentAvatar avatar= new DialogFragmentAvatar();
-                avatar.show(getParentFragmentManager(),"ChangeAvatarDialog");
+                DialogFragmentAvatar avatar = new DialogFragmentAvatar();
+                avatar.show(getParentFragmentManager(), "ChangeAvatarDialog");
             }
         });
-        getParentFragmentManager().setFragmentResultListener("updateSuccess",this,(req,keyvalue)->{
+        getParentFragmentManager().setFragmentResultListener("updateSuccess", this, (req, keyvalue) -> {
             boolean update = keyvalue.getBoolean("update");
-            if (update){
+            if (update) {
                 binding.avt.setVisibility(View.GONE);
                 HienThiThongTin();
 
             }
         });
-        binding.load.setVisibility(View.GONE);
         HienThiThongTin();
+        binding.avt.setImageResource(R.drawable.no_company);
         return view;
 
     }
@@ -118,7 +118,7 @@ public class AcountFragment extends Fragment {
     public void HienThiThongTin() {
         UserSessionManager sessionManager = new UserSessionManager();
         String uid = sessionManager.getUserUid();
-binding.load.setVisibility(View.VISIBLE);
+        binding.load.setVisibility(View.VISIBLE);
         // Dùng UID để truy vấn Firestore hoặc hiển thị thông tin người dùng
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(uid);
@@ -152,7 +152,10 @@ binding.load.setVisibility(View.VISIBLE);
                             binding.avt.setVisibility(View.VISIBLE);
                             binding.load.setVisibility(View.GONE);
                             Log.d("ii", "onComplete: lay dc anh vs uid" + uid);
+                        } else {
+                            binding.avt.setImageResource(R.drawable.no_company);
                         }
+                        binding.load.setVisibility(View.GONE);
 
                         Log.d("PPPP", "onComplete: " + email + name);
                     } else {

@@ -32,11 +32,10 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/avt"
-                    android:visibility="gone"
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/img_1"
+                    android:src="@drawable/no_company"
                     android:layout_marginTop="10dp"
                     app:shapeAppearanceOverlay="@style/customImg" />
                 <ProgressBar
