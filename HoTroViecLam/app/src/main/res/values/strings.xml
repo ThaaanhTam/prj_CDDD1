@@ -125,4 +125,6 @@
 
     <string name="back_button">Quay lại</string> <!-- Mô tả cho nút trở về -->
     <string name="avatar">Avatar</string>
+    <string name="info_management">Màn hình thông tin nhà tuyển dụng</string>
+
 </resources>
