@@ -42,11 +42,11 @@ public class JobDetailMain extends AppCompatActivity {
         // Lấy jobID từ Intent
         Intent intent = getIntent();
         jobID = intent.getStringExtra(ARG_JOB_ID);
-        sourceId = intent.getIntExtra("sourceId",0);
+        sourceId = intent.getIntExtra("sourceId", 0);
         Intent i = getIntent();
         job = (Job) i.getSerializableExtra("KEY_NAME");
 
-       Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaa",job.toString());
+        Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaa", job.toString());
 
         //Log.e("JobDetailMain", "Received jobIDdddddddddddddddddddddddddddddd: " + jobID);
         if (jobID == null) {
@@ -54,11 +54,9 @@ public class JobDetailMain extends AppCompatActivity {
             finish(); // Đóng Activity nếu jobID không hợp lệ
             return;
         }
-        binding.lvGoBack.setOnClickListener(new View.OnClickListener()
-
-        {
+        binding.lvGoBack.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick (View v){
+            public void onClick(View v) {
                 finish();
             }
         });
@@ -67,9 +65,9 @@ public class JobDetailMain extends AppCompatActivity {
 
         // Gọi phương thức để lấy chi tiết công việc
 //        fỉebaseJobDetails();
-        if (sourceId==3){
-           fỉebaseJobDetails();
-        }else {
+        if (sourceId == 3) {
+            fỉebaseJobDetails();
+        } else {
             Web_APIJobDetails();
 
         }
@@ -82,107 +80,142 @@ public class JobDetailMain extends AppCompatActivity {
                 .addSnapshotListener((documentSnapshot, e) -> {
                     if (e != null) {
                         Log.e("JobDetailMain", "Listen failed.", e);
-                        Log.d("JobDetailMainTitle","dddd");
+                        Log.d("JobDetailMainTitle", "dddd");
                         return;
                     }
 
                     if (documentSnapshot != null && documentSnapshot.exists()) {
-                        Log.d("JobDetailMainTitle","jobTitle");
+                        String employerId = documentSnapshot.getString("employerId");
+                        if (employerId != null) {
+                            // Truy vấn người sử dụng từ employerId
+                            db.collection("users").document(employerId)
+                                    .get()
+                                    .addOnSuccessListener(userSnapshot -> {
+                                        if (userSnapshot.exists()) {
+                                            // Lấy tên và số điện thoại của nhà tuyển dụng
+                                            String email = userSnapshot.getString("email");
+                                            String employerPhone = userSnapshot.getString("phoneNumber");
 
-                        // Kiểm tra và hiển thị tiêu đề công việc
-                        if (documentSnapshot.contains("title")) {
-                            String jobTitle = documentSnapshot.getString("title");
-                            Log.d("JobDetailMainTitle",jobTitle);
-                            binding.tvTitle.setText(jobTitle != null ? jobTitle : "N/A");
-                        } else {
-                            Log.w("JobDetailMain", "Field 'title' does not exist");
-                            binding.tvTitle.setText("N/A");
-                        }
-                        // Kiểm tra và hiển thị lĩnh vực
-                        if (documentSnapshot.contains("major")) {
-                            String jobMajor = documentSnapshot.getString("major");
-                            binding.tvField.setText(jobMajor != null ? jobMajor : "N/A");
-                        } else {
-                            Log.w("JobDetailMain", "Field 'title' does not exist");
-                            binding.tvField.setText("N/A");
-                        }
+                                            // Hiển thị thông tin
+                                            Log.d("EmployerDetails", "Name: " + email);
+                                            Log.d("EmployerDetails", "Phone: " + employerPhone);
 
-                        // Kiểm tra và hiển thị mô tả công việc
-                        if (documentSnapshot.contains("description")) {
-                            String description = documentSnapshot.getString("description");
-                            binding.tvDescription.setText(description != null ? description : "N/A");
-                        } else {
-                            Log.w("JobDetailMain", "Field 'description' does not exist");
-                            binding.tvDescription.setText("N/A");
+                                            // Cập nhật UI (ví dụ với TextView)
+                                            binding.tvEmail.setText(email != null ? email : "N/A");
+                                            binding.tvSDT.setText(employerPhone != null ? employerPhone : "N/A");
+                                        } else {
+                                            Log.w("EmployerDetails", "No such user document");
+                                        }
+                                    })
+                                    .addOnFailureListener(es -> Log.e("EmployerDetails", "Error getting user details", e));
                         }
 
-                        // Kiểm tra và hiển thị mức lương tối thiểu
-                        if (documentSnapshot.contains("salaryMin")) {
-                            Double salaryMin = documentSnapshot.getDouble("salaryMin");
-                            binding.tvSalaryMin.setText(salaryMin != null ? String.valueOf(salaryMin) : "N/A");
-                        } else {
-                            Log.w("JobDetailMain", "Field 'salaryMin' does not exist");
-                            binding.tvSalaryMin.setText("N/A");
-                        }
+                    Log.d("JobDetailMainTitle", "jobTitle");
 
-                        // Kiểm tra và hiển thị mức lương tối đa
-                        if (documentSnapshot.contains("salaryMax")) {
-                            Double salaryMax = documentSnapshot.getDouble("salaryMax");
-                            binding.tvSalaryMax.setText(salaryMax != null ? String.valueOf(salaryMax) : "N/A");
-                        } else {
-                            Log.w("JobDetailMain", "Field 'salaryMax' does not exist");
-                            binding.tvSalaryMax.setText("N/A");
-                        }
-
+                    // Kiểm tra và hiển thị tiêu đề công việc
+                    if (documentSnapshot.contains("title")) {
+                        String jobTitle = documentSnapshot.getString("title");
+                        Log.d("JobDetailMainTitle", jobTitle);
+                        binding.tvTitle.setText(jobTitle != null ? jobTitle : "N/A");
                     } else {
-                        Log.d("JobDetailMainTitle", "No such document");
+                        Log.w("JobDetailMain", "Field 'title' does not exist");
+                        binding.tvTitle.setText("N/A");
+                    }
+                    // Kiểm tra và hiển thị lĩnh vực
+                    if (documentSnapshot.contains("major")) {
+                        String jobMajor = documentSnapshot.getString("major");
+                        binding.tvField.setText(jobMajor != null ? jobMajor : "N/A");
+                    } else {
+                        Log.w("JobDetailMain", "Field 'title' does not exist");
+                        binding.tvField.setText("N/A");
+                    }
+                    // Kiểm tra và hiển thị địa điểm
+                    if (documentSnapshot.contains("major")) {
+                        String jobLocation = documentSnapshot.getString("location");
+                        binding.tvLocation.setText(jobLocation != null ? jobLocation : "N/A");
+                    } else {
+                        Log.w("JobDetailMain", "Field 'title' does not exist");
+                        binding.tvLocation.setText("N/A");
                     }
 
+                    // Kiểm tra và hiển thị mô tả công việc
+                    if (documentSnapshot.contains("description")) {
+                        String description = documentSnapshot.getString("description");
+                        binding.tvDescription.setText(description != null ? description : "N/A");
+                    } else {
+                        Log.w("JobDetailMain", "Field 'description' does not exist");
+                        binding.tvDescription.setText("N/A");
+                    }
 
-                });
-    }
-    private void Web_APIJobDetails() {
-        if (job != null) {
-            Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaa",job)
-            binding.dangkiungtuyen.setText("Truy cập trang web");
-            binding.msgImg.setVisibility(View.GONE);
-            // Thiết lập tiêu đề công việc
-            binding.tvTitle.setText(job.getTitle() != null ? job.getTitle() : "N/A");
+                    // Kiểm tra và hiển thị mức lương tối thiểu
+                    if (documentSnapshot.contains("salaryMin")) {
+                        Double salaryMin = documentSnapshot.getDouble("salaryMin");
+                        binding.tvSalaryMin.setText(salaryMin != null ? String.valueOf(salaryMin) : "N/A");
+                    } else {
+                        Log.w("JobDetailMain", "Field 'salaryMin' does not exist");
+                        binding.tvSalaryMin.setText("N/A");
+                    }
 
-            // Thiết lập lĩnh vực công việc
-            binding.tvField.setText(job.getMajor() != null ? job.getMajor() : "N/A");
+                    // Kiểm tra và hiển thị mức lương tối đa
+                    if (documentSnapshot.contains("salaryMax")) {
+                        Double salaryMax = documentSnapshot.getDouble("salaryMax");
+                        binding.tvSalaryMax.setText(salaryMax != null ? String.valueOf(salaryMax) : "N/A");
+                    } else {
+                        Log.w("JobDetailMain", "Field 'salaryMax' does not exist");
+                        binding.tvSalaryMax.setText("N/A");
+                    }
 
-            // Thiết lập mô tả công việc
-            binding.tvDescription.setText(job.getDescription() != null ? job.getDescription() : "N/A");
-
-            // Thiết lập mức lương tối thiểu
-            if (job.getSalaryMin() != -1.0f) {
-                binding.tvSalaryMin.setText(String.valueOf(job.getSalaryMin()));
-            } else {
-                binding.tvSalaryMin.setText("Thỏa thuận");
-            }
-
-            // Thiết lập mức lương tối đa
-            if (job.getSalaryMax() != -1.0f) {
-                binding.tvSalaryMax.setText(String.valueOf(job.getSalaryMax()+"  triệu"));
-            } else {
-                binding.tvSalaryMax.setText("");
-            }
-        } else {
-            Log.e("Web_APIJobDetails", "Job object is null.");
-            // Thiết lập các giá trị mặc định nếu job không tồn tại
-            binding.tvTitle.setText("N/A");
-            binding.tvField.setText("N/A");
-            binding.tvDescription.setText("N/A");
-            binding.tvSalaryMin.setText("Thỏa thuận");
-            binding.tvSalaryMax.setText("N/A");
+                } else{
+            Log.d("JobDetailMainTitle", "No such document");
         }
-    }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        binding = null;
+    });
+}
+
+private void Web_APIJobDetails() {
+    if (job != null) {
+        Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaa", job.getJobURL());
+        binding.dangkiungtuyen.setText("Truy cập trang web");
+        binding.msgImg.setVisibility(View.GONE);
+        binding.emailSDT.setVisibility(View.GONE);
+        // Thiết lập tiêu đề công việc
+        binding.tvTitle.setText(job.getTitle() != null ? job.getTitle() : "N/A");
+
+        // Thiết lập lĩnh vực công việc
+        binding.tvField.setText(job.getMajor() != null ? job.getMajor() : "N/A");
+
+        // Thiết lập mô tả công việc
+        binding.tvDescription.setText(job.getDescription() != null ? job.getDescription() : "N/A");
+        binding.tvLocation.setText(job.getLocation() != null ? job.getLocation() : "N/A");
+        // Thiết lập mức lương tối thiểu
+        if (job.getSalaryMin() != -1.0f) {
+            binding.tvSalaryMin.setText(String.valueOf(job.getSalaryMin()));
+        } else {
+            binding.tvSalaryMin.setText("Thỏa thuận");
+        }
+
+        // Thiết lập mức lương tối đa
+        if (job.getSalaryMax() != -1.0f) {
+            binding.tvSalaryMax.setText(String.valueOf(job.getSalaryMax() + "  triệu"));
+        } else {
+            binding.tvSalaryMax.setText("");
+        }
+    } else {
+        Log.e("Web_APIJobDetails", "Job object is null.");
+        // Thiết lập các giá trị mặc định nếu job không tồn tại
+        binding.tvTitle.setText("N/A");
+        binding.tvField.setText("N/A");
+        binding.tvDescription.setText("N/A");
+        binding.tvSalaryMin.setText("Thỏa thuận");
+        binding.tvSalaryMax.setText("N/A");
     }
+}
+
+
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    binding = null;
+}
 }

@@ -41,7 +41,7 @@ public class Website {
                     String image = jobElement.select("img.lazy-img").attr("data-src");
                     String title = jobElement.select(".job_link").text();
                     String salary = jobElement.select(".salary").text();
-
+                    String jobUrl = jobElement.select(".job_link").attr("href");
                     Document descriptionDoc = Jsoup.connect(jobElement.select(".job_link").attr("href")).get();
                     String description = descriptionDoc.select("div.detail-row").text();
                     String location = descriptionDoc.select("div.place-name").text();
@@ -53,6 +53,7 @@ public class Website {
                     job.setDescription(description);
                     job.setLocation(location);
                  //   job.setAgreement(salary);
+                    job.setJobURL(jobUrl);
                     job.setSourceId(2);
                     try {
                         String[] salaryParts = salary.split("-");
@@ -110,7 +111,10 @@ public class Website {
                     job.setDescription(description);
                     job.setAvatar(imgUrl);
                     job.setLocation(location);
-                //    job.setAgreement(salary);
+                    job.setJobURL(jobUrl);
+                    job.setSourceId(2);
+
+                    //    job.setAgreement(salary);
                     try {
                         String[] salaryParts = salary.split("-");
                         if (salaryParts.length == 2) {
