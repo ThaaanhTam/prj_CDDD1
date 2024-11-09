@@ -24,6 +24,7 @@
         <activity
             android:name=".Fragment.RecruiterManagement.PostJob"
             android:exported="false" />
+
         <activity
             android:name=".Fragment.RecruiterManagement.Detail_Job"
             android:exported="false" />

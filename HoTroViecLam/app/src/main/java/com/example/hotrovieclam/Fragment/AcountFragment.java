@@ -15,9 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Activity.Navigation;
 import com.example.hotrovieclam.Buoc.RegisterEmployer;
 import com.example.hotrovieclam.Fragment.Child_Fragment.ChangPassWordFragment;
+import com.example.hotrovieclam.Fragment.Child_Fragment.DialogFragmentAvatar;
 import com.example.hotrovieclam.Fragment.Child_Fragment.MyProFileFragment;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.Nam.ChangePassword.ChangePassWord;
@@ -72,7 +74,7 @@ public class AcountFragment extends Fragment {
                 editor.apply();
 
                 // Chuyển về màn hình đăng nhập
-                Intent intent = new Intent(getActivity(),Login.class);
+                Intent intent = new Intent(getActivity(), Login.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 getActivity().finish();
@@ -101,14 +103,32 @@ public class AcountFragment extends Fragment {
             }
         });
 
+        binding.avt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("000", "calll: ");
+                DialogFragmentAvatar avatar = new DialogFragmentAvatar();
+                avatar.show(getParentFragmentManager(), "ChangeAvatarDialog");
+            }
+        });
+        getParentFragmentManager().setFragmentResultListener("updateSuccess", this, (req, keyvalue) -> {
+            boolean update = keyvalue.getBoolean("update");
+            if (update) {
+                binding.avt.setVisibility(View.GONE);
+                HienThiThongTin();
+
+            }
+        });
         HienThiThongTin();
+        binding.avt.setImageResource(R.drawable.no_company);
         return view;
 
     }
-    public void HienThiThongTin(){
+
+    public void HienThiThongTin() {
         UserSessionManager sessionManager = new UserSessionManager();
         String uid = sessionManager.getUserUid();
-
+        binding.load.setVisibility(View.VISIBLE);
         // Dùng UID để truy vấn Firestore hoặc hiển thị thông tin người dùng
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(uid);
@@ -117,16 +137,37 @@ public class AcountFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+
                     if (document.exists()) {
                         String name = document.getString("name");
                         String email = document.getString("email");
                         String phoneNumber = document.getString("phoneNumber");
-
+                        Long typeuser = document.getLong("userTypeId");
+                        if (typeuser == 2) {
+                            binding.mucNhaTuynDung.setVisibility(View.VISIBLE);
+                        }
                         // Hiển thị thông tin người dùng
                         binding.name.setText(name);
                         binding.email.setText(email);
                         binding.sdt.setText(phoneNumber);
-                        Log.d("PPPP", "onComplete: "+email+name);
+                        String avatarUrl = document.getString("avatar");
+
+                        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+
+                            // Dùng Glide để tải ảnh từ URL và hiển thị vào ImageView
+                            Glide.with(getContext())
+                                    .load(avatarUrl)
+                                    .centerCrop()
+                                    .into(binding.avt);
+                            binding.avt.setVisibility(View.VISIBLE);
+                            binding.load.setVisibility(View.GONE);
+                            Log.d("ii", "onComplete: lay dc anh vs uid" + uid);
+                        } else {
+                            binding.avt.setImageResource(R.drawable.no_company);
+                        }
+                        binding.load.setVisibility(View.GONE);
+
+                        Log.d("PPPP", "onComplete: " + email + name);
                     } else {
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
                     }
@@ -135,5 +176,6 @@ public class AcountFragment extends Fragment {
                 }
             }
         });
+
     }
 }
