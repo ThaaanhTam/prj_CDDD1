@@ -316,6 +316,7 @@
 
 
                 <ImageButton
+                    android:id="@+id/msgImg"
                     android:layout_width="73dp"
                     android:layout_height="73dp"
                     android:background="@drawable/bogocanh"
@@ -337,7 +338,6 @@
                     android:layout_marginRight="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/hieu_ung_lom_xuong_khi_click"
-                    android:drawableEnd="@drawable/ic_send_in_jobde_tail"
                     android:text="Đăng ký ứng tuyển"
                     android:textColor="@color/white"
                     android:textStyle="bold" />

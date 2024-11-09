@@ -67,15 +67,13 @@ public class JobDetailMain extends AppCompatActivity {
 
         // Gọi phương thức để lấy chi tiết công việc
 //        fỉebaseJobDetails();
-        if (sourceId==1){
-            Log.d("sourceIdddddddddddd","1");
-        }else if (sourceId==2){
-            Log.d("sourceIdddddddddddd","2");
+        if (sourceId==3){
+           fỉebaseJobDetails();
         }else {
-            Log.d("sourceIdddddddddddd","3");
+            Web_APIJobDetails();
 
         }
-     Web_APIJobDetails();
+
     }
 
     private void fỉebaseJobDetails() {
@@ -85,7 +83,6 @@ public class JobDetailMain extends AppCompatActivity {
                     if (e != null) {
                         Log.e("JobDetailMain", "Listen failed.", e);
                         Log.d("JobDetailMainTitle","dddd");
-
                         return;
                     }
 
@@ -146,6 +143,9 @@ public class JobDetailMain extends AppCompatActivity {
     }
     private void Web_APIJobDetails() {
         if (job != null) {
+            Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaa",job)
+            binding.dangkiungtuyen.setText("Truy cập trang web");
+            binding.msgImg.setVisibility(View.GONE);
             // Thiết lập tiêu đề công việc
             binding.tvTitle.setText(job.getTitle() != null ? job.getTitle() : "N/A");
 
