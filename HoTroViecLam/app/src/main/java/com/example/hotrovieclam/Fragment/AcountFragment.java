@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.hotrovieclam.Activity.Navigation;
+import com.example.hotrovieclam.Buoc.RegisterEmployer;
 import com.example.hotrovieclam.Fragment.Child_Fragment.ChangPassWordFragment;
 import com.example.hotrovieclam.Fragment.Child_Fragment.MyProFileFragment;
 import com.example.hotrovieclam.Model.UserSessionManager;
@@ -77,6 +78,15 @@ public class AcountFragment extends Fragment {
                 getActivity().finish();
 
                 Toast.makeText(getContext(), "log out ok l", Toast.LENGTH_SHORT).show();
+            }
+        });
+        // Xử lý sự kiện khi người dùng nhấn vào nút "Acount".
+        binding.acount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Chuyển sang màn hình đăng ký nhà tuyển dụng.
+                Intent i = new Intent(getActivity(), RegisterEmployer.class);
+                startActivity(i);
             }
         });
         binding.doipassword.setOnClickListener(new View.OnClickListener() {
