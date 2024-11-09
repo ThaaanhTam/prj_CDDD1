@@ -1,6 +1,7 @@
 package com.example.hotrovieclam.Activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -201,6 +202,17 @@ private void Web_APIJobDetails() {
         } else {
             binding.tvSalaryMax.setText("");
         }
+        binding.dangkiungtuyen.setOnClickListener(v -> {
+            String jobURL = job.getJobURL();
+            if (jobURL != null && !jobURL.isEmpty()) {
+                // Kiểm tra URL hợp lệ và mở trình duyệt
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(jobURL));
+                startActivity(intent);
+            } else {
+                Log.e("Web_APIJobDetails", "Invalid job URL.");
+                // Có thể hiển thị thông báo hoặc xử lý khi URL không hợp lệ
+            }
+        });
     } else {
         Log.e("Web_APIJobDetails", "Job object is null.");
         // Thiết lập các giá trị mặc định nếu job không tồn tại
