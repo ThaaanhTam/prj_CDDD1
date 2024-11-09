@@ -25,6 +25,18 @@ public class InfoFragment extends Fragment {
     private FragmentInfoBinding binding;
 
 
+
+    public InfoFragment() {
+        // Required empty public constructor
+    }
+
+
+
+    public static InfoFragment newInstance(String param1, String param2) {
+        InfoFragment fragment = new InfoFragment();
+        return fragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

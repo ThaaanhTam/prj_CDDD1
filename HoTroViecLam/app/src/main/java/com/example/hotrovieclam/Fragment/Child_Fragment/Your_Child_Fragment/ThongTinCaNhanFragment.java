@@ -16,8 +16,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.hotrovieclam.Model.Profile;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentThongTinCaNhanBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -38,7 +40,10 @@ public class ThongTinCaNhanFragment extends Fragment {
     private FusedLocationProviderClient fusedLocationClient;
     private FragmentThongTinCaNhanBinding binding;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
-    String uid = null;
+    UserSessionManager userSessionManager = new UserSessionManager();
+    String uid = userSessionManager.getUserUid();
+    static String dc;
+    Bundle bundle;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,12 +55,10 @@ public class ThongTinCaNhanFragment extends Fragment {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
         // Nhận UID từ bundle
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            uid = bundle.getString("uid");
-            Log.d("TTT", "onCreateView: " + uid);
-        }
 
+        Log.d("TTT", "onCreateView: " + dc);
+        //binding.editTextDC.setText("");
+        //binding.editTextDC.setText(dc);
         // Hiển thị thông tin
         HienThiThongTin(uid);
 
@@ -102,14 +105,24 @@ public class ThongTinCaNhanFragment extends Fragment {
         binding.editTextDC.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 if (event.getRawX() >= (binding.editTextDC.getRight() - binding.editTextDC.getCompoundDrawables()[2].getBounds().width())) {
-                    Toast.makeText(getContext(), "Bạn đã nhấn vào biểu tượng vị trí!", Toast.LENGTH_SHORT).show();
-                    getLastLocation();
+                    //Toast.makeText(getContext(), "Bạn đã nhấn vào biểu tượng vị trí!", Toast.LENGTH_SHORT).show();
+                    //getLastLocation();
+                    Dialog_address address = new Dialog_address();
+                    address.show(getParentFragmentManager(), "adress");
                     return true;
                 }
             }
             return false;
         });
+        bundle = getArguments();
+        if (bundle != null) {
+            if (bundle.getString("diachi") != null) {
+                dc = bundle.getString("diachi");
+                Log.d("TTT", "onCreateView: " + dc);
+            }
 
+
+        }
         return view;
     }
 
@@ -131,8 +144,14 @@ public class ThongTinCaNhanFragment extends Fragment {
                 Toast.makeText(getContext(), "Bạn đã hủy chọn ngày", Toast.LENGTH_SHORT).show());
         datePickerDialog.show();
     }
+
     // Hàm hiển thị thông tin từ Firestore
     public void HienThiThongTin(String uid) {
+        if (uid == null || uid.isEmpty()) {
+            Log.e("HienThiThongTin", "UID không tồn tại hoặc rỗng");
+            // Hiển thị thông báo lỗi cho người dùng hoặc thực hiện một hành động thay thế
+            return;
+        }
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(uid);
         docRef.get().addOnCompleteListener(task -> {
@@ -150,7 +169,12 @@ public class ThongTinCaNhanFragment extends Fragment {
                             DocumentSnapshot profileDocument = profileTask.getResult();
                             if (profileDocument.exists()) {
                                 binding.editTextDate.setText(profileDocument.getString("birthday"));
-                                binding.editTextDC.setText(profileDocument.getString("address"));
+                                if (dc != null) {
+                                    binding.editTextDC.setText(dc);
+                                    Log.d("RRR", "HienThiThongTin: "+dc);
+                                } else {
+                                    binding.editTextDC.setText(profileDocument.getString("address"));
+                                }
                                 int gioitinh = profileDocument.getLong("gioitinh").intValue();
                                 if (gioitinh == 1) binding.rdNam.setChecked(true);
                                 else if (gioitinh == 2) binding.rdNu.setChecked(true);
@@ -161,6 +185,7 @@ public class ThongTinCaNhanFragment extends Fragment {
             }
         });
     }
+
     // Hàm cập nhật thông tin profile vào Firestore
     public void addProfile(String uid, Profile profile) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -181,31 +206,39 @@ public class ThongTinCaNhanFragment extends Fragment {
                     Toast.makeText(getContext(), "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
                 });
     }
-    private void getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-            return;
-        }
 
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(location -> {
-                    if (location != null) {
-                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-                        try {
-                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                            if (addresses != null && !addresses.isEmpty()) {
-                                Address address = addresses.get(0);
-                                String addressString = address.getAddressLine(0);
-                                binding.editTextDC.setText(addressString);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Không thể lấy địa chỉ", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(getContext(), "Không thể lấy vị trí hiện tại", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//    private void getLastLocation() {
+//        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(requireActivity(),
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+//            return;
+//        }
+//
+//        fusedLocationClient.getLastLocation()
+//                .addOnSuccessListener(location -> {
+//                    if (location != null) {
+//                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+//                        try {
+//                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+//                            if (addresses != null && !addresses.isEmpty()) {
+//                                Address address = addresses.get(0);
+//                                String addressString = address.getAddressLine(0);
+//                                binding.editTextDC.setText(addressString);
+//                            }
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                            Toast.makeText(getContext(), "Không thể lấy địa chỉ", Toast.LENGTH_SHORT).show();
+//                        }
+//                    } else {
+//                        Toast.makeText(getContext(), "Không thể lấy vị trí hiện tại", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
+    public void updateAddress(String diachi) {
+        // Kiểm tra nếu binding đã được khởi tạo
+        if (binding != null) {
+            binding.editTextDC.setText(diachi);
+        }
     }
+
 }
