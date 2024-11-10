@@ -174,7 +174,7 @@ public class ExperienceFragment extends Fragment {
                 .addOnSuccessListener(documentReference -> {
                     experience.setIdExperiences(documentReference.getId());
 
-                    documentReference.set(experience) // Cập nhật với ID mới
+                    documentReference.set(experience) // Cập nhật với ID mớiy
                             .addOnSuccessListener(aVoid -> {
                                 // Gửi req khi quay lại màn hình trước đó (KinhNghiemFragment)
                                 Bundle bundle = new Bundle();

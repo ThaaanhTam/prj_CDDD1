@@ -292,7 +292,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                 .document(id_candidate)
                                 .collection("role")
                                 .document("candidate")
-                                .collection("experiences");
+                                .collection("experience");
                         getKinhNghiem.get()
                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override

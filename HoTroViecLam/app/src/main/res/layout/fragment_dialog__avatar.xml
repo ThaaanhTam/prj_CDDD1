@@ -9,6 +9,7 @@
     tools:context=".Fragment.Child_Fragment.DialogFragmentAvatar">
 
     <!-- TODO: Update blank fragment layout -->
+
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/previewAvatar"
         android:layout_width="150dp"
