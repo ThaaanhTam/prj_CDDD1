@@ -207,66 +207,73 @@
         </LinearLayout>
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Liên hệ"
-            android:textSize="18dp"
-            android:textStyle="bold" />
-
-
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/emailSDT"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal">
-
+            android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:text="Số điện thoại: "
-                android:textColor="#666666"
-                android:textSize="14sp" />
+                android:layout_margin="5dp"
+                android:text="Liên hệ"
+                android:textSize="18dp"
+                android:textStyle="bold" />
 
 
-            <TextView
-                android:id="@+id/tvSDT"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="0862772420"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
 
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:text="Số điện thoại: "
+                    android:textColor="#666666"
+                    android:textSize="14sp" />
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/tvSDT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0862772420"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
 
-            <TextView
-                android:layout_width="wrap_content"
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:text="Email: "
-                android:textColor="#666666"
-                android:textSize="14sp" />
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
 
 
-            <TextView
-                android:id="@+id/tvEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="phamthanhliem011203@gmail.com"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:text="Email: "
+                    android:textColor="#666666"
+                    android:textSize="14sp" />
+
+
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="phamthanhliem011203@gmail.com"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+            </LinearLayout>
         </LinearLayout>
 
 
@@ -316,6 +323,7 @@
 
 
                 <ImageButton
+                    android:id="@+id/msgImg"
                     android:layout_width="73dp"
                     android:layout_height="73dp"
                     android:background="@drawable/bogocanh"
@@ -337,7 +345,6 @@
                     android:layout_marginRight="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/hieu_ung_lom_xuong_khi_click"
-                    android:drawableEnd="@drawable/ic_send_in_jobde_tail"
                     android:text="Đăng ký ứng tuyển"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
