@@ -129,53 +129,51 @@ public class AcountFragment extends Fragment {
         UserSessionManager sessionManager = new UserSessionManager();
         String uid = sessionManager.getUserUid();
         binding.load.setVisibility(View.VISIBLE);
-        // Dùng UID để truy vấn Firestore hoặc hiển thị thông tin người dùng
+
+        // Dùng UID để lắng nghe dữ liệu người dùng từ Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(uid);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
 
-                    if (document.exists()) {
-                        String name = document.getString("name");
-                        String email = document.getString("email");
-                        String phoneNumber = document.getString("phoneNumber");
-                        Long typeuser = document.getLong("userTypeId");
-                        if (typeuser == 2) {
-                            binding.mucNhaTuynDung.setVisibility(View.VISIBLE);
-                        }
-                        // Hiển thị thông tin người dùng
-                        binding.name.setText(name);
-                        binding.email.setText(email);
-                        binding.sdt.setText(phoneNumber);
-                        String avatarUrl = document.getString("avatar");
+        // Lắng nghe thay đổi từ Firestore
+        docRef.addSnapshotListener((documentSnapshot, error) -> {
+            if (error != null) {
+                Log.d("Firestore", "Lỗi khi lắng nghe dữ liệu.", error);
+                return;
+            }
 
-                        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                String name = documentSnapshot.getString("name");
+                String email = documentSnapshot.getString("email");
+                String phoneNumber = documentSnapshot.getString("phoneNumber");
+                Long typeuser = documentSnapshot.getLong("userTypeId");
 
-                            // Dùng Glide để tải ảnh từ URL và hiển thị vào ImageView
-                            Glide.with(getContext())
-                                    .load(avatarUrl)
-                                    .centerCrop()
-                                    .into(binding.avt);
-                            binding.avt.setVisibility(View.VISIBLE);
-                            binding.load.setVisibility(View.GONE);
-                            Log.d("ii", "onComplete: lay dc anh vs uid" + uid);
-                        } else {
-                            binding.avt.setImageResource(R.drawable.no_company);
-                        }
-                        binding.load.setVisibility(View.GONE);
-
-                        Log.d("PPPP", "onComplete: " + email + name);
-                    } else {
-                        Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
-                    }
-                } else {
-                    Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
+                if (typeuser != null && typeuser == 2) {
+                    binding.mucNhaTuynDung.setVisibility(View.VISIBLE);
                 }
+
+                // Hiển thị thông tin người dùng
+                binding.name.setText(name);
+                binding.email.setText(email);
+                binding.sdt.setText(phoneNumber);
+                String avatarUrl = documentSnapshot.getString("avatar");
+
+                if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                    // Dùng Glide để tải ảnh từ URL và hiển thị vào ImageView
+                    Glide.with(getContext())
+                            .load(avatarUrl)
+                            .centerCrop()
+                            .into(binding.avt);
+                    binding.avt.setVisibility(View.VISIBLE);
+                } else {
+                    binding.avt.setImageResource(R.drawable.no_company);
+                }
+
+                binding.load.setVisibility(View.GONE);
+
+                Log.d("Firestore", "Dữ liệu cập nhật: " + email + ", " + name);
+            } else {
+                Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
             }
         });
-
     }
 }

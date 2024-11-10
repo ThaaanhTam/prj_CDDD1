@@ -124,11 +124,10 @@
 
             <EditText
                 android:id="@+id/etLocation"
+                android:background="@android:drawable/edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@android:drawable/edit_text"
-                android:hint="@string/tp"
+                android:hint="Nhập địa chỉ"
                 android:padding="10dp" />
 
             <!-- Website -->

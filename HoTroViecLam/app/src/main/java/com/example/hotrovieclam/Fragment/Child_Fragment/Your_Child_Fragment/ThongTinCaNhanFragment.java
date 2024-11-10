@@ -1,6 +1,7 @@
 package com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -45,6 +46,7 @@ public class ThongTinCaNhanFragment extends Fragment {
     static String dc;
     Bundle bundle;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

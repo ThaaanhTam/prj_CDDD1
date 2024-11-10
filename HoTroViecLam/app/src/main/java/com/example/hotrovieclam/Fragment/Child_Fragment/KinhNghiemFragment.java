@@ -147,40 +147,45 @@ public class KinhNghiemFragment extends Fragment {
     }
 
 
+
     private void loadExperienceData(String uid) {
         // Khởi tạo Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Lấy dữ liệu từ Firestore
+        // Lắng nghe sự thay đổi trong Firestore theo thời gian thực
         db.collection("users").document(uid)
                 .collection("role").document("candidate")
-                .collection("experience") // Truy cập vào collection ""
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                .collection("experience") // Truy cập vào collection "experience"
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.e("Firestore", "Lỗi khi lấy dữ liệu", error);
+                        return;
+                    }
+
+                    if (value != null) {
                         experiences.clear(); // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            // Chuyển đổi dữ liệu từ Firestore thành đối tượng TruongHoc
-                            Experience kinhNghiem = document.toObject(Experience.class);
-                            experiences.add(kinhNghiem);
+                        for (QueryDocumentSnapshot document : value) {
+                            // Chuyển đổi dữ liệu từ Firestore thành đối tượng Experience
+                            Experience experience = document.toObject(Experience.class);
+                            experiences.add(experience);
                         }
 
                         if (experiences.isEmpty()) {
                             // Nếu không có dữ liệu, hiển thị thông báo
                             Log.d("Firestore", "Bạn chưa có thông tin nào.");
                             binding.btnCapnhat.setVisibility(View.VISIBLE);
+                            binding.themkn.setVisibility(View.GONE);
                         } else {
                             // Nếu có dữ liệu, cập nhật RecyclerView
                             binding.tvthem.setVisibility(View.GONE);
-                            binding.themkn.setVisibility(View.VISIBLE);
-                            binding.btnCapnhat.setVisibility(View.GONE); // Ẩn thông báo nếu có dữ liệu
+                            binding.btnCapnhat.setVisibility(View.GONE);
+                            binding.themkn.setVisibility(View.VISIBLE); // Ẩn thông báo nếu có dữ liệu
                             experienceAdapter.notifyDataSetChanged(); // Cập nhật lại RecyclerView
                         }
-                    } else {
-                        Log.e("Firestore", "Lỗi khi lấy dữ liệu", task.getException());
                     }
                 });
     }
+
     public void deleteExperience(String ex_id) {
         UserSessionManager userSession = new UserSessionManager();
         String uid = userSession.getUserUid();

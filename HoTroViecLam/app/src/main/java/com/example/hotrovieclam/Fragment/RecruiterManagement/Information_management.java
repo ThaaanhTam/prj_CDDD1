@@ -64,16 +64,19 @@ public class Information_management extends Fragment {
         UserSessionManager userSessionManager = new UserSessionManager();
         String uid = userSessionManager.getUserUid();
 
-        // Khởi tạo Firestore
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         // Tham chiếu đến document "employer" của user
         DocumentReference docRef = db.collection("users").document(uid)
                 .collection("roles").document("employer");
 
-        docRef.get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                // Đọc và gán dữ liệu vào các TextView
+        // Thêm snapshot listener để lắng nghe thay đổi
+        docRef.addSnapshotListener((documentSnapshot, error) -> {
+            if (error != null) {
+                Toast.makeText(getContext(), "Lỗi khi nghe thay đổi dữ liệu: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                // Cập nhật dữ liệu vào TextView khi có thay đổi
                 binding.tvCompanyName.setText(documentSnapshot.getString("companyName"));
                 binding.tvContactPerson.setText(documentSnapshot.getString("contactPerson"));
                 binding.tvPhoneNumber.setText(documentSnapshot.getString("companyPhone"));
@@ -87,18 +90,16 @@ public class Information_management extends Fragment {
                 binding.tvLegalDocumentBack.setText(documentSnapshot.getString("legalDocumentBack"));
                 binding.tvCertificationDocument.setText(documentSnapshot.getString("certificationDocument"));
 
-                // Lấy tên hoặc đường dẫn của logo từ Firestore
-                String logoPath = "images/"+documentSnapshot.getString("logo");
+                // Tải và hiển thị logo công ty
+                String logoPath = "images/" + documentSnapshot.getString("logo");
 
                 if (logoPath != null) {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     StorageReference storageRef = storage.getReference();
-                    // Tham chiếu đến ảnh trong Firebase Storage
                     StorageReference logoRef = storageRef.child(logoPath);
 
-                    // Lấy URL của ảnh
+                    // Tải ảnh logo từ Firebase Storage
                     logoRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        // Tải ảnh lên ImageView với Glide
                         Glide.with(this)
                                 .load(uri.toString())
                                 .into(binding.companyLogo);
@@ -106,7 +107,6 @@ public class Information_management extends Fragment {
                         Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
                     });
                 } else {
-                    // Nếu không có ảnh logo, hiển thị ảnh mặc định
                     Glide.with(this)
                             .load("https://123job.vn/images/no_company.png")
                             .into(binding.companyLogo);
@@ -114,10 +114,9 @@ public class Information_management extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Không tìm thấy dữ liệu công ty", Toast.LENGTH_SHORT).show();
             }
-        }).addOnFailureListener(e -> {
-            Toast.makeText(getContext(), "Lỗi khi đọc dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+
 
 
 
