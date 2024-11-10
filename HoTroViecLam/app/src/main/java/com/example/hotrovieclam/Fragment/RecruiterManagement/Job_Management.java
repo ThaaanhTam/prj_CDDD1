@@ -81,7 +81,9 @@ public class Job_Management extends Fragment {
             @Override
             public void EditClick(View view, int position, String jobID) {
                 Log.d("Click", "EditClick: " + position);
-
+                Intent intent = new Intent(getContext(), EditJob.class);
+                intent.putExtra("jobID", jobID);
+                startActivity(intent);
             }
 
             @Override
@@ -132,25 +134,25 @@ public class Job_Management extends Fragment {
                 Log.w("HomeFragment", "Listen failed.", error);
                 return;
             }
-
             if (snapshots != null && !snapshots.isEmpty()) {
                 jobs.clear();
                 for (QueryDocumentSnapshot document : snapshots) {
+                    try {
+                        Job job = document.toObject(Job.class);
 
-                    Job job = document.toObject(Job.class);
-                    //             Log.d("mm", job.getId());
-//                    Log.d("nn", uid);
-                    if (job.getEmployerId().equals(uid)) {
-                        job.setId(document.getId());
-                        jobs.add(job);
-
+                        if (job != null && job.getEmployerId() != null && job.getEmployerId().equals(uid)) {
+                            job.setId(document.getId());
+                            jobs.add(job);
+                        }
+                    } catch (Exception e) {
+                        Log.e("HomeFragment", "Error while processing job document: " + e.getMessage());
                     }
-
                 }
                 adapter.notifyDataSetChanged();
             } else {
-                Log.d("HomeFragment", "No current data in the collection");
+                Log.d("HomeFragment", "No current data in the collection or snapshots is null");
             }
+
         });
     }
 
