@@ -128,6 +128,8 @@ public class Job_Management extends Fragment {
 
 
     private void fetchJobsFromFirestore() {
+        UserSessionManager userSessionManager = new UserSessionManager();
+        String uid = userSessionManager.getUserUid();
         db = FirebaseFirestore.getInstance();
         db.collection("jobs").addSnapshotListener((snapshots, error) -> {
             if (error != null) {

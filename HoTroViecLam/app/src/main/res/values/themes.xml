@@ -38,7 +38,7 @@
     </style>
     <style name="email" parent="myEditText">
         <item name="android:drawableLeft">@drawable/mail</item>
-        <item name="android:hint">Email/SDT</item>
+        <item name="android:hint">Email</item>
         <item name="android:inputType">textEmailAddress</item>
     </style>
 
@@ -124,5 +124,11 @@
         <item name="android:layout_margin">5dp</item>
         <item name="android:textSize">20dp</item>
     </style>
-<!-- //   <style name=""></style>-->
+    <style name="customImg">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+
+    </style>
+
+    <!-- //   <style name=""></style>-->
 </resources>

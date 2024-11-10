@@ -84,7 +84,7 @@ public class DetailinfoJob extends Fragment {
 
                         // Check and fetch salary min
                         if (documentSnapshot.contains("salaryMin")) {
-                            String salaryMin = documentSnapshot.getDouble("salaryMin")+"";
+                            String salaryMin = documentSnapshot.getDouble("salaryMin") + "";
                             binding.tvSalaryMin.setText(salaryMin != null ? salaryMin : "N/A");
                         } else {
                             Log.w("DetailinfoJob", "Field 'salaryMin' does not exist");
@@ -93,7 +93,7 @@ public class DetailinfoJob extends Fragment {
 
                         // Check and fetch salary max
                         if (documentSnapshot.contains("salaryMax")) {
-                            String salaryMax = documentSnapshot.getDouble("salaryMax")+"";
+                            String salaryMax = documentSnapshot.getDouble("salaryMax") + "";
                             binding.tvSalaryMax.setText(salaryMax != null ? salaryMax : "N/A");
                         } else {
                             Log.w("DetailinfoJob", "Field 'salaryMax' does not exist");

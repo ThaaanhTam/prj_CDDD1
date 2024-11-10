@@ -63,6 +63,12 @@ dependencies {
     implementation ("org.jsoup:jsoup:1.15.3")
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.google.android.gms:play-services-location:latest-version")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+
+
     implementation ("com.google.android.gms:play-services-location:18.0.0")
     implementation ("com.google.android.material:material:1.4.0")
 

@@ -125,6 +125,22 @@
 
     <string name="back_button">Quay lại</string> <!-- Mô tả cho nút trở về -->
     <string name="avatar">Avatar</string>
+
+    <string name="sdtct">📞 Số Điện Thoại</string>
+    <string name="emailct">✉️ Email Công Ty</string>
+    <string name="tencongty">🏢 Tên công ty</string>
+    <string name="web">🏥 Website (nếu có):</string>
+    <string name="website">Link website</string>
+    <string name="diachi">🏥 Địa Chỉ</string>
+    <string name="tennguoituyendung">👤 Họ và tên người tuyển dụng:</string>
+    <string name="tp">Chọn tỉnh/thành phố</string>
+    <string name="logo">Logo công ty</string>
+    <string name="giayphep">Giấy phép chứng minh:</string>
+    <string name="ccmattruoc">CCCD mặt trước</string>
+    <string name="ccmatsau">CCCD mặt sau</string>
+    <string name="kinhdoanh">Giấy phép kinh doanh</string>
+    <string name="trangthai">Trạng Thái</string>
+
     <string name="info_management">Màn hình thông tin nhà tuyển dụng</string>
 
 </resources>

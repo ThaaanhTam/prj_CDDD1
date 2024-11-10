@@ -47,6 +47,7 @@ public class API {
                         job.setDescription(cleanDescription);
                         job.setLocation(jobData.getLocation());
                         job.setAvatar(jobData.getCompany().getLogo());
+                        job.setJobURL(jobData.getApplication_url());
                         job.setSourceId(1);
 
                         job.setAgreement("Thỏa thuận");

@@ -4,63 +4,171 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.hotrovieclam.Model.KiNang;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
+import com.example.hotrovieclam.databinding.FragmentSkillsAndCertificationBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SkillsAndCertificationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class SkillsAndCertificationFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public SkillsAndCertificationFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SkillsAndCertificationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SkillsAndCertificationFragment newInstance(String param1, String param2) {
-        SkillsAndCertificationFragment fragment = new SkillsAndCertificationFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private FragmentSkillsAndCertificationBinding binding;
+    String id = null;
+    String id_skill;
+    private KiNang kiNang;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_skills_and_certification, container, false);
+        binding = FragmentSkillsAndCertificationBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        Bundle bundle = getArguments();
+
+        if (bundle != null) {
+            id = bundle.getString("USER_ID");
+            id_skill = bundle.getString("ID_SKILL");
+            Log.d("CAC", "onCreateView: " + id + "---------------------------" + id_skill);
+
+        }
+        Log.d("VV", "aiaiaiai: " + id);
+        if (id_skill != null) {
+            loaddata(id_skill);
+        }
+        binding.back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getParentFragmentManager().getBackStackEntryCount() > 0) {
+                    getParentFragmentManager().popBackStack();
+                    BottomNavigationView bottomNav = getActivity().findViewById(R.id.nav_buttom);
+                    if (bottomNav != null) {
+                        bottomNav.setVisibility(View.GONE);
+                    }// Quay lại Fragment trước đó
+                }
+            }
+        });
+        binding.btnUpdateSkill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nameSkill = binding.nameskill.getText().toString().trim();
+                String description = binding.mota.getText().toString().trim();
+                if (nameSkill.isEmpty() || description.isEmpty()) {
+                    if (nameSkill.isEmpty()) {
+                        binding.nameskill.setError("Vui lòng nhập tên kỹ năng");
+                    }
+                    if (description.isEmpty()) {
+                        binding.mota.setError("Vui lòng nhập mô tả");
+                    }
+                    return;
+                }
+                kiNang = new KiNang(null, id, nameSkill, description);
+                if (id != null) {
+                    binding.loading.setVisibility(View.VISIBLE);
+                    saveSkill(id);
+                } else if (id_skill != null) {
+                    binding.loading.setVisibility(View.VISIBLE);
+                    update(id_skill);
+                }
+            }
+        });
+        return view;
+
     }
+
+    public void saveSkill(String uid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(uid)
+                .collection("role").document("candidate")
+                .collection("skills")
+                .add(kiNang)
+                .addOnSuccessListener(documentReference -> {
+                    kiNang.setId(documentReference.getId());
+
+                    documentReference.set(kiNang) // Cập nhật với ID mới
+                            .addOnSuccessListener(aVoid -> {
+                                // Gửi req khi quay lại màn hình trước đó (HocVanFragment)
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean("add", true);
+                                getParentFragmentManager().setFragmentResult("addSucess", bundle);
+                                getParentFragmentManager().popBackStack();
+                                Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
+                                Toast.makeText(getContext(), "Lưu skill thành công", Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Lỗi khi lưu dữ liệu", e);
+                });
+
+    }
+
+    public void loaddata(String id_skill) {
+        UserSessionManager user = new UserSessionManager();
+        String uid = user.getUserUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Lấy dữ liệu từ Firestore
+        db.collection("users").document(uid)
+                .collection("role").document("candidate")
+                .collection("skills").document(id_skill) // Truy cập đến document với id_school
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Lấy dữ liệu từ document
+                        KiNang skill = documentSnapshot.toObject(KiNang.class);
+
+                        if (skill != null) {
+                            // Cập nhật giao diện với dữ liệu từ Firestore
+                            binding.nameskill.setText(skill.getName());
+                            binding.mota.setText(skill.getDescription());
+
+                        } else {
+                            Log.e("LoadData", "Không thể chuyển đổi dữ liệu thành TruongHoc");
+                        }
+                    } else {
+                        Log.e("LoadData", "Tài liệu không tồn tại với ID: " + id_skill);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("LoadData", "Lỗi khi lấy dữ liệu từ Firestore", e);
+                });
+    }
+
+    private void update(String id_skill) {
+        UserSessionManager userSession = new UserSessionManager();
+        String uid = userSession.getUserUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String nameSkill = binding.nameskill.getText().toString().trim();
+        String description = binding.mota.getText().toString().trim();
+        // Tạo đối tượng KiNang với dữ liệu cập nhật
+        KiNang kiNang = new KiNang(uid, id_skill, nameSkill, description); // Gán dữ liệu mới vào kiNang
+
+        // Cập nhật tài liệu kỹ năng theo id_skill
+        db.collection("users").document(uid)
+                .collection("role").document("candidate")
+                .collection("skills")
+                .document(id_skill)  // Đảm bảo cập nhật đúng tài liệu bằng ID
+                .set(kiNang)  // Cập nhật tài liệu với dữ liệu mới
+                .addOnSuccessListener(aVoid -> {
+                    // Gửi thông báo khi cập nhật thành công
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("add", true);
+                    getParentFragmentManager().setFragmentResult("addSucess", bundle);
+                    getParentFragmentManager().popBackStack();
+                    Log.d("Firestore", "Dữ liệu đã được cập nhật thành công với ID: " + id_skill);
+                    Toast.makeText(getContext(), "Cập nhật kỹ năng thành công", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Lỗi khi cập nhật dữ liệu", e);
+                    Toast.makeText(getContext(), "Lỗi khi cập nhật kỹ năng", Toast.LENGTH_SHORT).show();
+                });
+    }
+
 }
