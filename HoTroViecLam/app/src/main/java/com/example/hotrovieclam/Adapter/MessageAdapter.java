@@ -12,7 +12,6 @@ import com.example.hotrovieclam.Model.Message;
 import com.example.hotrovieclam.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
@@ -23,7 +22,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         this.messageList = messageList;
         this.currentUserId = currentUserId;
     }
-
 
     @NonNull
     @Override
@@ -38,18 +36,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         Message message = messageList.get(position);
 
         if (message.getSender_id().equals(currentUserId)) {
-            // Hiển thị tin nhắn bên phải cho người dùng hiện tại
+            // Nếu người gửi là người dùng hiện tại, hiển thị tin nhắn bên phải
             holder.textViewMessageRight.setText(message.getContent());
             holder.textViewMessageRight.setVisibility(View.VISIBLE);
             holder.textViewMessageLeft.setVisibility(View.GONE);  // Ẩn tin nhắn bên trái
         } else {
-            // Hiển thị tin nhắn bên trái cho tin nhắn của người khác
+            // Nếu người gửi là người khác, hiển thị tin nhắn bên trái
             holder.textViewMessageLeft.setText(message.getContent());
             holder.textViewMessageLeft.setVisibility(View.VISIBLE);
             holder.textViewMessageRight.setVisibility(View.GONE); // Ẩn tin nhắn bên phải
         }
     }
-
 
     @Override
     public int getItemCount() {
