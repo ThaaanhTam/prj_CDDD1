@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class GioiThieuFragment extends Fragment {
     private UserSessionManager userSessionManager;
@@ -33,42 +34,73 @@ public class GioiThieuFragment extends Fragment {
         View view = binding.getRoot();
         userSessionManager = new UserSessionManager();
         String i = userSessionManager.getUserUid();
-        binding.gioithiebanthan.setText(i);
+        //lấy kết quả trả về của Bunble bên kia
+        getParentFragmentManager().setFragmentResultListener("updateResult", this, (requestKey, bundle) -> {
+            boolean isUpdated = bundle.getBoolean("isUpdated");
+            if (isUpdated) {
+                ReadData(i); // Tải lại dữ liệu mới  khi cập nhật thành công
+            }
+        });
+//tai lai du lieu khi truyen uid qua
+        ReadData(i);
+
         binding.btnCapnhatProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AddPersonalInfoFragment addPersonalInfoFragment = new AddPersonalInfoFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("USER_UID", i);
+                addPersonalInfoFragment.setArguments(bundle);
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, addPersonalInfoFragment).addToBackStack(null).commit();
+            }
+        });
+        binding.editGioiThieu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddPersonalInfoFragment addPersonalInfoFragment = new AddPersonalInfoFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("USER_UID", i);
+                addPersonalInfoFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, addPersonalInfoFragment).addToBackStack(null).commit();
             }
         });
         return view;
     }
 
-    public void HienThiThongTin() {
-        UserSessionManager sessionManager = new UserSessionManager();
-        String uid = sessionManager.getUserUid();
+    public void ReadData(String uid) {
+        // Khởi tạo Firestore
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
-        // Dùng UID để truy vấn Firestore hoặc hiển thị thông tin người dùng
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference docRef = db.collection("users").document(uid);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        String name = document.getString("name");
-                        String email = document.getString("email");
-                        String phoneNumber = document.getString("phoneNumber");
-
-                        // Hiển thị thông tin người dùng
-
-                        Log.d("PPPP", "onComplete: " + email + name);
-                    } else {
-                        Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
+        // Tham chiếu đến document với UID trong bảng "Introduces"
+        DocumentReference docRef = firestore.collection("users").document(uid)
+                .collection("role").document("candidate")
+                .collection("introduction").document("introductdata");
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    // Kiểm tra xem trường "introduction" đã có data hay chưa
+                    String introduction = document.getString("introduction");
+                    if (introduction != null && !introduction.isEmpty()) {
+                        binding.gioithiebanthan.setText(introduction);
+                        //nếu có data thì ẩn nút thêm thông tin giới thiệu bản thân và hiện nút và ngược lại
+                        binding.editGioiThieu.setVisibility(View.VISIBLE);
+                        binding.btnCapnhatProfile.setVisibility(View.GONE);
+                        Log.d("Firestore", "Đã có data: " + introduction);
                     }
                 } else {
-                    Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
+                    Log.d("Firestore", "Không có document với UID này trong bảng Introduces");
+                    binding.btnCapnhatProfile.setVisibility(View.VISIBLE);
+                    binding.editGioiThieu.setVisibility(View.GONE);
+                }
+            } else {
+                // Xử lý khi bảng "Introduces" không tồn tại hoặc lỗi kết nối Firestore
+                Exception e = task.getException();
+                if (e instanceof FirebaseFirestoreException &&
+                        ((FirebaseFirestoreException) e).getCode() == FirebaseFirestoreException.Code.NOT_FOUND) {
+                    Log.d("Firestore", "Bảng Introduces không tồn tại.");
+                } else {
+                    Log.d("Firestore", "Lỗi khi truy xuất document", e);
                 }
             }
         });

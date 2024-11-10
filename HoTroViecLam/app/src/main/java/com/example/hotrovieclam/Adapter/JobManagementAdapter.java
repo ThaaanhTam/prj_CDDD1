@@ -45,15 +45,15 @@ public class JobManagementAdapter extends RecyclerView.Adapter<JobManagementAdap
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Job job = jobs.get(position);
         holder.binding.tvTitle.setText(job.getTitle());
-        Timestamp timestamp = job.getCreatedAt();
-        if (timestamp != null) {
-            Date date = timestamp.toDate();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            String formattedDate = dateFormat.format(date);
-            holder.binding.tvCreateAt.setText(formattedDate);  // Hiển thị chuỗi định dạng
-        } else {
-            holder.binding.tvCreateAt.setText("N/A");  // Nếu createdAt là null
-        }
+    //    Timestamp timestamp = job.getCreatedAt();
+       // if (timestamp != null) {
+         //   Date date = timestamp.toDate();
+       //     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        //    String formattedDate = dateFormat.format(date);
+         //   holder.binding.tvCreateAt.setText(formattedDate);  // Hiển thị chuỗi định dạng
+//        } else {
+//            holder.binding.tvCreateAt.setText("N/A");  // Nếu createdAt là null
+//        }
         holder.binding.tvStartDate.setText(job.getStartTime());
         holder.binding.tvEndDate.setText(job.getEndTime());
         FirebaseFirestore db = FirebaseFirestore.getInstance();

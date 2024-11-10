@@ -134,22 +134,21 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/border_text_input_update_info"
                 android:gravity="top"
-                android:hint="|Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm
-việc"
+                android:hint="Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm việc"
                 android:minLines="6"
                 android:overScrollMode="always"
                 android:padding="7dp"
                 android:scrollbars="vertical" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnxoaKN"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:text="Xóa Kinh nghiệm">
+<!--            <androidx.appcompat.widget.AppCompatButton-->
+<!--                android:id="@+id/btnxoaKN"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginLeft="20dp"-->
+<!--                android:layout_marginRight="20dp"-->
+<!--                android:text="Xóa Kinh nghiệm">-->
 
-            </androidx.appcompat.widget.AppCompatButton>
+<!--            </androidx.appcompat.widget.AppCompatButton>-->
 
         </LinearLayout>
 
