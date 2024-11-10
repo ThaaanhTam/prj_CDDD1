@@ -35,6 +35,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -129,7 +130,7 @@ public class PostJob extends AppCompatActivity {
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
-                String fullAddress = address.getAddressLine(0); // Địa chỉ đầy đủ
+                String fullAddress = address.getAddressLine(0);
                 Log.d("Địa chỉ: ",  fullAddress);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -219,8 +220,8 @@ public class PostJob extends AppCompatActivity {
             return false;
         }
 
-        int salaryMin = Integer.parseInt(salaryMinStr);
-        int salaryMax = Integer.parseInt(salaryMaxStr);
+        Double salaryMin = Double.parseDouble(salaryMinStr);
+        Double salaryMax = Double.parseDouble(salaryMaxStr);
         if (salaryMax <= salaryMin) {
             Toast.makeText(this, "Lương tối đa phải lớn hơn lương tối thiểu", Toast.LENGTH_SHORT).show();
             return false;
@@ -281,6 +282,15 @@ public class PostJob extends AppCompatActivity {
             }
         });
     }
+    public String convertTimestampToString(Timestamp timestamp) {
+        if (timestamp != null) {
+
+            Date date = timestamp.toDate();
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+            return format.format(date);
+        }
+        return "N/A";  // Trả về "N/A" nếu timestamp null
+    }
     public void pushDataToFirestore() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> dataToPush = new HashMap<>();
@@ -289,7 +299,9 @@ public class PostJob extends AppCompatActivity {
         dataToPush.put("id", docId);  // Lưu ID vào data
         dataToPush.put("salaryMax", Integer.parseInt(binding.edtSalaryMax.getText().toString()));
         dataToPush.put("salaryMin", Integer.parseInt(binding.edtSalaryMin.getText().toString()));
-        dataToPush.put("createdAt", Timestamp.now());
+        Timestamp timestamp = Timestamp.now();
+        String timestampString = convertTimestampToString(timestamp);
+        dataToPush.put("createdAt", timestampString);
         dataToPush.put("startTime", binding.etDateStart.getText().toString());
         dataToPush.put("endTime", binding.etDateEnd.getText().toString());
         dataToPush.put("location", binding.edtLocation.getText().toString());

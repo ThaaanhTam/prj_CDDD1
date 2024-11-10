@@ -72,7 +72,6 @@ public class Job_Management extends Fragment {
             @Override
             public void DetailClick(View view, int position, String jobID) {
                 Log.d("Click", "DetailClick: " + position);
-                //Detail_Job detailJob = new Detail_Job();
                 Intent intent = new Intent(getContext(), Detail_Job.class);
                 intent.putExtra("jobID", jobID);
                 startActivity(intent);

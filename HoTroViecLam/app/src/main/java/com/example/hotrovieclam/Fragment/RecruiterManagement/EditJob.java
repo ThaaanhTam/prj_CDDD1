@@ -1,19 +1,12 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
-import static java.security.AccessController.getContext;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,17 +24,13 @@ import androidx.core.content.ContextCompat;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityEditJobBinding;
-import com.example.hotrovieclam.databinding.ActivityPostJobBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -61,6 +50,7 @@ public class EditJob extends AppCompatActivity {
     private String jobID;
     private FusedLocationProviderClient fusedLocationClient;
     private FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,10 +62,6 @@ public class EditJob extends AppCompatActivity {
         jobID = getIntent().getStringExtra("jobID");
         db = FirebaseFirestore.getInstance();
         //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-
-
-
 
 
 //        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -92,7 +78,7 @@ public class EditJob extends AppCompatActivity {
                 finish();
             }
         });
-
+        fetchJobDetails();
         binding.etDateStart.setOnClickListener(v -> showDatePickerDialog(binding.etDateStart, true));
         binding.etDateEnd.setOnClickListener(v -> showDatePickerDialog(binding.etDateEnd, false));
         binding.btnPost.setOnClickListener(new View.OnClickListener() {
@@ -104,11 +90,13 @@ public class EditJob extends AppCompatActivity {
             }
         });
 
-fetchJobDetails();
+
     }
+
+
     public void confirmEdit() {
         new AlertDialog.Builder(this)
-                .setTitle("Xác nhận xóa")
+                .setTitle("Xác nhận sửa")
                 .setMessage("Bạn có chắc chắn muốn sửa công vệc này không?")
                 .setPositiveButton("Sửa", (dialog, which) -> {
                     // Người dùng nhấn "Xóa"
@@ -149,7 +137,7 @@ fetchJobDetails();
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
                 String fullAddress = address.getAddressLine(0); // Địa chỉ đầy đủ
-                Log.d("Địa chỉ: ",  fullAddress);
+                Log.d("Địa chỉ: ", fullAddress);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -256,6 +244,7 @@ fetchJobDetails();
         binding.etDateStart.setText("");
         binding.etDateEnd.setText("");
     }
+
     private void setupFieldSpinner() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -300,6 +289,15 @@ fetchJobDetails();
             }
         });
     }
+    public String convertTimestampToString(Timestamp timestamp) {
+        if (timestamp != null) {
+
+            Date date = timestamp.toDate();
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+            return format.format(date);
+        }
+        return "N/A";  // Trả về "N/A" nếu timestamp null
+    }
     public void pushDataToFirestore() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> dataToPush = new HashMap<>();
@@ -310,7 +308,9 @@ fetchJobDetails();
         dataToPush.put("id", jobID);
         dataToPush.put("salaryMax", Double.parseDouble(binding.edtSalaryMax.getText().toString()));
         dataToPush.put("salaryMin", Double.parseDouble(binding.edtSalaryMin.getText().toString()));
-        dataToPush.put("createdAt", Timestamp.now());
+        Timestamp timestamp = Timestamp.now();
+        String timestampString = convertTimestampToString(timestamp);
+        dataToPush.put("createdAt", timestampString);
         dataToPush.put("startTime", binding.etDateStart.getText().toString());
         dataToPush.put("endTime", binding.etDateEnd.getText().toString());
         dataToPush.put("location", binding.edtLocation.getText().toString());
@@ -326,12 +326,13 @@ fetchJobDetails();
                     Log.d("Firestore", "Dữ liệu đã được cập nhật thành công");
                     Toast.makeText(this, "Cập nhật tuyển dụng thành công", Toast.LENGTH_SHORT).show();
                     clearInputFields();
-                    finish();
+
                 })
                 .addOnFailureListener(e -> {
                     Log.d("Firestore", "Cập nhật dữ liệu thất bại: " + e.getMessage());
                     Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
                 });
+
     }
 
 
@@ -378,92 +379,75 @@ fetchJobDetails();
                             String jobTitle = documentSnapshot.getString("title");
                             binding.edtTitle.setText(jobTitle != null ? jobTitle : "");
                         } else {
-                            Log.w("DetailinfoJob", "Field 'title' does not exist");
-                            binding.edtTitle.setText(" ");
+                            binding.edtTitle.setText("");
+                        }
+
+                        if (documentSnapshot.contains("location")) {
+                            String jobLocation = documentSnapshot.getString("location");
+                            binding.edtLocation.setText(jobLocation != null ? jobLocation : "");
+                        } else {
+                            binding.edtLocation.setText("");
                         }
 
                         // Check and fetch job description
                         if (documentSnapshot.contains("description")) {
                             String description = documentSnapshot.getString("description");
-                            binding.edtDescription.setText(description != null ? description : " ");
+                            binding.edtDescription.setText(description != null ? description : "");
                         } else {
-                            Log.w("DetailinfoJob", "Field 'description' does not exist");
-                            binding.edtDescription.setText(" ");
+                            binding.edtDescription.setText("");
                         }
 
                         // Check and fetch salary min
                         if (documentSnapshot.contains("salaryMin")) {
-                            String salaryMin = documentSnapshot.getDouble("salaryMin")+"";
-                            binding.edtSalaryMin.setText(salaryMin != null ? salaryMin : "0");
+                            String salaryMin = documentSnapshot.getDouble("salaryMin") + "";
+                            binding.edtSalaryMin.setText(salaryMin != null ? salaryMin : "");
                         } else {
-                            Log.w("DetailinfoJob", "Field 'salaryMin' does not exist");
-                            binding.edtSalaryMin.setText("0");
+                            binding.edtSalaryMin.setText("");
                         }
 
                         // Check and fetch salary max
                         if (documentSnapshot.contains("salaryMax")) {
-                            String salaryMax = documentSnapshot.getDouble("salaryMax")+"";
-                            binding.edtSalaryMax.setText(salaryMax != null ? salaryMax : "0");
+                            String salaryMax = documentSnapshot.getDouble("salaryMax") + "";
+                            binding.edtSalaryMax.setText(salaryMax != null ? salaryMax : "");
                         } else {
 
-                            binding.edtSalaryMax.setText("0");
+                            binding.edtSalaryMax.setText("");
                         }
 
 
-                        if (documentSnapshot.contains("start_time")) {
-                            Timestamp timestamp = documentSnapshot.getTimestamp("start_time");
-                            if (timestamp != null) {
-                                Date date = timestamp.toDate();
-                                // Định dạng ngày tháng năm
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                                String formattedDate = dateFormat.format(date);
-                                binding.etDateStart.setText(formattedDate);
-                            } else {
-                                binding.etDateStart.setText("01/01/2000");
-                            }
+                        if (documentSnapshot.contains("startTime")) {
+                            binding.etDateStart.setText(documentSnapshot.getString("startTime"));
                         } else {
-                            binding.etDateStart.setText("N/A");
+                            binding.etDateStart.setText("");
                         }
 
 
+                        if (documentSnapshot.contains("endTime")) {
+                            binding.etDateEnd.setText(documentSnapshot.getString("endTime"));
+                        } else {
+                            binding.etDateEnd.setText("");
+                        }
 
-                        if (documentSnapshot.contains("end_time")) {
-                            Timestamp timestamp = documentSnapshot.getTimestamp("end_time");
-                            if (timestamp != null) {
-                                Date date = timestamp.toDate();
-                                // Định dạng ngày tháng năm
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                                String formattedDate = dateFormat.format(date);
-                                binding.etDateEnd.setText(formattedDate);
+
+                        if (documentSnapshot.contains("major")) {
+                            String major = documentSnapshot.getString("major");
+                            //     String major = ma.toString();
+                            ArrayAdapter<String> adapter = (ArrayAdapter<String>) binding.edtField.getAdapter();
+                            int position = adapter.getPosition(major);
+                            if (position >= 0) {
+                                binding.edtField.setSelection(position);
                             } else {
-                                binding.etDateEnd.setText("01/01/2000");
+                                major = "khác";
+                                int positionn = adapter.getPosition(major);
+                                binding.edtField.setSelection(positionn);
                             }
                         } else {
+
                             binding.etDateEnd.setText("N/A");
                         }
 
 
-
-//                        if (documentSnapshot.contains("major")) {
-//                            Timestamp ma = documentSnapshot.getTimestamp("major");
-//                            String major = ma.toString();
-//                            ArrayAdapter<String> adapter = (ArrayAdapter<String>) binding.edtField.getAdapter();
-//                            int position = adapter.getPosition(major);
-//                            if (position >= 0) {
-//                                binding.edtField.setSelection(position);
-//                            } else {
-//                                major = "khác";
-//                                int positionn = adapter.getPosition(major);
-//                                binding.edtField.setSelection(positionn);
-//                            }
-//                        } else {
-//
-//                            binding.etDateEnd.setText("N/A");
-//                        }
-
-
                     } else {
-                        Log.d("DetailinfoJob", "No such document");
                     }
                 });
     }

@@ -61,6 +61,13 @@ public class AcountFragment extends Fragment {
 
             }
         });
+        binding.llHoSoUngTuyen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(getContext(), Application_candidate.class);
+                startActivity(intent);
+            }
+        });
         binding.logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
