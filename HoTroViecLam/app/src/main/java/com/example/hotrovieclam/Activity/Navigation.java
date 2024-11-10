@@ -1,6 +1,7 @@
 package com.example.hotrovieclam.Activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -18,9 +19,15 @@ import com.example.hotrovieclam.Fragment.Home;
 import com.example.hotrovieclam.Fragment.RecruiterManagement.Recruiter_Management;
 import com.example.hotrovieclam.Fragment.Save_job;
 import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.NavigationBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -29,11 +36,11 @@ public class Navigation extends AppCompatActivity {
     private NavigationBinding binding;
     private MyRecyclerViewAdapter myRecyclerViewAdapter;
     private ArrayList<Job> jobList; // Khai báo danh sách công việc
-int n=1;
-
+    int n = 1;
+UserSessionManager user = new UserSessionManager();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle  savedInstanceState) {
         binding = NavigationBinding.inflate(getLayoutInflater());
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -44,13 +51,15 @@ int n=1;
             return insets;
         });
 //        khởi chạy màn hình home đầu tiên
+        Log.d("YY", "onCreate: "+user.getUserUid());
+        Log.d("YY", "Call");
+        checkTypeUser(user.getUserUid());
+
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new Home())
-                    .commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Home()).commit();
         }
-        if(n==1){
-        binding.navButtom.getMenu().removeItem(R.id.managerPost);}
+
+
         binding.navButtom.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

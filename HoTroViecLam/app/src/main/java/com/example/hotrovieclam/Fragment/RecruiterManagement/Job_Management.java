@@ -42,8 +42,7 @@ public class Job_Management extends Fragment {
     FragmentJobManagementBinding binding;
     JobManagementAdapter adapter;
     ArrayList<Job> jobs = new ArrayList<>();
-    UserSessionManager userSessionManager = new UserSessionManager();
-    String uid = userSessionManager.getUserUid();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -94,6 +93,8 @@ adapter.setRecycleClick(new JobManagementAdapter.OnItemClick() {
         return binding.getRoot();
     }
     private void fetchJobsFromFirestore() {
+        UserSessionManager userSessionManager = new UserSessionManager();
+        String uid = userSessionManager.getUserUid();
         db = FirebaseFirestore.getInstance();
         db.collection("jobs").addSnapshotListener((snapshots, error) -> {
             if (error != null) {
@@ -107,8 +108,8 @@ adapter.setRecycleClick(new JobManagementAdapter.OnItemClick() {
 
                     Job job = document.toObject(Job.class);
        //             Log.d("mm", job.getId());
-//                    Log.d("nn", uid);
-                    if (job.getEmployerId().equals(uid)) {
+                 Log.d("nn", uid);
+                    if (uid != null && job.getEmployerId() != null && job.getEmployerId().equals(uid)) {
                         job.setId(document.getId());
                         jobs.add(job);
 
