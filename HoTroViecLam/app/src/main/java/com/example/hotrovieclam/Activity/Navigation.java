@@ -79,4 +79,30 @@ int n=1;
 
 
     }
+    public void checkTypeUser(String uid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(uid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+
+                    if (document.exists()) {
+                        Long typeUser = document.getLong("userTypeId");
+                        Log.d("VANTAR", "onComplete: "+typeUser);
+                        if (typeUser==1){
+                            binding.navButtom.getMenu().removeItem(R.id.managerPost);
+                        }
+
+                    }
+
+
+
+                } else {
+                    Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
+                }
+            }
+        });
+    }
 }
