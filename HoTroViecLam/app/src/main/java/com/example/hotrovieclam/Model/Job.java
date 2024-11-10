@@ -3,14 +3,15 @@ package com.example.hotrovieclam.Model;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
+
 import android.graphics.Color;
 
 
-public class Job  implements Serializable {
+public class Job implements Serializable {
     private String id;
     private String employerId;
     private String avatar; // ref to employers.user_id
-   // private Source source;
+    // private Source source;
 
     public String getAvatar() {
         return avatar;
@@ -30,6 +31,8 @@ public class Job  implements Serializable {
     private float salaryMin = -1.0f;
     private float salaryMax = -1.0f;
 
+
+    private String jobURL;
 
     private String major;
     private String agreement;
@@ -56,6 +59,7 @@ public class Job  implements Serializable {
     public String getEmployerId() {
         return employerId;
     }
+
     public float getSalaryMin() {
         return salaryMin;
     }
@@ -71,6 +75,7 @@ public class Job  implements Serializable {
     public void setSalaryMax(float salaryMax) {
         this.salaryMax = salaryMax;
     }
+
     public void setEmployerId(String employerId) {
         this.employerId = employerId;
     }
@@ -139,6 +144,13 @@ public class Job  implements Serializable {
         this.sourceId = sourceId;
     }
 
+    public String getJobURL() {
+        return jobURL;
+    }
+
+    public void setJobURL(String jobURL) {
+        this.jobURL = jobURL;
+    }
 
     public String getAgreement() {
         return agreement;
@@ -180,7 +192,8 @@ public class Job  implements Serializable {
                 ", major='" + major + '\'' +
                 ", salaryMin='" + salaryMin + '\'' +
                 ", salaryMax='" + salaryMax + '\'' +
-              //  ", createdAt=" + createdAt +
+                ", jobURL='" + jobURL + '\'' +
+                //  ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
     }

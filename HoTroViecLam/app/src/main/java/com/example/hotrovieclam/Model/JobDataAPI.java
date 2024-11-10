@@ -18,6 +18,15 @@ public class JobDataAPI {
         private boolean hasRemote;
         private String published;
 
+        public String getApplication_url() {
+            return application_url;
+        }
+
+        public void setApplication_url(String application_url) {
+            this.application_url = application_url;
+        }
+
+        private String application_url;
         public String getExtId() {
             return extId;
         }
