@@ -1,19 +1,15 @@
 package com.example.hotrovieclam.Fragment.Child_Fragment;
 
-
 import android.os.Bundle;
-
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 
 import com.example.hotrovieclam.Adapter.KiNangAdapter;
 import com.example.hotrovieclam.Adapter.TruongHocAdapter;
@@ -27,11 +23,8 @@ import com.example.hotrovieclam.databinding.FragmentKiNangVaChungChiBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
-
 
 
 public class KiNangVaChungChiFragment extends Fragment {
@@ -40,7 +33,6 @@ public class KiNangVaChungChiFragment extends Fragment {
     private List<KiNang> kiNangArrayList;
     UserSessionManager userSessionManager = new UserSessionManager();
     String uid = null;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,18 +43,15 @@ public class KiNangVaChungChiFragment extends Fragment {
         //tao id uid
         uid = userSessionManager.getUserUid();
 
-
         kiNangArrayList = new ArrayList<>();
 //        kiNangArrayList.add(new KiNang("33333", "3", "Laapj trinhs php", "hack nasa1"));
 //        kiNangArrayList.add(new KiNang("33333", "3", "Laapj trinhs python", "hack nasa2"));
-
 
         SetUpRecycleView();
         Log.d("IUY", "onCreateView: "+uid);
         binding.themSkill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 sendIUDFragmenr(uid);
             }
@@ -92,18 +81,15 @@ public class KiNangVaChungChiFragment extends Fragment {
             }
         });
 
-
         loadSchoolData(uid);
         return view;
     }
-
 
     public void SetUpRecycleView() {
         kiNangAdapter = new KiNangAdapter(kiNangArrayList,this);
         binding.ItemKiNang.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.ItemKiNang.setAdapter(kiNangAdapter);
     }
-
 
     private void sendIUDFragmenr(String uid) {
         Bundle bundle = new Bundle();
@@ -120,7 +106,6 @@ public class KiNangVaChungChiFragment extends Fragment {
         // Khởi tạo Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-
         // Lấy dữ liệu từ Firestore
         db.collection("users").document(uid)
                 .collection("role").document("candidate")
@@ -134,7 +119,6 @@ public class KiNangVaChungChiFragment extends Fragment {
                             KiNang kiNang = document.toObject(KiNang.class);
                             kiNangArrayList.add(kiNang);
                         }
-
 
                         if (kiNangArrayList.isEmpty()) {
                             // Nếu không có dữ liệu, hiển thị thông báo
@@ -155,7 +139,6 @@ public class KiNangVaChungChiFragment extends Fragment {
     public void deleteSkill(String skillId) {
         UserSessionManager userSession = new UserSessionManager();
         String uid = userSession.getUserUid();
-
 
         if (uid != null && skillId != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -181,7 +164,6 @@ public class KiNangVaChungChiFragment extends Fragment {
         kiNangAdapter.notifyDataSetChanged();
         loadSchoolData(uid);
 
-
     }
     private void removeSkillFromList(String skillId) {
         for (int i = 0; i < kiNangArrayList.size(); i++) {
@@ -193,6 +175,4 @@ public class KiNangVaChungChiFragment extends Fragment {
         }
     }
 
-
 }
-

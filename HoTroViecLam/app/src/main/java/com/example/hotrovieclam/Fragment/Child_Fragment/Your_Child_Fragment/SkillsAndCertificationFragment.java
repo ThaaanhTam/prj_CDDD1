@@ -6,13 +6,11 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 
 import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.UserSessionManager;
@@ -22,16 +20,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
-
-
 public class SkillsAndCertificationFragment extends Fragment {
-
 
     private FragmentSkillsAndCertificationBinding binding;
     String id = null;
     String id_skill;
     private KiNang kiNang;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,12 +35,10 @@ public class SkillsAndCertificationFragment extends Fragment {
         View view = binding.getRoot();
         Bundle bundle = getArguments();
 
-
         if (bundle != null) {
             id = bundle.getString("USER_ID");
             id_skill = bundle.getString("ID_SKILL");
             Log.d("CAC", "onCreateView: " + id + "---------------------------" + id_skill);
-
 
         }
         Log.d("VV", "aiaiaiai: " + id);
@@ -91,9 +83,7 @@ public class SkillsAndCertificationFragment extends Fragment {
         });
         return view;
 
-
     }
-
 
     public void saveSkill(String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -103,7 +93,6 @@ public class SkillsAndCertificationFragment extends Fragment {
                 .add(kiNang)
                 .addOnSuccessListener(documentReference -> {
                     kiNang.setId(documentReference.getId());
-
 
                     documentReference.set(kiNang) // Cập nhật với ID mới
                             .addOnSuccessListener(aVoid -> {
@@ -119,14 +108,13 @@ public class SkillsAndCertificationFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     Log.e("Firestore", "Lỗi khi lưu dữ liệu", e);
                 });
-    }
 
+    }
 
     public void loaddata(String id_skill) {
         UserSessionManager user = new UserSessionManager();
         String uid = user.getUserUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
 
         // Lấy dữ liệu từ Firestore
         db.collection("users").document(uid)
@@ -138,12 +126,10 @@ public class SkillsAndCertificationFragment extends Fragment {
                         // Lấy dữ liệu từ document
                         KiNang skill = documentSnapshot.toObject(KiNang.class);
 
-
                         if (skill != null) {
                             // Cập nhật giao diện với dữ liệu từ Firestore
                             binding.nameskill.setText(skill.getName());
                             binding.mota.setText(skill.getDescription());
-
 
                         } else {
                             Log.e("LoadData", "Không thể chuyển đổi dữ liệu thành TruongHoc");
@@ -157,7 +143,6 @@ public class SkillsAndCertificationFragment extends Fragment {
                 });
     }
 
-
     private void update(String id_skill) {
         UserSessionManager userSession = new UserSessionManager();
         String uid = userSession.getUserUid();
@@ -166,7 +151,6 @@ public class SkillsAndCertificationFragment extends Fragment {
         String description = binding.mota.getText().toString().trim();
         // Tạo đối tượng KiNang với dữ liệu cập nhật
         KiNang kiNang = new KiNang(uid, id_skill, nameSkill, description); // Gán dữ liệu mới vào kiNang
-
 
         // Cập nhật tài liệu kỹ năng theo id_skill
         db.collection("users").document(uid)
@@ -189,6 +173,4 @@ public class SkillsAndCertificationFragment extends Fragment {
                 });
     }
 
-
 }
-

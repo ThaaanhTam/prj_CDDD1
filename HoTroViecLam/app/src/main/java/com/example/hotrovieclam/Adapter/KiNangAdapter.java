@@ -1,6 +1,5 @@
 package com.example.hotrovieclam.Adapter;
 
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,10 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.example.hotrovieclam.Fragment.Child_Fragment.KiNangVaChungChiFragment;
 import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.SkillsAndCertificationFragment;
@@ -20,9 +17,7 @@ import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.databinding.ItemKinangvachungchiBinding;
 
-
 import java.util.List;
-
 
 public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangViewHolder> {
     private final List<KiNang> kiNangList;
@@ -30,25 +25,19 @@ public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangView
     private final  KiNangVaChungChiFragment fragment;
 
 
-
-
     public interface OnItemEditClickListener {
         void onEditClick(String schoolId); // Phương thức để truyền ID
     }
-
 
     public void setOnItemEditClickListener(KiNangAdapter.OnItemEditClickListener listener) {
         this.editClickListener = listener;
     }
 
-
     public KiNangAdapter(List<KiNang> kiNangList, KiNangVaChungChiFragment fragment) {
         this.kiNangList = kiNangList;
         this.fragment = fragment;
 
-
     }
-
 
     @NonNull
     @Override
@@ -56,7 +45,6 @@ public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangView
         ItemKinangvachungchiBinding binding = ItemKinangvachungchiBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
         return new KiNangViewHolder(binding);
     }
-
 
     @Override
     public void onBindViewHolder(@NonNull KiNangAdapter.KiNangViewHolder holder, int position) {
@@ -77,7 +65,6 @@ public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangView
             public void onClick(View v) {
                 Log.d("DeleteClick", "Skill ID: " + kiNang.getId());
 
-
                 // Hiển thị dialog xác nhận xóa
                 new AlertDialog.Builder(v.getContext())
                         .setTitle("Xác nhận xóa")
@@ -86,7 +73,6 @@ public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangView
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // Gọi hàm delete khi người dùng xác nhận xóa
-
 
                                 fragment.deleteSkill(kiNang.getUid());
                                 fragment.deleteSkill(kiNang.getId());
@@ -104,22 +90,15 @@ public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangView
 
 
 
-
-
-
     }
-
 
     @Override
     public int getItemCount() {
         return kiNangList.size();
     }
 
-
     public class KiNangViewHolder extends RecyclerView.ViewHolder {
         private final ItemKinangvachungchiBinding binding;
-
-
 
 
         public KiNangViewHolder(ItemKinangvachungchiBinding binding) {
@@ -128,6 +107,3 @@ public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangView
         }
     }
 }
-
-
-

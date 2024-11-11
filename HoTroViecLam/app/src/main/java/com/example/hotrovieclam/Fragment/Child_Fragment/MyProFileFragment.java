@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Adapter.TabLayoutAdapter;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
@@ -87,6 +88,15 @@ private FragmentMyProFileBinding binding;
 
                         // Hiển thị thông tin người dùng
                         binding.name.setText(name);
+                        String avatarUrl = document.getString("avatar");
+                        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                            // Dùng Glide để tải ảnh từ URL và hiển thị vào ImageView
+                            Glide.with(getContext())
+                                    .load(avatarUrl)
+                                    .centerCrop()
+                                    .into(binding.avt); // imageView là ImageView của bạn
+                            Log.d("ii", "onComplete: lay dc anh vs uid"+uid );
+                        }
                         Log.d("PPPP", "onComplete: "+name);
                     } else {
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");

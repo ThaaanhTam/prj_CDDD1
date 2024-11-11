@@ -36,15 +36,20 @@ public class API {
                     JobDataAPI jobDataAPI = gson.fromJson(jsonResponse, JobDataAPI.class);
 
                     for (JobDataAPI.Job jobData : jobDataAPI.getResults()) {
+
                         Job job = new Job();
                         job.setId(jobData.getId());
+                        Log.d(TAG,  jobData.getApplication_url());
+
                         job.setTitle(jobData.getTitle());
                         String rawDescription = jobData.getDescription();
                         String cleanDescription = Jsoup.parse(rawDescription).text();
                         job.setDescription(cleanDescription);
                         job.setLocation(jobData.getLocation());
                         job.setAvatar(jobData.getCompany().getLogo());
+                        job.setJobURL(jobData.getApplication_url());
                         job.setSourceId(1);
+
                         job.setAgreement("Thỏa thuận");
 
                         jobList.add(job);

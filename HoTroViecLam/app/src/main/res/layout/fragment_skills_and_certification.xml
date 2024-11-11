@@ -6,20 +6,17 @@
     android:orientation="vertical"
     tools:context=".Fragment.Child_Fragment.Your_Child_Fragment.SkillsAndCertificationFragment">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#39BD74"
         android:padding="10dp">
 
-
         <ImageView
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/baseline_arrow_back_ios_24" />
-
 
         <TextView
             android:id="@+id/tv"
@@ -32,13 +29,11 @@
             android:textSize="25sp"
             android:textStyle="bold" />
 
-
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/img_2" />
     </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -47,7 +42,6 @@
         android:background="@drawable/boder_info_linealayout"
         android:orientation="vertical"
         android:padding="20dp">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -61,8 +55,6 @@
                 android:visibility="gone"/>
 
 
-
-
             <EditText
                 android:id="@+id/nameskill"
                 android:layout_width="match_parent"
@@ -70,16 +62,9 @@
                 android:background="@drawable/custom_text_input_truong_hoc"
                 android:hint="Tên kĩ năng"
 
-
                 android:padding="10dp" />
 
-
         </LinearLayout>
-
-
-
-
-
 
 
 
@@ -92,16 +77,13 @@
             android:orientation="vertical">
 
 
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:textStyle="bold"
-                android:textSize="17sp"
-                android:text="Mô tả chi tiết"/>
-
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="20dp"
+               android:textStyle="bold"
+               android:textSize="17sp"
+               android:text="Mô tả chi tiết"/>
 
             <EditText
                 android:id="@+id/mota"
@@ -118,14 +100,9 @@
 
 
 
-
-
-
         </LinearLayout>
 
-
     </LinearLayout>
-
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_update_skill"
@@ -138,7 +115,4 @@
         android:textStyle="bold" />
 
 
-
-
 </LinearLayout>
-

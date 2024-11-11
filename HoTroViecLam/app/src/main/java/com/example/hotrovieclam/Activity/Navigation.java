@@ -1,6 +1,7 @@
 package com.example.hotrovieclam.Activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -18,9 +19,15 @@ import com.example.hotrovieclam.Fragment.Home;
 import com.example.hotrovieclam.Fragment.RecruiterManagement.Recruiter_Management;
 import com.example.hotrovieclam.Fragment.Save_job;
 import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.NavigationBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -29,11 +36,11 @@ public class Navigation extends AppCompatActivity {
     private NavigationBinding binding;
     private MyRecyclerViewAdapter myRecyclerViewAdapter;
     private ArrayList<Job> jobList; // Khai báo danh sách công việc
-
-
+    int n = 1;
+UserSessionManager user = new UserSessionManager();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle  savedInstanceState) {
         binding = NavigationBinding.inflate(getLayoutInflater());
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -44,11 +51,15 @@ public class Navigation extends AppCompatActivity {
             return insets;
         });
 //        khởi chạy màn hình home đầu tiên
+        Log.d("YY", "onCreate: "+user.getUserUid());
+        Log.d("YY", "Call");
+        checkTypeUser(user.getUserUid());
+
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new Home())
-                    .commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Home()).commit();
         }
+
+
         binding.navButtom.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -76,5 +87,31 @@ public class Navigation extends AppCompatActivity {
         });
 
 
+    }
+    public void checkTypeUser(String uid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(uid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+
+                    if (document.exists()) {
+                        Long typeUser = document.getLong("userTypeId");
+                        Log.d("VANTAR", "onComplete: "+typeUser);
+                        if (typeUser==1){
+                            binding.navButtom.getMenu().removeItem(R.id.managerPost);
+                        }
+
+                    }
+
+
+
+                } else {
+                    Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
+                }
+            }
+        });
     }
 }

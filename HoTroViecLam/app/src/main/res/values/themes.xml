@@ -10,6 +10,12 @@
         <item name="android:textSize">12sp</item> <!-- Kích thước chữ -->
         <item name="android:textColor">#39BD74</item> <!-- Màu chữ -->
     </style>
+    <style name="HintTextAppearance" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">18sp</item> <!-- Kích cỡ chữ của hint khi ở trên -->
+
+        <item name="android:backgroundTint">@color/white</item> <!-- Màu chữ của hint khi ở trên -->
+    </style>
+
     <style name="Theme.HoTroViecLam" parent="Base.Theme.HoTroViecLam" />
     <style name="myEditText">
         <item name="android:layout_width">match_parent</item>
@@ -32,7 +38,7 @@
     </style>
     <style name="email" parent="myEditText">
         <item name="android:drawableLeft">@drawable/mail</item>
-        <item name="android:hint">Email/SDT</item>
+        <item name="android:hint">Email</item>
         <item name="android:inputType">textEmailAddress</item>
     </style>
 
@@ -118,5 +124,11 @@
         <item name="android:layout_margin">5dp</item>
         <item name="android:textSize">20dp</item>
     </style>
-<!-- //   <style name=""></style>-->
+    <style name="customImg">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+
+    </style>
+
+    <!-- //   <style name=""></style>-->
 </resources>
