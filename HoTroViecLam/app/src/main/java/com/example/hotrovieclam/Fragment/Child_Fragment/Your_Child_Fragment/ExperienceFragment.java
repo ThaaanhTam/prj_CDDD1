@@ -182,7 +182,7 @@ public class ExperienceFragment extends Fragment {
                                 getParentFragmentManager().setFragmentResult("addSucess", bundle);
                                 getParentFragmentManager().popBackStack();
                                 Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
-                                Toast.makeText(getContext(),"Lưu Trường học thành công", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(),"Lưu kinh nghiệm thành công", Toast.LENGTH_SHORT).show();
                             });
                 })
                 .addOnFailureListener(e -> {
