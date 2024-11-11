@@ -213,43 +213,41 @@ public class Profile_Candidate_Fragment extends Fragment {
 
                                         Log.d("Firestore", "Không tìm thấy dữ liệu profile.");
                                     }
+                                    DocumentReference doc = db.collection("users").document(id_candidate)
+                                            .collection("role").document("candidate")
+                                            .collection("introduction").document("introductdata");
+
+                                    doc.addSnapshotListener((documentSnapshot, e) -> {
+                                        if (e != null) {
+                                            // Xử lý lỗi nếu có
+                                            Log.e("Firestore", "Error listening to document", e);
+                                            return;
+                                        }
+
+                                        if (documentSnapshot != null && documentSnapshot.exists()) {
+                                            // Kiểm tra xem trường "introduction" đã có data hay chưa
+                                            String introduction = documentSnapshot.getString("introduction");
+                                            if (introduction != null && !introduction.isEmpty()) {
+                                                binding.gioithieu.setText(introduction);
+                                                // Nếu có data thì ẩn nút thêm thông tin giới thiệu bản thân và hiện nút và ngược lại
+                                                Log.d("Firestore", "Đã có data: " + introduction);
+                                            } else {
+                                                binding.gioithieu.setText("Chưa cập nhật");
+                                                binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
+                                            }
+                                        } else {
+                                            Log.d("Firestore", "Không có document với UID này trong bảng Introduces");
+                                            binding.gioithieu.setText("Chưa cập nhật");
+                                            binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
+                                        }
+                                    });
                                 } else {
                                     Log.d("Firestore", "Lỗi khi truy vấn dữ liệu profile.", task.getException());
                                 }
                             }
                         });
-                        DocumentReference doc = db.collection("users").document(id_candidate)
-                                .collection("role").document("candidate")
-                                .collection("introduction").document("introductdata");
-                        doc.get().addOnCompleteListener(taskgioithieu -> {
-                            if (taskgioithieu.isSuccessful()) {
-                                DocumentSnapshot documentGioithieu = taskgioithieu.getResult();
-                                if (documentGioithieu.exists()) {
-                                    // Kiểm tra xem trường "introduction" đã có data hay chưa
-                                    String introduction = documentGioithieu.getString("introduction");
-                                    if (introduction != null && !introduction.isEmpty()) {
-                                        binding.gioithieu.setText(introduction);
-                                        //nếu có data thì ẩn nút thêm thông tin giới thiệu bản thân và hiện nút và ngược lại
 
-                                        Log.d("Firestore", "Đã có data: " + introduction);
-                                    }
-                                } else {
-                                    Log.d("Firestore", "Không có document với UID này trong bảng Introduces");
-                                    binding.gioithieu.setText("Chưa cập nhật");
-                                    binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
 
-                                }
-                            } else {
-                                // Xử lý khi bảng "Introduces" không tồn tại hoặc lỗi kết nối Firestore
-                                Exception e = task.getException();
-                                if (e instanceof FirebaseFirestoreException &&
-                                        ((FirebaseFirestoreException) e).getCode() == FirebaseFirestoreException.Code.NOT_FOUND) {
-                                    Log.d("Firestore", "Bảng Introduces không tồn tại.");
-                                } else {
-                                    Log.d("Firestore", "Lỗi khi truy xuất document", e);
-                                }
-                            }
-                        });
 
                         CollectionReference docSchool = db.collection("users")
                                 .document(id_candidate)
