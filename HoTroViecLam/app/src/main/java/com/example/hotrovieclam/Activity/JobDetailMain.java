@@ -65,6 +65,7 @@ public class JobDetailMain extends AppCompatActivity {
     private FirebaseStorage storage;
     private StorageReference storageRef;
     private ActivityJobDetailMainBinding binding;
+    boolean isRbLibraryChecked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -287,24 +288,39 @@ public class JobDetailMain extends AppCompatActivity {
         Button btnApply = dialog.findViewById(R.id.btnApply);
         RadioButton rbLibrary = dialog.findViewById(R.id.rbLibrary);
         RadioButton rbUpload = dialog.findViewById(R.id.rbUpload);
+        LinearLayout file = dialog.findViewById(R.id.file);
         TextView tvname = dialog.findViewById(R.id.tvName);
         TextView tvemail = dialog.findViewById(R.id.tvEmail);
         TextView tvsdt = dialog.findViewById(R.id.tvSDT);
         TextView seeCV = dialog.findViewById(R.id.seeCV);
 
-        uploadLayout.setVisibility(View.GONE);
+//        uploadLayout.setVisibility(View.GONE);
+//        cvLibraryLayout.setVisibility(View.GONE);
+//        rbLibrary.setOnClickListener(v -> {
+//            rbLibrary.setChecked(true);
+//            rbUpload.setChecked(false);
+//            cvLibraryLayout.setVisibility(View.VISIBLE);
+//            uploadLayout.setVisibility(View.GONE);
+//        });
+//        rbUpload.setOnClickListener(v -> {
+//            rbUpload.setChecked(true);
+//            rbLibrary.setChecked(false);
+//            uploadLayout.setVisibility(View.VISIBLE);
+//            cvLibraryLayout.setVisibility(View.GONE);
+//        });
+        file.setVisibility(View.GONE);
         cvLibraryLayout.setVisibility(View.GONE);
         rbLibrary.setOnClickListener(v -> {
-            rbLibrary.setChecked(true);
-            rbUpload.setChecked(false);
-            cvLibraryLayout.setVisibility(View.VISIBLE);
-            uploadLayout.setVisibility(View.GONE);
-        });
-        rbUpload.setOnClickListener(v -> {
-            rbUpload.setChecked(true);
-            rbLibrary.setChecked(false);
-            uploadLayout.setVisibility(View.VISIBLE);
-            cvLibraryLayout.setVisibility(View.GONE);
+            isRbLibraryChecked = !isRbLibraryChecked;
+            rbLibrary.setChecked(isRbLibraryChecked);
+
+            if (isRbLibraryChecked) {
+                // Hiển thị layout khi được chọn
+                cvLibraryLayout.setVisibility(View.VISIBLE);
+            } else {
+                // Ẩn layout khi hủy chọn
+                cvLibraryLayout.setVisibility(View.GONE);
+            }
         });
         UserSessionManager sessionManager = new UserSessionManager();
         String uid = sessionManager.getUserUid();
@@ -360,7 +376,29 @@ public class JobDetailMain extends AppCompatActivity {
 
         // Xử lý sự kiện khi nhấn nút ứng tuyển
         btnApply.setOnClickListener(v -> {
+            if (!isRbLibraryChecked) {
+                // Thông báo nhắc người dùng chọn rbLibrary trước
+                Toast.makeText(this, "Vui lòng chọn vào rbLibrary trước khi nhấn 'Apply'", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Toast.makeText(this, "đã nhấn", Toast.LENGTH_SHORT).show();
+            UserSessionManager userSessionManager = new UserSessionManager();
+            String uida = userSessionManager.getUserUid();
+            Map<String, Object> newData = new HashMap<>();
+            newData.put("candidateId",uida );
+            newData.put("status", -1);
+
+            db.collection("jobs")
+                    .document(jobID)
+                    .collection("application")
+                    .add(newData)
+                    .addOnSuccessListener(documentReference -> {
+                        Log.d("Firestore", "Document added with ID: " + documentReference.getId());
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.w("Firestore", "Error adding document", e);
+                    });
+            isRbLibraryChecked=false;
             dialog.dismiss();
         });
 
