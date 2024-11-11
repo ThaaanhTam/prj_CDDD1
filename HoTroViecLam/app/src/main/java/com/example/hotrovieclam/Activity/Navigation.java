@@ -40,7 +40,7 @@ public class Navigation extends AppCompatActivity {
 UserSessionManager user = new UserSessionManager();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle  savedInstanceState) {
         binding = NavigationBinding.inflate(getLayoutInflater());
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);

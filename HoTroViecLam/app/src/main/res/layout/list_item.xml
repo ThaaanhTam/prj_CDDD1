@@ -4,10 +4,11 @@
 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="150dp"
+    android:minHeight="200dp"
     android:maxHeight="500dp"
     app:cardCornerRadius="5dp"
     app:cardElevation="5dp"
+    android:id="@+id/btnThongTinMain"
     app:cardUseCompatPadding="true">
 
     <LinearLayout
@@ -67,7 +68,6 @@
                 android:textSize="10dp" />
 
         </LinearLayout>
-
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

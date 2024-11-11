@@ -119,8 +119,6 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                                 public void onSuccess(Void aVoid) {
                                                                     // Xóa thành công tài liệu ứng viên
                                                                     Toast.makeText(getContext(), "Xóa ứng viên thành công!", Toast.LENGTH_SHORT).show();
-                                                                    Candidate_List candidateList = new Candidate_List();
-                                                                    candidateList.fetchCandidatesRealtime();
                                                                     Bundle bundle = new Bundle();
                                                                     bundle.putBoolean("delete", true);  // Đảm bảo tên khóa là "delete"
                                                                     getParentFragmentManager().setFragmentResult("deleteSuccess", bundle);
@@ -294,7 +292,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                 .document(id_candidate)
                                 .collection("role")
                                 .document("candidate")
-                                .collection("experiences");
+                                .collection("experience");
                         getKinhNghiem.get()
                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
