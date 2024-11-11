@@ -52,15 +52,11 @@ public class ExperienceFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                    // Log.d("VX", "onClick: " + id);
-                    binding.btnUpdateExperience.setVisibility(View.GONE);
                     if (id != null) {
                         binding.loading.setVisibility(View.VISIBLE);
-                        binding.btnUpdateExperience.setVisibility(View.GONE);
                         saveExperience();
                     } else if (id_experience != null) {
                         binding.loading.setVisibility(View.VISIBLE);
-                        binding.btnUpdateExperience.setVisibility(View.GONE);
-
                         updateExperience(id_experience);
                     }
 
@@ -178,7 +174,7 @@ public class ExperienceFragment extends Fragment {
                 .addOnSuccessListener(documentReference -> {
                     experience.setIdExperiences(documentReference.getId());
 
-                    documentReference.set(experience) // Cập nhật với ID mớiy
+                    documentReference.set(experience) // Cập nhật với ID mới
                             .addOnSuccessListener(aVoid -> {
                                 // Gửi req khi quay lại màn hình trước đó (KinhNghiemFragment)
                                 Bundle bundle = new Bundle();
@@ -186,7 +182,7 @@ public class ExperienceFragment extends Fragment {
                                 getParentFragmentManager().setFragmentResult("addSucess", bundle);
                                 getParentFragmentManager().popBackStack();
                                 Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
-                                Toast.makeText(getContext(),"Lưu Trường học thành công", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(),"Lưu kinh nghiệm thành công", Toast.LENGTH_SHORT).show();
                             });
                 })
                 .addOnFailureListener(e -> {

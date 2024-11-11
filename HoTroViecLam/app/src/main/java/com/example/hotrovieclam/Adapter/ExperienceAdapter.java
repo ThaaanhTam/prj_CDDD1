@@ -61,7 +61,6 @@ public class ExperienceAdapter extends RecyclerView.Adapter<ExperienceAdapter.Ex
         holder.binding.imgEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // Log.d("EditClick", "School ID: " + truongHoc.getId_Shool());
                 if (editClickListener != null) {
                     editClickListener.onEditClick(kinhNghiem.getIdExperiences()); // Truyền ID qua interface
                 }
