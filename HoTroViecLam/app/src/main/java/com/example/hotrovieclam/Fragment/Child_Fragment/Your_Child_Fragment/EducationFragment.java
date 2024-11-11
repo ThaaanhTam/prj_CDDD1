@@ -47,7 +47,9 @@ public class EducationFragment extends Fragment {
             //loadData(id,id_school);
             binding.btnUpdateEducation.setOnClickListener(new View.OnClickListener() {
                 @Override
+
                 public void onClick(View v) {
+                    binding.btnUpdateEducation.setVisibility(View.GONE);
                     Log.d("VX", "onClick: " + id);
                     if (id != null) {
                         binding.loading.setVisibility(View.VISIBLE);
@@ -148,43 +150,98 @@ public class EducationFragment extends Fragment {
     }
 
     private void saveSchool() {
-        // Khởi tạo Firestore
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        try {
+            // Khởi tạo Firestore
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Lấy các giá trị từ EditText và CheckBox
-        String UID = id; // ID người dùng
-        String nameSchool = binding.nameSchool.getText().toString().trim();
-        String nameMajor = binding.nameMajor.getText().toString().trim();
-        String start = binding.start.getText().toString().trim();
-        String end = binding.end.getText().toString().trim();
-        String description = binding.editTextDC.getText().toString().trim();
-        Integer type = binding.check.isChecked() ? 1 : 0; // 1 cho đang học, 0 cho không học
+            // Lấy các giá trị từ EditText và CheckBox
+            String UID = id; // ID người dùng
+            String nameSchool = binding.nameSchool.getText().toString().trim();
+            String nameMajor = binding.nameMajor.getText().toString().trim();
+            String start = binding.start.getText().toString().trim();
+            String end = binding.end.getText().toString().trim();
+            String description = binding.editTextDC.getText().toString().trim();
+            Integer type = binding.check.isChecked() ? 1 : 0; // 1 cho đang học, 0 cho không học
 
-        // Tạo một đối tượng TruongHoc
-        TruongHoc truongHoc = new TruongHoc(null, UID, nameSchool, nameMajor, start, end, description, type);
+            // Kiểm tra dữ liệu không được để trống và thiết lập lỗi
+            boolean hasError = false;
 
-        // Lưu dữ liệu vào Firestore
-        db.collection("users").document(UID)
-                .collection("role").document("candidate")
-                .collection("school")
-                .add(truongHoc)
-                .addOnSuccessListener(documentReference -> {
-                    truongHoc.setId_Shool(documentReference.getId());
+            if (UID == null || UID.isEmpty()) {
+                Toast.makeText(getContext(), "Lỗi ID người dùng", Toast.LENGTH_SHORT).show();
+                binding.loading.setVisibility(View.GONE);
+                return; // UID là thông tin quan trọng, nên cần kiểm tra và thoát sớm nếu null
+            }
 
-                    documentReference.set(truongHoc) // Cập nhật với ID mới
-                            .addOnSuccessListener(aVoid -> {
-                                // Gửi req khi quay lại màn hình trước đó (HocVanFragment)
-                                Bundle bundle = new Bundle();
-                                bundle.putBoolean("add", true);
-                                getParentFragmentManager().setFragmentResult("addSucess", bundle);
-                                getParentFragmentManager().popBackStack();
-                                Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
-                                Toast.makeText(getContext(),"Lưu Trường học thành công", Toast.LENGTH_SHORT).show();
-                            });
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Lỗi khi lưu dữ liệu", e);
-                });
+            if (nameSchool.isEmpty()) {
+                binding.nameSchool.setError("Tên trường không được để trống");
+                binding.loading.setVisibility(View.GONE);
+
+                hasError = true;
+            }
+
+            if (nameMajor.isEmpty()) {
+                binding.nameMajor.setError("Tên chuyên ngành không được để trống");
+                binding.loading.setVisibility(View.GONE);
+
+                hasError = true;
+            }
+
+            if (start.isEmpty()) {
+                binding.start.setError("Thời gian bắt đầu không được để trống");
+                binding.loading.setVisibility(View.GONE);
+
+                hasError = true;
+            }
+
+            if (end.isEmpty()) {
+                binding.end.setError("Thời gian kết thúc không được để trống");
+                binding.loading.setVisibility(View.GONE);
+
+                hasError = true;
+            }
+
+            // Nếu có lỗi, dừng việc lưu lại
+            if (hasError) {
+                binding.btnUpdateEducation.setVisibility(View.VISIBLE);
+                binding.loading.setVisibility(View.GONE);
+                return;
+            }
+
+            // Tạo một đối tượng TruongHoc
+            TruongHoc truongHoc = new TruongHoc(null, UID, nameSchool, nameMajor, start, end, description, type);
+
+            // Lưu dữ liệu vào Firestore
+            db.collection("users").document(UID)
+                    .collection("role").document("candidate")
+                    .collection("school")
+                    .add(truongHoc)
+                    .addOnSuccessListener(documentReference -> {
+                        try {
+                            truongHoc.setId_Shool(documentReference.getId());
+
+                            documentReference.set(truongHoc) // Cập nhật với ID mới
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Gửi req khi quay lại màn hình trước đó (HocVanFragment)
+                                        Bundle bundle = new Bundle();
+                                        bundle.putBoolean("add", true);
+                                        getParentFragmentManager().setFragmentResult("addSchool", bundle);
+                                        getParentFragmentManager().popBackStack();
+                                        Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
+                                        Toast.makeText(getContext(), "Lưu Trường học thành công", Toast.LENGTH_SHORT).show();
+                                    });
+                        } catch (Exception e) {
+                            Log.e("Firestore", "Lỗi khi cập nhật ID của trường học", e);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Firestore", "Lỗi khi lưu dữ liệu", e);
+                        Toast.makeText(getContext(), "Lỗi khi lưu dữ liệu", Toast.LENGTH_SHORT).show();
+                    });
+
+        } catch (Exception e) {
+            Log.e("saveSchool", "Lỗi trong quá trình lưu thông tin trường học", e);
+            Toast.makeText(getContext(), "Đã xảy ra lỗi khi lưu thông tin", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadData( String id_school) {
@@ -252,7 +309,7 @@ public class EducationFragment extends Fragment {
                     Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                     Bundle bundle = new Bundle();
                     bundle.putBoolean("update", true);
-                    getParentFragmentManager().setFragmentResult("updateSuccess", bundle);
+                    getParentFragmentManager().setFragmentResult("updateTruongHoc", bundle);
                     getParentFragmentManager().popBackStack();
                 })
                 .addOnFailureListener(e -> {
