@@ -30,7 +30,15 @@ public class Job implements Serializable {
     private int sourceId; // ref to source.id
     private float salaryMin = -1.0f;
     private float salaryMax = -1.0f;
+    private String createdAt;
 
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
 
     private String jobURL;
 

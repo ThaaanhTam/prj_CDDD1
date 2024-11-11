@@ -1,16 +1,12 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,17 +23,14 @@ import androidx.core.content.ContextCompat;
 
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
-import com.example.hotrovieclam.databinding.ActivityPostJobBinding;
+import com.example.hotrovieclam.databinding.ActivityEditJobBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,39 +39,37 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class PostJob extends AppCompatActivity {
-    ActivityPostJobBinding binding;
+public class EditJob extends AppCompatActivity {
+    ActivityEditJobBinding binding;
     private Calendar startDate = Calendar.getInstance();
     private Calendar endDate = Calendar.getInstance();
     UserSessionManager userSessionManager = new UserSessionManager();
     ArrayList<String> fieldNames = new ArrayList<>();
     String uid = userSessionManager.getUserUid();
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
-
+    private String jobID;
     private FusedLocationProviderClient fusedLocationClient;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityPostJobBinding.inflate(getLayoutInflater());
+        binding = ActivityEditJobBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.title));
         setupFieldSpinner();
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-
-
+        jobID = getIntent().getStringExtra("jobID");
+        db = FirebaseFirestore.getInstance();
+        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
-        } else {
-            getUserLocation();
-        }
+//        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+//                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+//        } else {
+//            getUserLocation();
+//        }
 
 
         binding.lvGoBack.setOnClickListener(new View.OnClickListener() {
@@ -87,14 +78,14 @@ public class PostJob extends AppCompatActivity {
                 finish();
             }
         });
-
+        fetchJobDetails();
         binding.etDateStart.setOnClickListener(v -> showDatePickerDialog(binding.etDateStart, true));
         binding.etDateEnd.setOnClickListener(v -> showDatePickerDialog(binding.etDateEnd, false));
         binding.btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (validateInputs()) {
-                    pushDataToFirestore();
+                    confirmEdit();
                 }
             }
         });
@@ -103,10 +94,25 @@ public class PostJob extends AppCompatActivity {
     }
 
 
+    public void confirmEdit() {
+        new AlertDialog.Builder(this)
+                .setTitle("Xác nhận sửa")
+                .setMessage("Bạn có chắc chắn muốn sửa công vệc này không?")
+                .setPositiveButton("Sửa", (dialog, which) -> {
+                    // Người dùng nhấn "Xóa"
+                    pushDataToFirestore();
+                })
+                .setNegativeButton("Hủy", (dialog, which) -> {
+
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
     private void getUserLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Yêu cầu quyền vị trí nếu chưa có
+
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
@@ -130,8 +136,8 @@ public class PostJob extends AppCompatActivity {
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
-                String fullAddress = address.getAddressLine(0);
-                Log.d("Địa chỉ: ",  fullAddress);
+                String fullAddress = address.getAddressLine(0); // Địa chỉ đầy đủ
+                Log.d("Địa chỉ: ", fullAddress);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -238,6 +244,7 @@ public class PostJob extends AppCompatActivity {
         binding.etDateStart.setText("");
         binding.etDateEnd.setText("");
     }
+
     private void setupFieldSpinner() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -294,11 +301,13 @@ public class PostJob extends AppCompatActivity {
     public void pushDataToFirestore() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> dataToPush = new HashMap<>();
-        String docId = db.collection("jobs").document().getId();  // Tạo ID mới
 
-        dataToPush.put("id", docId);  // Lưu ID vào data
-        dataToPush.put("salaryMax", Integer.parseInt(binding.edtSalaryMax.getText().toString()));
-        dataToPush.put("salaryMin", Integer.parseInt(binding.edtSalaryMin.getText().toString()));
+        // Sử dụng ID tài liệu đã có
+
+
+        dataToPush.put("id", jobID);
+        dataToPush.put("salaryMax", Double.parseDouble(binding.edtSalaryMax.getText().toString()));
+        dataToPush.put("salaryMin", Double.parseDouble(binding.edtSalaryMin.getText().toString()));
         Timestamp timestamp = Timestamp.now();
         String timestampString = convertTimestampToString(timestamp);
         dataToPush.put("createdAt", timestampString);
@@ -311,19 +320,22 @@ public class PostJob extends AppCompatActivity {
         dataToPush.put("major", binding.edtField.getSelectedItem().toString());
 
         db.collection("jobs")
-                .document(docId)        // Sử dụng ID đã tạo
-                .set(dataToPush)        // Dùng set() thay vì add()
+                .document(jobID)
+                .set(dataToPush)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("Firestore", "Dữ liệu đã được đẩy lên thành công");
-                    Toast.makeText(this, "Đăng tuyển thành công", Toast.LENGTH_SHORT).show();
+                    Log.d("Firestore", "Dữ liệu đã được cập nhật thành công");
+                    Toast.makeText(this, "Cập nhật tuyển dụng thành công", Toast.LENGTH_SHORT).show();
                     clearInputFields();
-                    finish();
+
                 })
                 .addOnFailureListener(e -> {
-                    Log.d("Firestore", "Đẩy dữ liệu thất bại: " + e.getMessage());
-                    Toast.makeText(this, "Đăng tuyển thất bại", Toast.LENGTH_SHORT).show();
+                    Log.d("Firestore", "Cập nhật dữ liệu thất bại: " + e.getMessage());
+                    Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
                 });
+
     }
+
+
     private void showDatePickerDialog(final EditText dateField, final boolean isStartDate) {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -352,8 +364,93 @@ public class PostJob extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    private void fetchJobDetails() {
+        // Replace "jobs" with the name of your Firestore collection
+        db.collection("jobs").document(jobID)
+                .addSnapshotListener((documentSnapshot, e) -> {
+                    if (e != null) {
+                        Log.e("DetailinfoJob", "Listen failed.", e);
+                        return;
+                    }
 
-    // Trong onCreate hoặc một hàm khởi tạo nào đó
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+
+                        if (documentSnapshot.contains("title")) {
+                            String jobTitle = documentSnapshot.getString("title");
+                            binding.edtTitle.setText(jobTitle != null ? jobTitle : "");
+                        } else {
+                            binding.edtTitle.setText("");
+                        }
+
+                        if (documentSnapshot.contains("location")) {
+                            String jobLocation = documentSnapshot.getString("location");
+                            binding.edtLocation.setText(jobLocation != null ? jobLocation : "");
+                        } else {
+                            binding.edtLocation.setText("");
+                        }
+
+                        // Check and fetch job description
+                        if (documentSnapshot.contains("description")) {
+                            String description = documentSnapshot.getString("description");
+                            binding.edtDescription.setText(description != null ? description : "");
+                        } else {
+                            binding.edtDescription.setText("");
+                        }
+
+                        // Check and fetch salary min
+                        if (documentSnapshot.contains("salaryMin")) {
+                            String salaryMin = documentSnapshot.getDouble("salaryMin") + "";
+                            binding.edtSalaryMin.setText(salaryMin != null ? salaryMin : "");
+                        } else {
+                            binding.edtSalaryMin.setText("");
+                        }
+
+                        // Check and fetch salary max
+                        if (documentSnapshot.contains("salaryMax")) {
+                            String salaryMax = documentSnapshot.getDouble("salaryMax") + "";
+                            binding.edtSalaryMax.setText(salaryMax != null ? salaryMax : "");
+                        } else {
+
+                            binding.edtSalaryMax.setText("");
+                        }
+
+
+                        if (documentSnapshot.contains("startTime")) {
+                            binding.etDateStart.setText(documentSnapshot.getString("startTime"));
+                        } else {
+                            binding.etDateStart.setText("");
+                        }
+
+
+                        if (documentSnapshot.contains("endTime")) {
+                            binding.etDateEnd.setText(documentSnapshot.getString("endTime"));
+                        } else {
+                            binding.etDateEnd.setText("");
+                        }
+
+
+                        if (documentSnapshot.contains("major")) {
+                            String major = documentSnapshot.getString("major");
+                            //     String major = ma.toString();
+                            ArrayAdapter<String> adapter = (ArrayAdapter<String>) binding.edtField.getAdapter();
+                            int position = adapter.getPosition(major);
+                            if (position >= 0) {
+                                binding.edtField.setSelection(position);
+                            } else {
+                                major = "khác";
+                                int positionn = adapter.getPosition(major);
+                                binding.edtField.setSelection(positionn);
+                            }
+                        } else {
+
+                            binding.etDateEnd.setText("N/A");
+                        }
+
+
+                    } else {
+                    }
+                });
+    }
 
 
 }

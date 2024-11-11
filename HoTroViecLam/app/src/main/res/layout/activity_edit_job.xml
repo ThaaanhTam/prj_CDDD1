@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".Fragment.RecruiterManagement.PostJob">
+    tools:context=".Fragment.RecruiterManagement.EditJob">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,12 +17,12 @@
 
         <LinearLayout
             android:id="@+id/lvGoBack"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/title"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="5dp">
+            android:padding="15dp">
 
             <ImageView
                 android:layout_width="24dp"
@@ -35,30 +35,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tin tuyển dụng"
+                android:text="Thay đổi thông tin tuyển dụng"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/title"
-            android:gravity="end"
-            android:padding="5dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnPost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
-                android:padding="3dp"
-                android:text="Đăng"
-                android:textColor="@color/title"
-                app:cornerRadius="5dp" />
-        </LinearLayout>
 
 
     </LinearLayout>
@@ -265,9 +248,28 @@
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPost"
+                app:backgroundTint="#5F2F2F"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:layout_marginTop="15dp"
+                android:text="Sửa"
+                android:textColor="@color/white"
+                app:cornerRadius="5dp" />
         </LinearLayout>
 
     </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/title"
+        android:gravity="center"
+        android:padding="15dp">
+
+
+    </LinearLayout>
 
 </LinearLayout>
