@@ -91,27 +91,38 @@ UserSessionManager user = new UserSessionManager();
     public void checkTypeUser(String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(uid);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
 
-                    if (document.exists()) {
-                        Long typeUser = document.getLong("userTypeId");
-                        Log.d("VANTAR", "onComplete: "+typeUser);
-                        if (typeUser==1){
-                            binding.navButtom.getMenu().removeItem(R.id.managerPost);
+        // Lắng nghe thời gian thực
+        docRef.addSnapshotListener((documentSnapshot, error) -> {
+            if (error != null) {
+                Log.w("Firestore", "Lỗi khi lắng nghe thay đổi dữ liệu", error);
+                return;
+            }
+
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                Long typeUser = documentSnapshot.getLong("userTypeId");
+                Log.d("VANTAR", "UserType thay đổi: " + typeUser);
+
+                if (binding.navButtom != null) {
+                    MenuItem menuItem = binding.navButtom.getMenu().findItem(R.id.managerPost);
+
+                    // Kiểm tra nếu `menuItem` không null trước khi gọi `setVisible`
+                    if (menuItem != null) {
+                        if (typeUser != null && typeUser == 1) {
+                            menuItem.setVisible(false);
+                        } else {
+                            menuItem.setVisible(true);
                         }
-
+                    } else {
+                        Log.e("Menu", "MenuItem với ID 'managerPost' không tồn tại.");
                     }
-
-
-
                 } else {
-                    Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
+                    Log.e("NavBottom", "Navigation Bottom chưa được khởi tạo.");
                 }
+            } else {
+                Log.d("Firestore", "Tài liệu không tồn tại.");
             }
         });
     }
+
 }

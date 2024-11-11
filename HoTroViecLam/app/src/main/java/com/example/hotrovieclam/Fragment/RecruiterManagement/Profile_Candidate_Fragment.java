@@ -15,7 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.hotrovieclam.Model.Experiences;
+import com.example.hotrovieclam.Model.Experience;
 import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.Model.UserSessionManager;
@@ -40,10 +40,10 @@ public class Profile_Candidate_Fragment extends Fragment {
     String id_candidate = null;
     String id_Job=null;
     ArrayList<TruongHoc> truonghoc = new ArrayList<>();
-    ArrayList<Experiences> experiences = new ArrayList<>();
+    ArrayList<Experience> experiences = new ArrayList<>();
     ArrayList<KiNang>kiNangs= new ArrayList<>();
     ArrayAdapter<TruongHoc> truongHocAdapter;
-    ArrayAdapter<Experiences> kinhnghiemAdater;
+    ArrayAdapter<Experience> kinhnghiemAdater;
     ArrayAdapter<KiNang>kiNangArrayAdapter;
 
     @Override
@@ -299,7 +299,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                             experiences.clear(); // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
                                             if (task.getResult().isEmpty()) {
                                                 // Hiển thị thông báo nếu không có dữ liệu
-                                                experiences.add(new Experiences(null, "", "", "", "Chưa cập nhật kinh nghiệm", "", null));
+                                                experiences.add(new Experience(null, "", "", "", "Chưa cập nhật kinh nghiệm", "", null));
                                                 kinhnghiemAdater.notifyDataSetChanged();
                                                 //binding.lisviewHocVan.setVisibility(View.VISIBLE); // Hiển thị ListView
                                             } else {
@@ -310,7 +310,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                     String timeStart = document.getString("time_start");
                                                     String timeEnd = document.getString("time_end");
 
-                                                    Experiences experie = new Experiences(null, timeEnd, timeStart, position, name_organization, null, null);
+                                                    Experience experie = new Experience(null, timeEnd, timeStart, position, name_organization, null, null);
 
                                                     experiences.add(experie); // Thêm vào danh sách
                                                 }
