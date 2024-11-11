@@ -204,7 +204,7 @@ public class RegisterEmployer extends AppCompatActivity {
 
 
             db.collection("users").document(uid)
-                    .collection("roles").document("employer")
+                    .collection("role").document("employer")
                     .set(companyInfo)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Lưu dữ liệu thành công", Toast.LENGTH_SHORT).show();
