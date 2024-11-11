@@ -16,12 +16,17 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.hotrovieclam.Fragment.RecruiterManagement.DetailinfoJob;
 import com.example.hotrovieclam.Model.Job;
+import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityJobDetailMainBinding;
 import com.example.hotrovieclam.databinding.FragmentDetailinfoJobBinding;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JobDetailMain extends AppCompatActivity {
 
@@ -31,6 +36,7 @@ public class JobDetailMain extends AppCompatActivity {
     private FirebaseFirestore db;
     private ArrayList<Job> listJob = new ArrayList<>(); // Khởi tạo listJob
     private Job job;
+
 
     private ActivityJobDetailMainBinding binding;
 
@@ -63,7 +69,6 @@ public class JobDetailMain extends AppCompatActivity {
         });
         db = FirebaseFirestore.getInstance();
 
-
         // Gọi phương thức để lấy chi tiết công việc
 //        fỉebaseJobDetails();
         if (sourceId == 3) {
@@ -74,6 +79,7 @@ public class JobDetailMain extends AppCompatActivity {
         }
 
     }
+
 
     private void fỉebaseJobDetails() {
         // Thay "jobs" bằng tên của collection trong Firestore
