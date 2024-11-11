@@ -13,7 +13,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
-import com.example.hotrovieclam.Model.Experiences;
+import com.example.hotrovieclam.Model.Experience;
 import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.R;
@@ -37,10 +37,10 @@ public class cv_template extends AppCompatActivity {
     private FirebaseFirestore db;
     private ActivityCvTemplateBinding binding;
     ArrayList<TruongHoc> truonghoc = new ArrayList<>();
-    ArrayList<Experiences> experiences = new ArrayList<>();
+    ArrayList<Experience> experiences = new ArrayList<>();
     ArrayList<KiNang>kiNangs= new ArrayList<>();
     ArrayAdapter<TruongHoc> truongHocAdapter;
-    ArrayAdapter<Experiences> kinhnghiemAdater;
+    ArrayAdapter<Experience> kinhnghiemAdater;
     ArrayAdapter<KiNang>kiNangArrayAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,7 +207,7 @@ public class cv_template extends AppCompatActivity {
 
                     experiences.clear(); // Xóa dữ liệu cũ
                     if (value != null && value.isEmpty()) {
-                        experiences.add(new Experiences(null, "", "", "", "Chưa cập nhật kinh nghiệm", "", null));
+                        experiences.add(new Experience(null, "", "", "", "Chưa cập nhật kinh nghiệm", "", null));
                     } else if (value != null) {
                         for (DocumentSnapshot document : value) {
                             String name_organization = document.getString("name_organization");
@@ -215,7 +215,7 @@ public class cv_template extends AppCompatActivity {
                             String timeStart = document.getString("time_start");
                             String timeEnd = document.getString("time_end");
 
-                            Experiences experie = new Experiences(null, timeEnd, timeStart, position, name_organization, null, null);
+                            Experience experie = new Experience(null, timeEnd, timeStart, position, name_organization, null, null);
                             experiences.add(experie); // Thêm vào danh sách
                         }
                     }

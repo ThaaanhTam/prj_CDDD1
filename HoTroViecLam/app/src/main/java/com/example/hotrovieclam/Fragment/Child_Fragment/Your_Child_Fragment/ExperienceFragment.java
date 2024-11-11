@@ -52,11 +52,15 @@ public class ExperienceFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                    // Log.d("VX", "onClick: " + id);
+                    binding.btnUpdateExperience.setVisibility(View.GONE);
                     if (id != null) {
                         binding.loading.setVisibility(View.VISIBLE);
+                        binding.btnUpdateExperience.setVisibility(View.GONE);
                         saveExperience();
                     } else if (id_experience != null) {
                         binding.loading.setVisibility(View.VISIBLE);
+                        binding.btnUpdateExperience.setVisibility(View.GONE);
+
                         updateExperience(id_experience);
                     }
 

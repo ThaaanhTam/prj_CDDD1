@@ -274,6 +274,9 @@ public class RegisterEmployer extends AppCompatActivity {
         backCCCDUri = null;
         companyCertUri = null;
         logoUri = null;
+        binding.progressBar.setVisibility(View.GONE);
+       // binding.btnSubmit.setVisibility(View.VISIBLE);
+
     }
     // Kiểm tra xem số điện thoại có phải 10 chữ số không
     private boolean isPhoneNumberValid(String phoneNumber) {
