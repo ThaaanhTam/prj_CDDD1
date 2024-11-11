@@ -38,6 +38,7 @@ public class Navigation extends AppCompatActivity {
     private ArrayList<Job> jobList; // Khai báo danh sách công việc
     int n = 1;
 UserSessionManager user = new UserSessionManager();
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle  savedInstanceState) {
@@ -89,7 +90,7 @@ UserSessionManager user = new UserSessionManager();
 
     }
     public void checkTypeUser(String uid) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         DocumentReference docRef = db.collection("users").document(uid);
 
         // Lắng nghe thời gian thực
