@@ -11,37 +11,36 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Model.Job;
-import com.example.hotrovieclam.Model.Source;
-import com.example.hotrovieclam.R;
-import com.example.hotrovieclam.databinding.ListItemBinding;
+import com.example.hotrovieclam.databinding.ItemJobSaveBinding;
 
 import java.util.ArrayList;
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.MyViewHolder> {
-
+public class AdapterListJobSave  extends RecyclerView.Adapter<AdapterListJobSave.MyViewHolder>{
     private Activity context;
     private ArrayList<Job> jobs;
-    private OnItemClick recycleClick;
+    private OnItemEditClickListener bamvaodexemchitietcongviecdaluu;
+    public interface OnItemEditClickListener {
+        void onEditClick(String idJob); // Phương thức để truyền ID
+    }
 
-
-    public void setRecycleClick(OnItemClick recycleClick) {
-        this.recycleClick = recycleClick;
+    public void setbamvaodexemchitietcongviecdaluu(AdapterListJobSave.OnItemEditClickListener listener) {
+        this.bamvaodexemchitietcongviecdaluu = listener;
     }
 
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MyViewHolder(ListItemBinding.inflate(context.getLayoutInflater(), parent, false));
+    public AdapterListJobSave.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new AdapterListJobSave.MyViewHolder(ItemJobSaveBinding.inflate(context.getLayoutInflater(), parent, false));
     }
 
-    public MyRecyclerViewAdapter(Activity context, ArrayList<Job> jobs) {
+    public AdapterListJobSave(Activity context, ArrayList<Job> jobs) {
         this.context = context;
         this.jobs = jobs;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AdapterListJobSave.MyViewHolder holder, int position) {
         Job job = jobs.get(position);
 
         Uri uri;
@@ -72,16 +71,27 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 //        }
 
 
-        if (job.getSourceId() != 3) {
-           // holder.binding.backgroundItem.setBackgroundResource(R.color.API);
-            holder.binding.logoApp.setVisibility(ViewGroup.GONE);
-        }
-        else {
-            holder.binding.logoApp.setVisibility(ViewGroup.VISIBLE);
-        }
+
         holder.jobID = jobs.get(position).getId();
         holder.job = jobs.get(position);
-
+        holder.binding.btnThongTinMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                    if (recycleClick != null){
+//                        recycleClick.DetailClick(SourceId, jobID,job );
+//                    }
+                Log.d("TAG", "onClick: chi tiet"+job.getId());
+                if (bamvaodexemchitietcongviecdaluu != null) {
+                    bamvaodexemchitietcongviecdaluu.onEditClick(job.getId()); // Truyền ID qua interface
+                }
+            }
+        });
+        holder.binding.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG", "onClick: Xoa"+job.getId());
+            }
+        });
 
     }
 
@@ -91,33 +101,18 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public int position;
-        ListItemBinding binding;
+        ItemJobSaveBinding binding;
         public String jobID = "",SourceId = "";
-       public Job job = new Job();
-        public MyViewHolder(@NonNull ListItemBinding itemView) {
+        public Job job = new Job();
+        public MyViewHolder(@NonNull ItemJobSaveBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
 
-            binding.btnThongTinMain.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (recycleClick != null){
-                        recycleClick.DetailClick(SourceId, jobID,job );
-                    }
-                }
-            });
+
+
 
         }
     }
 
-    public void updateList(ArrayList<Job> newJobs) {
-        jobs.clear(); // Xóa danh sách cũ
-        jobs.addAll(newJobs); // Thêm danh sách mới
-        notifyDataSetChanged(); // Cập nhật RecyclerView,
-    }
-    public interface OnItemClick {
-        void DetailClick(String SourceId,  String jobID,Job job);
 
-
-    }
 }
