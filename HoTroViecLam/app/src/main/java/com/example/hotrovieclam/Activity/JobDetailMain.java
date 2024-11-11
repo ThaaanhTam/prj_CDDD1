@@ -360,16 +360,7 @@ public class JobDetailMain extends AppCompatActivity {
 
         // Xử lý sự kiện khi nhấn nút ứng tuyển
         btnApply.setOnClickListener(v -> {
-            int selectedId = radioGroup.getCheckedRadioButtonId();
-            if (selectedId == -1) {
-                Toast.makeText(this, "Vui lòng chọn phương thức nộp CV", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (selectedId == R.id.rbLibrary) {
-                useAppCV();
-            } else {
-                openFilePicker();
-            }
+            Toast.makeText(this, "đã nhấn", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
         });
 
@@ -440,7 +431,6 @@ public class JobDetailMain extends AppCompatActivity {
         application.put("cvUrl", cvUrl);
         application.put("applicationDate", new Date());
         application.put("status", "Pending"); // Trạng thái mặc định
-
         db.collection("applications")
                 .add(application)
                 .addOnSuccessListener(documentReference -> {
@@ -451,7 +441,6 @@ public class JobDetailMain extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 });
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
