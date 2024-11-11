@@ -37,8 +37,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:layout_margin="20dp"
+        android:layout_weight="1"
         android:background="@drawable/boder_info_linealayout"
         android:orientation="vertical"
         android:padding="20dp">
@@ -48,11 +49,12 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
+
             <ProgressBar
+                android:id="@+id/loading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/loading"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
 
             <EditText
@@ -67,52 +69,58 @@
         </LinearLayout>
 
 
-
-
-
         <LinearLayout
+            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:orientation="vertical">
 
 
-           <TextView
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_marginBottom="20dp"
-               android:textStyle="bold"
-               android:textSize="17sp"
-               android:text="Mô tả chi tiết"/>
-
-            <EditText
-                android:id="@+id/mota"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:background="@drawable/border_text_input_update_info"
-                android:gravity="top"
-                android:hint=" Mô tả chi tiết kĩ năng"
-                android:minLines="6"
-                android:overScrollMode="always"
-                android:padding="7dp"
-                android:scrollbars="vertical" />
+                android:text="Mô tả chi tiết"
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <EditText
+                    android:id="@+id/mota"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/border_text_input_update_info"
+                    android:gravity="top"
+                    android:hint=" Mô tả chi tiết kĩ năng"
+                    android:minLines="6"
+                    android:overScrollMode="always"
+                    android:padding="7dp"
+                    android:scrollbars="vertical" />
+            </ScrollView>
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_update_skill"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:background="@color/navigation"
-        android:text="cập nhật"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:layout_weight="1">
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_update_skill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@color/navigation"
+            android:text="cập nhật"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </LinearLayout>
