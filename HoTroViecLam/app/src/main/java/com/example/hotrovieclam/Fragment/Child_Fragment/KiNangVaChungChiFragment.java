@@ -167,12 +167,15 @@ public class KiNangVaChungChiFragment extends Fragment {
     }
     private void removeSkillFromList(String skillId) {
         for (int i = 0; i < kiNangArrayList.size(); i++) {
-            if (kiNangArrayList.get(i).getId().equals(skillId)) {
+            // Kiểm tra nếu id của phần tử khác null trước khi gọi equals
+            String currentSkillId = kiNangArrayList.get(i).getId();
+            if (currentSkillId != null && currentSkillId.equals(skillId)) {
                 kiNangArrayList.remove(i); // Xóa phần tử khỏi danh sách
                 kiNangAdapter.notifyItemRemoved(i); // Cập nhật RecyclerView tại vị trí đã xóa
                 break;
             }
         }
     }
+
 
 }

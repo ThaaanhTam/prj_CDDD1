@@ -133,7 +133,9 @@
                 android:layout_marginBottom="20dp"
                 android:text="Tôi đang học  ở đây" />
 
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/
             <EditText
                 android:id="@+id/editTextDC"
                 android:layout_width="match_parent"
