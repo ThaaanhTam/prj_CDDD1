@@ -37,7 +37,7 @@ public class MessageFrament extends Fragment {
     private ImageButton imageButtonSend;
 
     private String currentUserId;
-    private String senderId;
+    private String senderId ;
     private String receiverId;
 
     @Nullable
@@ -114,8 +114,7 @@ public class MessageFrament extends Fragment {
 
         // Lắng nghe tin nhắn theo thời gian thực
         db.collection("messages")
-                .whereIn("sender_id", Arrays.asList(senderId, receiverId))
-                .whereIn("receiver_id", Arrays.asList(senderId, receiverId))
+                .whereEqualTo("sender_id",senderId).whereEqualTo("receiver_id", receiverId)
                 .orderBy("sent_at")
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
@@ -128,20 +127,23 @@ public class MessageFrament extends Fragment {
                             String msgSenderId = document.getString("sender_id");
                             String msgReceiverId = document.getString("receiver_id");
                             String content = document.getString("content");
+                            Long sentAt = document.getLong("sent_at");
 
                             Message message = new Message();
                             message.setContent(content);
                             message.setReceiver_id(msgReceiverId);
                             message.setSender_id(msgSenderId);
+                            message.setSent_at(sentAt);
 
                             // Chỉ thêm tin nhắn mới vào danh sách nếu chưa tồn tại
                             if (!messageList.contains(message)) {
                                 messageList.add(message);
                                 messageAdapter.notifyItemInserted(messageList.size() - 1);
-                                recyclerViewMessages.scrollToPosition(messageList.size() - 1); // Cuộn xuống tin nhắn mới nhất
+                                recyclerViewMessages.scrollToPosition(messageList.size() - 1);
                             }
                         }
                     }
                 });
+
     }
 }
