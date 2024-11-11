@@ -44,7 +44,7 @@ public class KinhNghiemFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
          uid = userSessionManager.getUserUid();
         setupRecyclerView();
-        //lay req va cap lại du lieu
+        //lay req va cap lại du lieuy
         getParentFragmentManager().setFragmentResultListener("addSucess", this, (requestKey, bundle) -> {
             boolean isUpdated = bundle.getBoolean("add");
             if (isUpdated) {

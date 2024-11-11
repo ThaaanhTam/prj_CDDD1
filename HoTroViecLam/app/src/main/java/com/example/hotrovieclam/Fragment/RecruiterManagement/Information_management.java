@@ -1,5 +1,6 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ public class Information_management extends Fragment {
     Job_Management adapter;
     ArrayList<Job> jobs = new ArrayList<>();
     FirebaseFirestore db = FirebaseFirestore.getInstance(); // Khởi tạo Firestore instance
+    static String anhcccdTruoc = null;
 
     public Information_management() {
         // Required empty public constructor
@@ -55,7 +57,27 @@ public class Information_management extends Fragment {
 
         // Gọi hàm load thông tin công ty
         loadCompanyInformation();
-
+        binding.tvLegalDocumentFront.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CCCD_MatTruoc_Fragment cccd_matTruoc_fragment = new CCCD_MatTruoc_Fragment();
+                cccd_matTruoc_fragment.show(getParentFragmentManager(), "cccdMatSauFragment");
+            }
+        });
+        binding.tvLegalDocumentBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CCCD_MatSau_Fragment cccdMatSauFragment = new CCCD_MatSau_Fragment();
+                cccdMatSauFragment.show(getParentFragmentManager(), "cccdMatSauFragment");
+            }
+        });
+        binding.tvCertificationDocument.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Giay_Phep_Kinh_Doanh giayPhepKinhDoanh = new Giay_Phep_Kinh_Doanh();
+                giayPhepKinhDoanh.show(getParentFragmentManager(),"giayPhepKinhDoanh");
+            }
+        });
         return binding.getRoot();
     }
 
@@ -86,10 +108,14 @@ public class Information_management extends Fragment {
                 binding.tvStatus.setText(documentSnapshot.getString("statusId"));
 
                 // Hiển thị link tài liệu giấy tờ
-                binding.tvLegalDocumentFront.setText(documentSnapshot.getString("legalDocumentFront"));
-                binding.tvLegalDocumentBack.setText(documentSnapshot.getString("legalDocumentBack"));
-                binding.tvCertificationDocument.setText(documentSnapshot.getString("certificationDocument"));
+                anhcccdTruoc = documentSnapshot.getString("legalDocumentFront");
+                binding.tvLegalDocumentFront.setText(anhcccdTruoc);
+                binding.tvLegalDocumentFront.setPaintFlags(binding.tvLegalDocumentFront.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
+                binding.tvLegalDocumentBack.setText(documentSnapshot.getString("legalDocumentBack"));
+                binding.tvLegalDocumentBack.setPaintFlags(binding.tvLegalDocumentFront.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                binding.tvCertificationDocument.setText(documentSnapshot.getString("certificationDocument"));
+                binding.tvCertificationDocument.setPaintFlags(binding.tvLegalDocumentFront.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                 // Tải và hiển thị logo công ty
                 String logoPath = "images/" + documentSnapshot.getString("logo");
 
@@ -116,11 +142,6 @@ public class Information_management extends Fragment {
             }
         });
     }
-
-
-
-
-
 
 
 }

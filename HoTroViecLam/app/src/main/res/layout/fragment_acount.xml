@@ -35,9 +35,10 @@
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/no_company"
                     android:layout_marginTop="10dp"
+                    android:src="@drawable/no_company"
                     app:shapeAppearanceOverlay="@style/customImg" />
+
                 <ProgressBar
                     android:visibility="gone"
                     android:id="@+id/load"
