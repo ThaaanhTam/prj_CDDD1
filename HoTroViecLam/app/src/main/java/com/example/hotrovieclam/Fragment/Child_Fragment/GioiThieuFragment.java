@@ -43,6 +43,7 @@ public class GioiThieuFragment extends Fragment {
         });
 //tai lai du lieu khi truyen uid qua
         ReadData(i);
+        fetchDataRealtime(i);
 
         binding.btnCapnhatProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,4 +106,44 @@ public class GioiThieuFragment extends Fragment {
             }
         });
     }
+    public void fetchDataRealtime(String uid) {
+        // Khởi tạo Firestore
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        // Tham chiếu đến document với UID trong bảng "Introduces"
+        DocumentReference docRef = firestore.collection("users").document(uid)
+                .collection("role").document("candidate")
+                .collection("introduction").document("introductdata");
+
+        // Lắng nghe sự thay đổi của document này
+        docRef.addSnapshotListener((snapshot, error) -> {
+            if (error != null) {
+                Log.e("Firestore", "Lỗi khi lắng nghe sự kiện thay đổi dữ liệu", error);
+                return;
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                // Kiểm tra xem trường "introduction" đã có data hay chưa
+                String introduction = snapshot.getString("introduction");
+                if (introduction != null && !introduction.isEmpty()) {
+                    binding.gioithiebanthan.setText(introduction);
+                    binding.editGioiThieu.setVisibility(View.VISIBLE);
+                    binding.btnCapnhatProfile.setVisibility(View.GONE);
+                    Log.d("Firestore", "Đã có data: " + introduction);
+                } else {
+                    binding.gioithiebanthan.setText("");
+                    binding.btnCapnhatProfile.setVisibility(View.VISIBLE);
+                    binding.editGioiThieu.setVisibility(View.GONE);
+                    Log.d("Firestore", "Trường introduction trống.");
+                }
+            } else {
+                // Trường hợp không có document nào hoặc document bị xóa
+                binding.gioithiebanthan.setText("");
+                binding.btnCapnhatProfile.setVisibility(View.VISIBLE);
+                binding.editGioiThieu.setVisibility(View.GONE);
+                Log.d("Firestore", "Document không tồn tại hoặc đã bị xóa.");
+            }
+        });
+    }
+
 }

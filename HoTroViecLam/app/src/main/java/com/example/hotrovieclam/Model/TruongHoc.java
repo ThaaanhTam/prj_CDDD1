@@ -84,7 +84,7 @@ public class TruongHoc {
 
     @Override
     public String toString() {
-        return nameSchool + "\n" + nganhHoc + "\n" + timeStart + "-" + timeEnd;
+        return nameSchool + "\n" + nganhHoc + "\n" + timeEnd + "-" +timeStart ;
     }
 
 }
