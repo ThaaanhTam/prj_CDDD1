@@ -71,8 +71,8 @@ public class RegisterEmployer extends AppCompatActivity {
         binding.back.setOnClickListener(v -> finish());
 
 
-
     }
+
     // Hiển thị trạng thái tải
     private void showLoadingState(boolean isLoading) {
         if (isLoading) {
@@ -180,40 +180,40 @@ public class RegisterEmployer extends AppCompatActivity {
     }
 
     // Lưu thông tin vào Firestore
-        private void saveToFirestore(String logoFileName, String frontFileName, String backFileName, String certFileName) {
-            UserSessionManager userSessionManager = new UserSessionManager();
-            String uid = userSessionManager.getUserUid();
+    private void saveToFirestore(String logoFileName, String frontFileName, String backFileName, String certFileName) {
+        UserSessionManager userSessionManager = new UserSessionManager();
+        String uid = userSessionManager.getUserUid();
 
-            // Tạo đối tượng thông tin công ty
-            Map<String, Object> companyInfo = new HashMap<>();
-            companyInfo.put("companyName", binding.etCompanyName.getText().toString().trim());
-            companyInfo.put("contactPerson", binding.etRecruiterName.getText().toString().trim());
-            companyInfo.put("companyPhone", binding.etPhoneNumber.getText().toString().trim());
-            companyInfo.put("companyEmail", binding.etCompanyMail.getText().toString().trim());
-            companyInfo.put("address", binding.etLocation.getText().toString().trim());
-            companyInfo.put("website", binding.etWebsite.getText().toString().trim());
-            companyInfo.put("logo", logoFileName);
-            companyInfo.put("legalDocumentFront", frontFileName);
-            companyInfo.put("legalDocumentBack", backFileName);
-            companyInfo.put("certificationDocument", certFileName);
-            companyInfo.put("statusId", "1");
-            companyInfo.put("createdAt", FieldValue.serverTimestamp());
-            companyInfo.put("updatedAt", FieldValue.serverTimestamp());
+        // Tạo đối tượng thông tin công ty
+        Map<String, Object> companyInfo = new HashMap<>();
+        companyInfo.put("companyName", binding.etCompanyName.getText().toString().trim());
+        companyInfo.put("contactPerson", binding.etRecruiterName.getText().toString().trim());
+        companyInfo.put("companyPhone", binding.etPhoneNumber.getText().toString().trim());
+        companyInfo.put("companyEmail", binding.etCompanyMail.getText().toString().trim());
+        companyInfo.put("address", binding.etLocation.getText().toString().trim());
+        companyInfo.put("website", binding.etWebsite.getText().toString().trim());
+        companyInfo.put("logo", logoFileName);
+        companyInfo.put("legalDocumentFront", frontFileName);
+        companyInfo.put("legalDocumentBack", backFileName);
+        companyInfo.put("certificationDocument", certFileName);
+        companyInfo.put("statusId", "1");
+        companyInfo.put("createdAt", FieldValue.serverTimestamp());
+        companyInfo.put("updatedAt", FieldValue.serverTimestamp());
 
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-            db.collection("users").document(uid)
-                    .collection("role").document("employer")
-                    .set(companyInfo)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Lưu dữ liệu thành công", Toast.LENGTH_SHORT).show();
-                        clearInputs(); // Xóa các input sau khi lưu thành công
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Lưu dữ liệu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
-        }
+        db.collection("users").document(uid)
+                .collection("role").document("employer")
+                .set(companyInfo)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Lưu dữ liệu thành công", Toast.LENGTH_SHORT).show();
+                    clearInputs(); // Xóa các input sau khi lưu thành công
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Lưu dữ liệu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
 
     // Tải ảnh lên Firebase Storage
     private void uploadImage(Uri uri, String path, OnSuccessListener<String> onSuccess) {
@@ -275,9 +275,10 @@ public class RegisterEmployer extends AppCompatActivity {
         companyCertUri = null;
         logoUri = null;
         binding.progressBar.setVisibility(View.GONE);
-       // binding.btnSubmit.setVisibility(View.VISIBLE);
+        // binding.btnSubmit.setVisibility(View.VISIBLE);
 
     }
+
     // Kiểm tra xem số điện thoại có phải 10 chữ số không
     private boolean isPhoneNumberValid(String phoneNumber) {
         return phoneNumber.matches("^\\d{10}$");
@@ -287,6 +288,7 @@ public class RegisterEmployer extends AppCompatActivity {
     private boolean isEmailValid(String email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
+
     private void populateDefaultUserInfo() {
         UserSessionManager userSessionManager = new UserSessionManager();
         String name = userSessionManager.getName();
@@ -316,7 +318,7 @@ public class RegisterEmployer extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) { // Kiểm tra nếu truy vấn thành công.
                     DocumentSnapshot document = task.getResult();
-                    if (document.exists()) { // Kiểm tra nếu tài liệu tồn tại.
+                    if (document.exists())  { // Kiểm tra nếu tài liệu tồn tại.
                         // Lấy thông tin người dùng từ tài liệu.
                         String name = document.getString("name");
                         String email = document.getString("email");
@@ -329,7 +331,7 @@ public class RegisterEmployer extends AppCompatActivity {
 
                         // Ghi log thông tin người dùng để kiểm tra.
                         Log.d("PPPP", "onComplete: " + email + name);
-                    } else {
+                    } else{
                         // Thông báo nếu không tìm thấy dữ liệu người dùng.
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
                     }

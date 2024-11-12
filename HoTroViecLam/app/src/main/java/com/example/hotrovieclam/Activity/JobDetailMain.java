@@ -66,6 +66,8 @@ public class JobDetailMain extends AppCompatActivity {
     private StorageReference storageRef;
     private ActivityJobDetailMainBinding binding;
     boolean isRbLibraryChecked = false;
+    UserSessionManager userSessionManager = new UserSessionManager();
+    String uid = userSessionManager.getUserUid();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,17 @@ public class JobDetailMain extends AppCompatActivity {
         // Khởi tạo Firebase Storage
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+        binding.save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("luuu", "onClick: luuuuu" + jobID);
+                Log.d("luuu", "onClick: luuuuu" + uid);
+
+                if (jobID != null && uid != null) {
+                    SaveJob(uid, jobID);
+                }
+            }
+        });
     }
 
     private void fỉebaseJobDetails() {
@@ -272,13 +285,13 @@ public class JobDetailMain extends AppCompatActivity {
 
     private void showUploadDialog() {
         final Dialog dialog = new Dialog(this);
-      //  dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //  dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.upload_cv);
         // Thiết lập kích thước dialog
         Window window = dialog.getWindow();
         if (window != null) {
-         //   window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-           //window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            //   window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            //window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
         // Khởi tạo các view
@@ -385,7 +398,7 @@ public class JobDetailMain extends AppCompatActivity {
             UserSessionManager userSessionManager = new UserSessionManager();
             String uida = userSessionManager.getUserUid();
             Map<String, Object> newData = new HashMap<>();
-            newData.put("candidateId",uida );
+            newData.put("candidateId", uida);
             newData.put("status", -1);
 
             db.collection("jobs")
@@ -398,7 +411,7 @@ public class JobDetailMain extends AppCompatActivity {
                     .addOnFailureListener(e -> {
                         Log.w("Firestore", "Error adding document", e);
                     });
-            isRbLibraryChecked=false;
+            isRbLibraryChecked = false;
             dialog.dismiss();
         });
 
@@ -460,6 +473,60 @@ public class JobDetailMain extends AppCompatActivity {
         }
     }
 
+    private void SaveJob(String uid, String idJob) {
+        try {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // Tham chiếu đến document của công việc
+            db.collection("users")
+                    .document(uid)
+                    .collection("role")
+                    .document("candidate")
+                    .collection("saveJob")
+                    .document(idJob)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        try {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    // Nếu document tồn tại, hiển thị thông báo rằng công việc đã được lưu
+                                    Toast.makeText(this, "Công việc này đã được lưu trước đó", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // Nếu document chưa tồn tại, lưu công việc vào Firestore
+                                    Map<String, Object> jobData = new HashMap<>();
+                                    jobData.put("idJob", idJob);
+
+                                    db.collection("users")
+                                            .document(uid)
+                                            .collection("role")
+                                            .document("candidate")
+                                            .collection("saveJob")
+                                            .document(idJob)
+                                            .set(jobData)
+                                            .addOnSuccessListener(aVoid -> {
+                                                Log.d("SaveJob", "Job saved successfully with ID: " + idJob);
+                                                Toast.makeText(this, "Lưu công việc thành công", Toast.LENGTH_SHORT).show();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Log.e("SaveJob", "Error saving job", e);
+                                                Toast.makeText(this, "Lỗi khi lưu công việc", Toast.LENGTH_SHORT).show();
+                                            });
+                                }
+                            } else {
+                                throw new Exception("Lỗi khi kiểm tra công việc: " + task.getException());
+                            }
+                        } catch (Exception e) {
+                            Log.e("SaveJob", "Error in Firestore operation", e);
+                            Toast.makeText(this, "Đã xảy ra lỗi khi lưu công việc", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } catch (Exception e) {
+            Log.e("SaveJob", "Unexpected error", e);
+            Toast.makeText(this, "Đã xảy ra lỗi không mong muốn", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     // Thêm phương thức để lưu thông tin ứng tuyển
     private void saveJobApplication(String cvUrl) {
         // Tạo một document mới trong collection "applications"
@@ -479,6 +546,7 @@ public class JobDetailMain extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 });
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
