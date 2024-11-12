@@ -341,7 +341,7 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/dangkiungtuyen"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginRight="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/hieu_ung_lom_xuong_khi_click"
