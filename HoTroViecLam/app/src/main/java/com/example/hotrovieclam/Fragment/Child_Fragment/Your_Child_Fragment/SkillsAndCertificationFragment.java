@@ -81,6 +81,7 @@ public class SkillsAndCertificationFragment extends Fragment {
                         saveSkill(id);
                     } else if (id_skill != null) {
                         binding.loading.setVisibility(View.VISIBLE);
+                        Log.d("BOM", "onClick: "+id+"-------"+id_skill);
                         update(id_skill);
                     }
                 }
@@ -178,14 +179,14 @@ public class SkillsAndCertificationFragment extends Fragment {
     private void update(String id_skill) {
         try {
             UserSessionManager userSession = new UserSessionManager();
-            String uid = userSession.getUserUid();
+             id = userSession.getUserUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             String nameSkill = binding.nameskill.getText().toString().trim();
             String description = binding.mota.getText().toString().trim();
 
-            KiNang kiNang = new KiNang(uid, id_skill, nameSkill, description);
+            KiNang kiNang = new KiNang(id_skill, id, nameSkill, description);
 
-            db.collection("users").document(uid)
+            db.collection("users").document(id)
                     .collection("role").document("candidate")
                     .collection("skills")
                     .document(id_skill)

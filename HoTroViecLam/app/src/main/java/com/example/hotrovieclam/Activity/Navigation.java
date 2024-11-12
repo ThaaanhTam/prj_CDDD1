@@ -1,5 +1,7 @@
 package com.example.hotrovieclam.Activity;
 
+import static android.app.PendingIntent.getActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -37,8 +39,9 @@ public class Navigation extends AppCompatActivity {
     private NavigationBinding binding;
     private MyRecyclerViewAdapter myRecyclerViewAdapter;
     private ArrayList<Job> jobList; // Khai báo danh sách công việc
-    int n = 1;
-UserSessionManager user = new UserSessionManager();
+    //luu fragmrnt hien tai
+    private int currentFragmentId = -1;
+    UserSessionManager user = new UserSessionManager();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
@@ -62,33 +65,47 @@ UserSessionManager user = new UserSessionManager();
         }
 
 
+        setupBottomNavigation();
+
+
+    }
+    private void setupBottomNavigation() {
         binding.navButtom.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                khuyến khích dùng if else dùng swith case sex bị lỗi R.id......
-                Fragment selectedFragment = null;
                 int id = item.getItemId();
+
+                // Kiểm tra xem người dùng có nhấn vào mục đang hiển thị không
+                if (id == currentFragmentId) {
+                    return false; // Không thực hiện gì nếu Fragment đang hiển thị
+                }
+
+                // Cập nhật currentFragmentId với ID mới
+                currentFragmentId = id;
+                Fragment selectedFragment = null;
+
                 if (id == R.id.home) {
                     selectedFragment = new Home();
                 } else if (id == R.id.saved) {
                     selectedFragment = new Save_job();
                 } else if (id == R.id.managerPost) {
                     selectedFragment = new Recruiter_Management();
-
                 } else if (id == R.id.message) {
                     selectedFragment = new ConvestationFrament();
                 } else if (id == R.id.accout) {
                     selectedFragment = new AcountFragment();
                 }
+
                 if (selectedFragment != null) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, selectedFragment)
+                            .commit();
                     return true;
                 }
                 return false;
             }
         });
-
-
     }
     public void checkTypeUser(String uid) {
 

@@ -46,10 +46,8 @@ public class DialogFragmentAvatar extends DialogFragment {
     String uid = null;
     private Uri selectedImageUri;  // Lưu Uri ảnh đã chọn
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentDialogAvatarBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
@@ -57,16 +55,19 @@ public class DialogFragmentAvatar extends DialogFragment {
         binding.previewAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TAG", "onClick: ggggggg");
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                mGetContent.launch(intent);
+                Log.d("TAG", "onClick: chọn ảnh");
+                try {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    mGetContent.launch(intent);
+                } catch (Exception e) {
+                    Log.e("TAG", "Lỗi khi mở thư viện ảnh", e);
+                    Toast.makeText(getContext(), "Không thể mở thư viện ảnh", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         // Khi bấm nút Cập Nhật
         binding.btnCapNhat.setOnClickListener(new View.OnClickListener() {
-
-
             @Override
             public void onClick(View v) {
                 binding.loadding.setVisibility(View.VISIBLE);
@@ -75,13 +76,13 @@ public class DialogFragmentAvatar extends DialogFragment {
                 // Kiểm tra nếu selectedImageUri không phải là null thì tiến hành upload
                 if (selectedImageUri != null) {
                     uploadImageToStorage(selectedImageUri);
-
                 } else {
                     binding.loadding.setVisibility(View.GONE);
-                    Log.d("TAG", "No image selected");
+                    Log.d("TAG", "Chưa chọn ảnh");
                 }
             }
         });
+
         uid = userSessionManager.getUserUid();
         if (uid != null) {
             LoadAnh(uid);
@@ -95,16 +96,21 @@ public class DialogFragmentAvatar extends DialogFragment {
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        // Cập nhật biến toàn cục selectedImageUri
-                        selectedImageUri = result.getData().getData();
-                        if (selectedImageUri != null) {
-                            // Hiển thị ảnh lên ShapeableImageView
-                            Glide.with(DialogFragmentAvatar.this)
-                                    .load(selectedImageUri)
-                                    .into(binding.previewAvatar);
-                            Log.d("TAG", "Selected Image URI: " + selectedImageUri);
+                    try {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            selectedImageUri = result.getData().getData();
+                            if (selectedImageUri != null) {
+                                // Hiển thị ảnh lên ShapeableImageView và hiện nút Cập Nhật
+                                Glide.with(DialogFragmentAvatar.this)
+                                        .load(selectedImageUri)
+                                        .into(binding.previewAvatar);
+                                binding.btnCapNhat.setVisibility(View.VISIBLE); // Hiển thị nút Cập Nhật
+                                Log.d("TAG", "Đã chọn ảnh: " + selectedImageUri);
+                            }
                         }
+                    } catch (Exception e) {
+                        Log.e("TAG", "Lỗi khi chọn ảnh", e);
+                        Toast.makeText(getContext(), "Có lỗi xảy ra khi chọn ảnh", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -112,113 +118,92 @@ public class DialogFragmentAvatar extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        // Thay đổi kích thước của dialog
         Dialog dialog = getDialog();
         if (dialog != null) {
             Window window = dialog.getWindow();
             if (window != null) {
-                // Đặt chiều rộng và chiều cao cho dialog
                 window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                // Bạn cũng có thể sử dụng chiều cao cố định hoặc tỷ lệ, ví dụ:
-                // window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 600);
             }
         }
     }
 
     // Tải ảnh lên Firebase Storage
     private void uploadImageToStorage(Uri imageUri) {
-        // Tạo reference của Firebase Storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference().child("avatars/" + System.currentTimeMillis() + ".jpg");
 
-        // Upload ảnh
         storageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    // Khi upload thành công, lấy URL của ảnh
-                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        // Cập nhật URL vào Firestore
-                        updateAvatarInFirestore(uri);
-                    });
-                })
+                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> updateAvatarInFirestore(uri)))
                 .addOnFailureListener(e -> {
-                    Log.e("TAG", "Upload failed", e);
-                    binding.loadding.setVisibility(View.GONE); // Ẩn loading nếu tải ảnh thất bại
+                    Log.e("TAG", "Lỗi khi tải ảnh lên", e);
+                    binding.loadding.setVisibility(View.GONE);
                 });
     }
 
     // Cập nhật URL avatar vào Firestore
-// Cập nhật URL avatar vào Firestore
     private void updateAvatarInFirestore(Uri newImageUri) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference userRef = db.collection("users").document(uid);
+        try {
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference userRef = db.collection("users").document(uid);
 
-        // Lấy URL ảnh cũ từ Firestore
-        userRef.get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                String oldAvatarUrl = documentSnapshot.getString("avatar");
+            userRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    String oldAvatarUrl = documentSnapshot.getString("avatar");
 
-                // Cập nhật URL avatar trong Firestore
-                userRef.update("avatar", newImageUri.toString())
-                        .addOnSuccessListener(aVoid -> {
-                            Log.d("TAG", "Avatar updated successfully");
-                            binding.loadding.setVisibility(View.GONE);
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean("update", true);
-                            getParentFragmentManager().setFragmentResult("updateSuccess", bundle);
-                            getParentFragmentManager().popBackStack();
-                            Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                            // Xóa ảnh cũ khỏi Firebase Storage
-                            if (oldAvatarUrl != null) {
-                                FirebaseStorage.getInstance().getReferenceFromUrl(oldAvatarUrl)
-                                        .delete()
-                                        .addOnSuccessListener(aVoid1 -> Log.d("TAG", "Old avatar deleted successfully"))
-                                        .addOnFailureListener(e -> Log.e("TAG", "Failed to delete old avatar", e));
-                            }
+                    userRef.update("avatar", newImageUri.toString())
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d("TAG", "Cập nhật avatar thành công");
+                                binding.loadding.setVisibility(View.GONE);
+                                Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
 
-                            dismiss(); // Đóng DialogFragment
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.e("TAG", "Failed to update avatar", e);
-                            binding.loadding.setVisibility(View.GONE);
-                        });
-            }
-        });
+                                // Xóa ảnh cũ khỏi Firebase Storage
+                                if (oldAvatarUrl != null) {
+                                    FirebaseStorage.getInstance().getReferenceFromUrl(oldAvatarUrl)
+                                            .delete()
+                                            .addOnSuccessListener(aVoid1 -> Log.d("TAG", "Xóa avatar cũ thành công"))
+                                            .addOnFailureListener(e -> Log.e("TAG", "Lỗi khi xóa avatar cũ", e));
+                                }
+
+                                dismiss(); // Đóng DialogFragment
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("TAG", "Lỗi khi cập nhật avatar", e);
+                                binding.loadding.setVisibility(View.GONE);
+                            });
+                }
+            });
+        } catch (Exception e) {
+            Log.e("TAG", "Lỗi khi cập nhật Firestore", e);
+        }
     }
 
+    // Hàm tải ảnh từ Firestore
     public void LoadAnh(String uid) {
-
-
-        // Dùng UID để truy vấn Firestore hoặc hiển thị thông tin người dùng
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(uid);
+
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-
-                    if (document.exists()) {
-
+                try {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot document = task.getResult();
                         String avatarUrl = document.getString("avatar");
+
                         if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                            // Dùng Glide để tải ảnh từ URL và hiển thị vào ImageView
                             Glide.with(getContext())
                                     .load(avatarUrl)
                                     .centerCrop()
-                                    .into(binding.previewAvatar); // imageView là ImageView của bạn
-                            Log.d("ii", "onComplete: lay dc anh vs uid" + uid);
+                                    .into(binding.previewAvatar);
                         }
-
                     } else {
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
                     }
-                } else {
-                    Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
+                } catch (Exception e) {
+                    Log.e("Firestore", "Lỗi khi tải ảnh từ Firestore", e);
                 }
             }
         });
-
     }
 }

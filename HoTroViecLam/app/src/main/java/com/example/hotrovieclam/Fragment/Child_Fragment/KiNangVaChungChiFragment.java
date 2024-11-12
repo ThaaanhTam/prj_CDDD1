@@ -12,11 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.hotrovieclam.Adapter.KiNangAdapter;
-import com.example.hotrovieclam.Adapter.TruongHocAdapter;
-import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.EducationFragment;
 import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.SkillsAndCertificationFragment;
 import com.example.hotrovieclam.Model.KiNang;
-import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentKiNangVaChungChiBinding;
@@ -65,7 +62,7 @@ public class KiNangVaChungChiFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener("addSucess", this, (requestKey, bundle) -> {
             boolean isUpdated = bundle.getBoolean("add");
             if (isUpdated) {
-                loadSchoolData(uid); // Tải lại dữ liệu mới  khi cập nhật thành công
+                loadSkillData(uid); // Tải lại dữ liệu mới  khi cập nhật thành công
             }
         });
         kiNangAdapter.setOnItemEditClickListener(new KiNangAdapter.OnItemEditClickListener() {
@@ -81,7 +78,8 @@ public class KiNangVaChungChiFragment extends Fragment {
             }
         });
 
-        loadSchoolData(uid);
+        loadSkillData(uid);
+        loadSkillrealtime(uid);
         return view;
     }
 
@@ -102,7 +100,7 @@ public class KiNangVaChungChiFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
-    private void loadSchoolData(String uid) {
+    private void loadSkillData(String uid) {
         // Khởi tạo Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -160,9 +158,60 @@ public class KiNangVaChungChiFragment extends Fragment {
             Log.e("DeleteSkill", "User ID hoặc Skill ID bị null");
         }
     }
+    private void loadSkillrealtime(String uid) {
+        // Khởi tạo Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        try {
+            // Lắng nghe sự thay đổi trong collection "skills"
+            db.collection("users").document(uid)
+                    .collection("role").document("candidate")
+                    .collection("skills")
+                    .addSnapshotListener((snapshots, e) -> {
+                        try {
+                            if (e != null) {
+                                throw e; // Ném lỗi để bắt trong khối catch bên ngoài
+                            }
+
+                            // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
+                            kiNangArrayList.clear();
+
+                            if (snapshots != null) {
+                                // Duyệt qua từng tài liệu trong collection "skills"
+                                for (QueryDocumentSnapshot document : snapshots) {
+                                    // Chuyển dữ liệu từ Firestore thành đối tượng KiNang
+                                    KiNang kiNang = document.toObject(KiNang.class);
+                                    kiNangArrayList.add(kiNang);
+                                }
+
+                                // Kiểm tra nếu kiNangArrayList trống
+                                if (kiNangArrayList.isEmpty()) {
+                                    // Nếu không có dữ liệu, hiển thị thông báo
+                                    Log.d("Firestore", "Bạn chưa có kỹ năng nào.");
+                                    binding.themkinang.setVisibility(View.VISIBLE);
+                                } else {
+                                    // Nếu có dữ liệu, cập nhật RecyclerView
+                                    binding.gioithiebanthan.setVisibility(View.GONE);
+                                    binding.themkinang.setVisibility(View.GONE);
+                                    binding.themSkill.setVisibility(View.VISIBLE); // Ẩn thông báo nếu có dữ liệu
+                                    kiNangAdapter.notifyDataSetChanged(); // Cập nhật lại RecyclerView
+                                }
+                            } else {
+                                Log.d("Firestore", "Không có dữ liệu kỹ năng.");
+                            }
+                        } catch (Exception ex) {
+                            // Bắt và xử lý các ngoại lệ từ addSnapshotListener
+                            Log.e("Firestore", "Lỗi khi xử lý dữ liệu kỹ năng", ex);
+                        }
+                    });
+        } catch (Exception e) {
+            // Bắt lỗi nếu có trong quá trình lắng nghe sự thay đổi
+            Log.e("Firestore", "Lỗi khi lắng nghe sự thay đổi dữ liệu kỹ năng", e);
+        }
+    }
     public void LoadLaiData(){
         kiNangAdapter.notifyDataSetChanged();
-        loadSchoolData(uid);
+        loadSkillData(uid);
 
     }
     private void removeSkillFromList(String skillId) {
