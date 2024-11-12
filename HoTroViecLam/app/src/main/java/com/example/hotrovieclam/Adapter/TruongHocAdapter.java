@@ -54,7 +54,7 @@ public class TruongHocAdapter extends RecyclerView.Adapter<TruongHocAdapter.Truo
         // Gán các giá trị vào các view bằng ViewBinding
         holder.binding.tvSchoolName.setText(truongHoc.getNameSchool());
         holder.binding.tvNganhHoc.setText(truongHoc.getNganhHoc());
-        holder.binding.tvTime.setText(truongHoc.getTimeStart() + " - " + truongHoc.getTimeEnd());
+        holder.binding.tvTime.setText(truongHoc.getTimeEnd() + " - " + truongHoc.getTimeStart());
         holder.binding.imgEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
