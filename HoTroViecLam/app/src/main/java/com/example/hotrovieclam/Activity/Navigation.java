@@ -108,6 +108,10 @@ public class Navigation extends AppCompatActivity {
         });
     }
     public void checkTypeUser(String uid) {
+        if (uid == null || uid.isEmpty()) {
+            Log.e("checkTypeUser", "UID không hợp lệ");
+            return;  // Dừng lại nếu UID không hợp lệ
+        }
 
         DocumentReference docRef = db.collection("users").document(uid);
 
@@ -143,5 +147,6 @@ public class Navigation extends AppCompatActivity {
             }
         });
     }
+
 
 }
