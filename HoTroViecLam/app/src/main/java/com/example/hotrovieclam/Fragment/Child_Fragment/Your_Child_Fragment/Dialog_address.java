@@ -103,7 +103,11 @@ public class Dialog_address extends DialogFragment {
                 String c = binding.quanHuyen.getSelectedItem().toString();
                 String d = binding.phuongxa.getSelectedItem().toString();
                 String diachhi = a + ", " + d + ", " + c + ", " + b;
-
+                if (a.isEmpty()) {
+                    binding.diachicuthe.setError("vui long nhap dia chi cu the");
+                    binding.diachicuthe.requestFocus();
+                    return;
+                }
                 // Tìm ThongTinCaNhanFragment và gọi phương thức updateAddress
                 ThongTinCaNhanFragment thongTinCaNhanFragment =
                         (ThongTinCaNhanFragment) getParentFragmentManager().findFragmentById(R.id.fragment_container);
@@ -116,7 +120,6 @@ public class Dialog_address extends DialogFragment {
                 dismiss();
             }
         });
-
 
 
         return view;

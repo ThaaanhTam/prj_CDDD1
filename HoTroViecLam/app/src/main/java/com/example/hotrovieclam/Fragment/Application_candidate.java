@@ -42,7 +42,12 @@ public class Application_candidate extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+binding.lvGoBack.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        finish();
+    }
+});
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         Glide.with(this)
                 .asGif()

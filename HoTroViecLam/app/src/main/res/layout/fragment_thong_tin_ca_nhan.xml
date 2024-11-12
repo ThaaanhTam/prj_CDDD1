@@ -31,17 +31,18 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_margin="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_margin="20dp"
         android:background="@drawable/boder_info_linealayout"
+        android:orientation="vertical"
         android:padding="20dp">
+
         <ProgressBar
             android:id="@+id/loadding"
-            android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -105,6 +106,7 @@
             </RadioGroup>
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -123,12 +125,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_text_input_update_info"
-                android:hint="Nhập Email"
-                android:textColor="@color/black"
                 android:enabled="false"
-                android:padding="10dp" />
+                android:hint="Nhập Email"
+                android:padding="10dp"
+                android:textColor="@color/black" />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -145,18 +148,19 @@
             <EditText
                 android:id="@+id/editTextsdt"
                 android:layout_width="match_parent"
-                android:inputType="phone"
                 android:layout_height="wrap_content"
                 android:background="@drawable/border_text_input_update_info"
-                android:hint="Nhập số điện thoại"
-                android:textColor="@color/black"
                 android:enabled="false"
-                android:padding="10dp" />
+                android:hint="Nhập số điện thoại"
+                android:inputType="phone"
+                android:padding="10dp"
+                android:textColor="@color/black" />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="90dp"
             android:layout_marginBottom="15dp"
             android:orientation="vertical">
 
@@ -167,27 +171,32 @@
                 android:text="Địa chỉ"
                 android:textStyle="bold" />
 
-            <EditText
-                android:drawableRight="@drawable/vitrii"
-                android:id="@+id/editTextDC"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_text_input_update_info"
-                android:hint="Nhập địa chỉ"
-                android:padding="10dp" />
+                android:layout_height="wrap_content">
 
+                <EditText
+                    android:id="@+id/editTextDC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_text_input_update_info"
+                    android:drawableRight="@drawable/vitrii"
+                    android:hint="Nhập địa chỉ"
+                    android:padding="10dp" />
+            </ScrollView>
         </LinearLayout>
 
     </LinearLayout>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_update_info"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:background="@color/navigation"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
+        android:text="cập nhật"
         android:textColor="@color/white"
-        android:text="cập nhật"/>
+        android:textStyle="bold" />
 
 
 </LinearLayout>

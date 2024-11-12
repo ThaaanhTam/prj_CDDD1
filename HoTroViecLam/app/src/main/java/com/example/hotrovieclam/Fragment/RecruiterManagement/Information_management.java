@@ -66,7 +66,7 @@ public class Information_management extends Fragment {
         }
 
         DocumentReference docRef = db.collection("users").document(uid)
-                .collection("roles").document("employer");
+                .collection("role").document("employer");
 
         docRef.addSnapshotListener((documentSnapshot, error) -> {
             if (error != null) {

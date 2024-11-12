@@ -80,6 +80,7 @@ public class ThongTinCaNhanFragment extends Fragment {
 
         // Xử lý cập nhật thông tin người dùng
         binding.btnUpdateInfo.setOnClickListener(v -> {
+            binding.btnUpdateInfo.setVisibility(View.GONE);
             binding.loadding.setVisibility(View.VISIBLE);
             Log.d("uid", "onClick: " + uid);
             String ngaysinh = binding.editTextDate.getText().toString().trim();
@@ -96,6 +97,8 @@ public class ThongTinCaNhanFragment extends Fragment {
             if (ngaysinh.isEmpty() || diachi.isEmpty() || gioitinh == 0) {
                 binding.loadding.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                binding.btnUpdateInfo.setVisibility(View.VISIBLE);
+
                 return;
             }
 

@@ -36,6 +36,7 @@ import com.example.hotrovieclam.Connect.API;
 import com.example.hotrovieclam.Connect.Website;
 import com.example.hotrovieclam.Fragment.RecruiterManagement.Detail_Job;
 import com.example.hotrovieclam.Model.Job;
+
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentHomeBinding;
 import com.google.android.gms.dynamic.IFragmentWrapper;
