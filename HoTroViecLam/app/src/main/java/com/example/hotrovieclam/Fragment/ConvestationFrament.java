@@ -124,7 +124,7 @@ public class ConvestationFrament extends Fragment {
                     // Kiểm tra nếu người dùng hiện tại là người gửi hoặc người nhận
                     if ((message.getSender_id() != null && message.getSender_id().equals(currentUserId)) ||
                             (message.getReceiver_id() != null && message.getReceiver_id().equals(currentUserId))) {
-
+                        Log.d("zz", "Listen x.");
                         // Xác định ID của đối tác trò chuyện
                         String chatPartnerId = message.getSender_id().equals(currentUserId)
                                 ? message.getReceiver_id() : message.getSender_id();
