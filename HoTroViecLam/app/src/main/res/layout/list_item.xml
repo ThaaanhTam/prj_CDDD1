@@ -4,8 +4,7 @@
 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="200dp"
-    android:maxHeight="500dp"
+
     app:cardCornerRadius="5dp"
     app:cardElevation="5dp"
     android:id="@+id/btnThongTinMain"
@@ -14,6 +13,7 @@
     <LinearLayout
         android:id="@+id/background_item"
         android:layout_width="match_parent"
+        android:padding="10dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 

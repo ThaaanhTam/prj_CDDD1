@@ -25,15 +25,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/ivLogo"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_marginEnd="16dp"
-                    android:contentDescription="Company Logo"
-                    android:src="@drawable/img_3" />
 
                 <TextView
                     android:id="@+id/tvTitle"
@@ -142,82 +135,10 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="8dp"
-                android:layout_height="match_parent"
-                android:background="@color/title" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="Thông tin chi tiết"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Liên hệ"
-            android:textSize="18dp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:text="Số điện thoại: "
-                android:textColor="#666666"
-                android:textSize="14sp" />
 
 
-            <TextView
-                android:id="@+id/tvSDT"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0862772420"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:text="Email: "
-                android:textColor="#666666"
-                android:textSize="14sp" />
 
 
-            <TextView
-                android:id="@+id/tvEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="phamthanhliem011203@gmail.com"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
-        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"

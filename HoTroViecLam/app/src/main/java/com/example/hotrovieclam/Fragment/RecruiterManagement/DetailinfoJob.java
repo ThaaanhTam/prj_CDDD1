@@ -47,15 +47,12 @@ public class DetailinfoJob extends Fragment {
 
         binding = FragmentDetailinfoJobBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
-        // Call a method to fetch job details using jobID
         fetchJobDetails();
 
         return view;
     }
 
     private void fetchJobDetails() {
-        // Replace "jobs" with the name of your Firestore collection
         db.collection("jobs").document(jobID)
                 .addSnapshotListener((documentSnapshot, e) -> {
                     if (e != null) {
@@ -63,41 +60,47 @@ public class DetailinfoJob extends Fragment {
                         return;
                     }
 
-                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                    if (documentSnapshot != null && documentSnapshot.exists() && binding!=null) {
 
                         if (documentSnapshot.contains("title")) {
                             String jobTitle = documentSnapshot.getString("title");
-                            binding.tvTitle.setText(jobTitle != null ? jobTitle : "N/A");
+                            binding.tvTitle.setText(jobTitle != null ? jobTitle : "");
                         } else {
                             Log.w("DetailinfoJob", "Field 'title' does not exist");
-                            binding.tvTitle.setText("N/A");
+                            binding.tvTitle.setText("");
                         }
-
+                        if (documentSnapshot.contains("Location")) {
+                            String location = documentSnapshot.getString("Location");
+                            binding.tvLocation.setText(location != null ? location : "");
+                        } else {
+                            Log.w("DetailinfoJob", "Field 'description' does not exist");
+                            binding.tvDescription.setText("");
+                        }
                         // Check and fetch job description
                         if (documentSnapshot.contains("description")) {
                             String description = documentSnapshot.getString("description");
-                            binding.tvDescription.setText(description != null ? description : "N/A");
+                            binding.tvDescription.setText(description != null ? description : "");
                         } else {
                             Log.w("DetailinfoJob", "Field 'description' does not exist");
-                            binding.tvDescription.setText("N/A");
+                            binding.tvDescription.setText("");
                         }
 
                         // Check and fetch salary min
                         if (documentSnapshot.contains("salaryMin")) {
                             String salaryMin = documentSnapshot.getDouble("salaryMin") + "";
-                            binding.tvSalaryMin.setText(salaryMin != null ? salaryMin : "N/A");
+                            binding.tvSalaryMin.setText(salaryMin != null ? salaryMin : "");
                         } else {
                             Log.w("DetailinfoJob", "Field 'salaryMin' does not exist");
-                            binding.tvSalaryMin.setText("N/A");
+                            binding.tvSalaryMin.setText("");
                         }
 
                         // Check and fetch salary max
                         if (documentSnapshot.contains("salaryMax")) {
                             String salaryMax = documentSnapshot.getDouble("salaryMax") + "";
-                            binding.tvSalaryMax.setText(salaryMax != null ? salaryMax : "N/A");
+                            binding.tvSalaryMax.setText(salaryMax != null ? salaryMax : "");
                         } else {
                             Log.w("DetailinfoJob", "Field 'salaryMax' does not exist");
-                            binding.tvSalaryMax.setText("N/A");
+                            binding.tvSalaryMax.setText("");
                         }
 
                     } else {

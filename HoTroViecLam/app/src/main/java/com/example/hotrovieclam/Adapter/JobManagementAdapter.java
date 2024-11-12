@@ -1,6 +1,5 @@
 package com.example.hotrovieclam.Adapter;
 
-import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,16 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.databinding.ListItemJobManagementBinding;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 public class JobManagementAdapter extends RecyclerView.Adapter<JobManagementAdapter.MyViewHolder> {
 
@@ -45,15 +39,7 @@ public class JobManagementAdapter extends RecyclerView.Adapter<JobManagementAdap
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Job job = jobs.get(position);
         holder.binding.tvTitle.setText(job.getTitle());
-    //    Timestamp timestamp = job.getCreatedAt();
-       // if (timestamp != null) {
-         //   Date date = timestamp.toDate();
-       //     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        //    String formattedDate = dateFormat.format(date);
-         //   holder.binding.tvCreateAt.setText(formattedDate);  // Hiển thị chuỗi định dạng
-//        } else {
-//            holder.binding.tvCreateAt.setText("N/A");  // Nếu createdAt là null
-//        }
+        holder.binding.tvCreateAt.setText(job.getCreatedAt());
         holder.binding.tvStartDate.setText(job.getStartTime());
         holder.binding.tvEndDate.setText(job.getEndTime());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -67,8 +53,8 @@ public class JobManagementAdapter extends RecyclerView.Adapter<JobManagementAdap
                     }
 
                     if (snapshots != null) {
-                        int count = snapshots.size(); // Số lượng phần tử trong sub-collection
-                        holder.binding.tvCount.setText(count+"");
+                        int count = snapshots.size();
+                        holder.binding.tvCount.setText(count + "");
                     } else {
 
                     }
@@ -91,6 +77,7 @@ public class JobManagementAdapter extends RecyclerView.Adapter<JobManagementAdap
         public int position;
         ListItemJobManagementBinding binding;
         public String jobID = "";
+
         public MyViewHolder(@NonNull ListItemJobManagementBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
@@ -99,8 +86,8 @@ public class JobManagementAdapter extends RecyclerView.Adapter<JobManagementAdap
             binding.btnThongTin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (recycleClick != null){
-                        recycleClick.DetailClick(view, position, jobID );
+                    if (recycleClick != null) {
+                        recycleClick.DetailClick(view, position, jobID);
                     }
                 }
             });
@@ -108,7 +95,7 @@ public class JobManagementAdapter extends RecyclerView.Adapter<JobManagementAdap
             binding.btnSua.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (recycleClick != null){
+                    if (recycleClick != null) {
                         recycleClick.EditClick(view, position, jobID);
                     }
                 }
@@ -118,7 +105,7 @@ public class JobManagementAdapter extends RecyclerView.Adapter<JobManagementAdap
             binding.btnXoa.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (recycleClick != null){
+                    if (recycleClick != null) {
                         recycleClick.DeleteClick(view, position, jobID);
                     }
                 }
@@ -129,13 +116,16 @@ public class JobManagementAdapter extends RecyclerView.Adapter<JobManagementAdap
     }
 
     public void updateList(ArrayList<Job> newJobs) {
-        jobs.clear(); // Xóa danh sách cũ
-        jobs.addAll(newJobs); // Thêm danh sách mới
-        notifyDataSetChanged(); // Cập nhật RecyclerView
+        jobs.clear();
+        jobs.addAll(newJobs);
+        notifyDataSetChanged();
     }
+
     public interface OnItemClick {
         void DetailClick(View view, int position, String jobID);
+
         void EditClick(View view, int position, String jobID);
+
         void DeleteClick(View view, int position, String jobID);
 
     }
