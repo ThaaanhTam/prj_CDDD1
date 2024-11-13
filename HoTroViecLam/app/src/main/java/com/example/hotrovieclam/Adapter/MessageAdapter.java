@@ -11,14 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hotrovieclam.Model.Message;
 import com.example.hotrovieclam.R;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
-    private List<Message> messageList;
+    private ArrayList<Message> messageList;
     private String currentUserId;
 
-    public MessageAdapter(List<Message> messageList, String currentUserId) {
+    public MessageAdapter(ArrayList<Message> messageList, String currentUserId) {
         this.messageList = messageList;
         this.currentUserId = currentUserId;
     }
@@ -35,16 +35,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messageList.get(position);
 
-        if (message.getSenderId().equals(currentUserId)) {
-            // Nếu là tin nhắn do người dùng hiện tại gửi, hiển thị tin nhắn bên phải
+        if (message.getSender_id().equals(currentUserId)) {
+            // Nếu người gửi là người dùng hiện tại, hiển thị tin nhắn bên phải
             holder.textViewMessageRight.setText(message.getContent());
             holder.textViewMessageRight.setVisibility(View.VISIBLE);
-            holder.textViewMessageLeft.setVisibility(View.GONE);
+            holder.textViewMessageLeft.setVisibility(View.GONE);  // Ẩn tin nhắn bên trái
         } else {
-            // Nếu là tin nhắn của người khác, hiển thị tin nhắn bên trái
+            // Nếu người gửi là người khác, hiển thị tin nhắn bên trái
             holder.textViewMessageLeft.setText(message.getContent());
             holder.textViewMessageLeft.setVisibility(View.VISIBLE);
-            holder.textViewMessageRight.setVisibility(View.GONE);
+            holder.textViewMessageRight.setVisibility(View.GONE); // Ẩn tin nhắn bên phải
         }
     }
 
@@ -53,14 +53,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return messageList.size();
     }
 
-    public static class MessageViewHolder extends RecyclerView.ViewHolder {
-        public TextView textViewMessageLeft;
-        public TextView textViewMessageRight;
+    public class MessageViewHolder extends RecyclerView.ViewHolder {
+        TextView textViewMessageRight, textViewMessageLeft;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewMessageLeft = itemView.findViewById(R.id.textViewMessageLeft);
             textViewMessageRight = itemView.findViewById(R.id.textViewMessageRight);
+            textViewMessageLeft = itemView.findViewById(R.id.textViewMessageLeft);
         }
     }
 }

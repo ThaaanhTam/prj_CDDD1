@@ -13,7 +13,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 
 import com.example.hotrovieclam.Fragment.AcountFragment;
