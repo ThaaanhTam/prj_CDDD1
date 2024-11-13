@@ -152,16 +152,6 @@ việc"
 </ScrollView>
 
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="match_parent"
-                android:id="@+id/delete"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:text="Xóa học vấn">
-
-            </androidx.appcompat.widget.AppCompatButton>
-
         </LinearLayout>
 
     </LinearLayout>
