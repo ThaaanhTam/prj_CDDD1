@@ -124,8 +124,9 @@
             android:layout_marginBottom="15dp"
             android:orientation="vertical">
 
-
-
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="180dp">
 
             <EditText
                 android:id="@+id/editTextDC"
@@ -139,6 +140,8 @@
                 android:overScrollMode="always"
                 android:padding="7dp"
                 android:scrollbars="vertical" />
+
+        </ScrollView>
 
 <!--            <androidx.appcompat.widget.AppCompatButton-->
 <!--                android:id="@+id/btnxoaKN"-->

@@ -133,20 +133,24 @@
                 android:layout_marginBottom="20dp"
                 android:text="Tôi đang học  ở đây" />
 
-
-            <EditText
-                android:id="@+id/editTextDC"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/border_text_input_update_info"
-                android:gravity="top"
-                android:hint=" Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="180dp">
+    <EditText
+        android:id="@+id/editTextDC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/border_text_input_update_info"
+        android:gravity="top"
+        android:hint=" Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm
 việc"
-                android:minLines="6"
-                android:overScrollMode="always"
-                android:padding="7dp"
-                android:scrollbars="vertical" />
+        android:minLines="6"
+        android:overScrollMode="always"
+        android:padding="7dp"
+        android:scrollbars="vertical" />
+</ScrollView>
+
 
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="match_parent"

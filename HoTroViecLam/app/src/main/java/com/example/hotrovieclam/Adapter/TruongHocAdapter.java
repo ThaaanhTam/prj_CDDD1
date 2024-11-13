@@ -1,5 +1,7 @@
 package com.example.hotrovieclam.Adapter;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hotrovieclam.Fragment.Child_Fragment.HocVanFragment;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.databinding.ItemSchoolRecycleviewBinding;
 
@@ -18,6 +21,7 @@ public class TruongHocAdapter extends RecyclerView.Adapter<TruongHocAdapter.Truo
 
     private final List<TruongHoc> truongHocList;
     private OnItemEditClickListener editClickListener;
+    private HocVanFragment hocvan;
 
     public interface OnItemEditClickListener {
         void onEditClick(String schoolId); // Phương thức để truyền ID
@@ -28,8 +32,9 @@ public class TruongHocAdapter extends RecyclerView.Adapter<TruongHocAdapter.Truo
     }
 
     // Constructor cho adapter, nhận vào danh sách các đối tượng TruongHoc
-    public TruongHocAdapter(List<TruongHoc> truongHocList) {
+    public TruongHocAdapter(List<TruongHoc> truongHocList ,HocVanFragment hocVanFragment) {
         this.truongHocList = truongHocList;
+        this.hocvan= hocVanFragment;
     }
 
     @NonNull
@@ -49,7 +54,12 @@ public class TruongHocAdapter extends RecyclerView.Adapter<TruongHocAdapter.Truo
         // Gán các giá trị vào các view bằng ViewBinding
         holder.binding.tvSchoolName.setText(truongHoc.getNameSchool());
         holder.binding.tvNganhHoc.setText(truongHoc.getNganhHoc());
-        holder.binding.tvTime.setText(truongHoc.getTimeStart() + " - " + truongHoc.getTimeEnd());
+        // Kiểm tra type để hiển thị "Đang học" hoặc thời gian
+        if (truongHoc.getType() == 1) {
+            holder.binding.tvTime.setText("Đang học");
+        } else {
+            holder.binding.tvTime.setText(truongHoc.getTimeEnd() + " - " + truongHoc.getTimeStart());
+        }
         holder.binding.imgEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,8 +72,26 @@ public class TruongHocAdapter extends RecyclerView.Adapter<TruongHocAdapter.Truo
         holder.binding.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), "iiiii", Toast.LENGTH_SHORT).show();
+                Toast.makeText(v.getContext(), "iiii", Toast.LENGTH_SHORT).show();
                 Log.d("GGGG", "onClick: "+truongHoc.getId_Shool());
+                new AlertDialog.Builder(v.getContext())
+                        .setTitle("Xác nhận xóa")
+                        .setMessage("Bạn có chắc chắn muốn xóa trường học này không?")
+                        .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Gọi hàm delete khi người dùng xác nhận xóa
+
+                                hocvan.deleteSkill(truongHoc.getId_Shool());
+                            }
+                        })
+                        .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss(); // Đóng dialog nếu người dùng chọn "Hủy"
+                            }
+                        })
+                        .show();
             }
         });
 
