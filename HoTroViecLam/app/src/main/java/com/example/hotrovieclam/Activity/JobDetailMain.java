@@ -98,7 +98,6 @@ public class JobDetailMain extends AppCompatActivity {
         });
         db = FirebaseFirestore.getInstance();
 
-
         // Gọi phương thức để lấy chi tiết công việc
 //        fỉebaseJobDetails();
         if (sourceId == 3) {
@@ -122,6 +121,7 @@ public class JobDetailMain extends AppCompatActivity {
             }
         });
     }
+
 
     private void fỉebaseJobDetails() {
         // Thay "jobs" bằng tên của collection trong Firestore
