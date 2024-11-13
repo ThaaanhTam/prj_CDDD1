@@ -48,22 +48,26 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
+
             <ProgressBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/loading"
-                android:visibility="gone"/>
-
-
-            <EditText
-                android:id="@+id/nameSchool"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_text_input_truong_hoc"
-                android:hint="Tên trường học"
+                android:visibility="gone" />
 
-                android:padding="10dp" />
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <EditText
+                    android:id="@+id/nameSchool"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_text_input_truong_hoc"
+                    android:hint="Tên trường học"
+
+                    android:padding="10dp" />
+            </ScrollView>
         </LinearLayout>
 
         <LinearLayout
@@ -72,16 +76,19 @@
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
-
-            <EditText
-
-                android:id="@+id/nameMajor"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_text_input_truong_hoc"
-                android:hint="Ngành đang học"
-                android:padding="10dp" />
+                android:layout_height="wrap_content">
 
+                <EditText
+
+                    android:id="@+id/nameMajor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_text_input_truong_hoc"
+                    android:hint="Ngành đang học"
+                    android:padding="10dp" />
+            </ScrollView>
         </LinearLayout>
 
         <LinearLayout
@@ -133,28 +140,29 @@
                 android:layout_marginBottom="20dp"
                 android:text="Tôi đang học  ở đây" />
 
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="180dp">
-    <EditText
-        android:id="@+id/editTextDC"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/border_text_input_update_info"
-        android:gravity="top"
-        android:hint=" Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="180dp">
+
+                <EditText
+                    android:id="@+id/editTextDC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/border_text_input_update_info"
+                    android:gravity="top"
+                    android:hint=" Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm
 việc"
-        android:minLines="6"
-        android:overScrollMode="always"
-        android:padding="7dp"
-        android:scrollbars="vertical" />
-</ScrollView>
+                    android:minLines="6"
+                    android:overScrollMode="always"
+                    android:padding="7dp"
+                    android:scrollbars="vertical" />
+            </ScrollView>
 
 
             <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="match_parent"
                 android:id="@+id/delete"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
