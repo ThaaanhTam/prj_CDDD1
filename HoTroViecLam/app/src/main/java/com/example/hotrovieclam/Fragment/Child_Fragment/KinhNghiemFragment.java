@@ -198,14 +198,14 @@ public class KinhNghiemFragment extends Fragment {
                     .delete()
                     .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "Xóa kinh nghiem thành công"+ex_id);
-                        Toast.makeText(getContext(), "Đã xóa kỹ năng", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Đã xóa kinh nghiem", Toast.LENGTH_SHORT).show();
                         // Cập nhật lại danh sách kinh nghiem nếu cần
 
                         removeExperienceFromList(ex_id);
                         LoadLaiData();
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("Firestore", "Lỗi khi xóa kỹ năng", e);
+                        Log.e("Firestore", "Lỗi khi xóa kinh nghiem", e);
                     });
         } else {
             Log.e("Delete", "User ID hoặc Skill ID bị null");
