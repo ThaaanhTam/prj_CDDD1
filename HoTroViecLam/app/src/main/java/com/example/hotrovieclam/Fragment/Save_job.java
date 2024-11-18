@@ -52,7 +52,6 @@ public class Save_job extends Fragment {
         adapter.setbamvaodexemchitietcongviecdaluu(new AdapterListJobSave.OnItemEditClickListener() {
             @Override
             public void onEditClick(String idJob) {
-
             }
         });
 

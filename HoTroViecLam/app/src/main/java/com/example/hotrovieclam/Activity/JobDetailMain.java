@@ -394,25 +394,48 @@ public class JobDetailMain extends AppCompatActivity {
                 Toast.makeText(this, "Vui lòng chọn vào rbLibrary trước khi nhấn 'Apply'", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Toast.makeText(this, "đã nhấn", Toast.LENGTH_SHORT).show();
+
             UserSessionManager userSessionManager = new UserSessionManager();
             String uida = userSessionManager.getUserUid();
-            Map<String, Object> newData = new HashMap<>();
-            newData.put("candidateId", uida);
-            newData.put("status", -1);
 
+// Kiểm tra xem người dùng đã ứng tuyển công việc này chưa
             db.collection("jobs")
                     .document(jobID)
                     .collection("application")
-                    .add(newData)
-                    .addOnSuccessListener(documentReference -> {
-                        Log.d("Firestore", "Document added with ID: " + documentReference.getId());
+                    .whereEqualTo("candidateId", uida)
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        if (!querySnapshot.isEmpty()) {
+                            // Nếu đã ứng tuyển, thông báo cho người dùng và không lưu nữa
+                            Toast.makeText(this, "Bạn đã ứng tuyển công việc này trước đó", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Nếu chưa ứng tuyển, tiếp tục lưu thông tin ứng tuyển
+                            Map<String, Object> newData = new HashMap<>();
+                            newData.put("candidateId", uida);
+                            newData.put("status", -1);
+
+                            db.collection("jobs")
+                                    .document(jobID)
+                                    .collection("application")
+                                    .add(newData)
+                                    .addOnSuccessListener(documentReference -> {
+                                        Log.d("Firestore", "Document added with ID: " + documentReference.getId());
+                                        Toast.makeText(this, "Đã ứng tuyển thành công", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.w("Firestore", "Error adding document", e);
+                                        Toast.makeText(this, "Lỗi khi ứng tuyển", Toast.LENGTH_SHORT).show();
+                                    });
+                        }
                     })
                     .addOnFailureListener(e -> {
-                        Log.w("Firestore", "Error adding document", e);
+                        Log.w("Firestore", "Error checking application", e);
+                        Toast.makeText(this, "Lỗi khi kiểm tra ứng tuyển", Toast.LENGTH_SHORT).show();
                     });
+
             isRbLibraryChecked = false;
             dialog.dismiss();
+
         });
 
         dialog.show();

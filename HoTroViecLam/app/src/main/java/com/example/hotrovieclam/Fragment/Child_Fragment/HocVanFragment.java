@@ -39,7 +39,7 @@ public class HocVanFragment extends Fragment {
         binding = FragmentHocVanBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         db = FirebaseFirestore.getInstance();
-         uid = userSessionManager.getUserUid();
+        uid = userSessionManager.getUserUid();
         setupRecyclerView();
         //lay req va cap lại du lieu
         getParentFragmentManager().setFragmentResultListener("addSchool", getViewLifecycleOwner(), (requestKey, bundle) -> {
@@ -58,7 +58,7 @@ public class HocVanFragment extends Fragment {
 
         loadSchoolData(uid);
 
-
+        fetchdataShoolRealTime(uid);
         binding.themhocvan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +91,7 @@ public class HocVanFragment extends Fragment {
     // Hàm thiết lập RecyclerView và Adapter
     private void setupRecyclerView() {
         truongHocs = new ArrayList<>();
-        truongHocAdapter = new TruongHocAdapter(truongHocs,this);
+        truongHocAdapter = new TruongHocAdapter(truongHocs, this);
         binding.recycelViewItemTruongHoc.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recycelViewItemTruongHoc.setAdapter(truongHocAdapter);
     }
@@ -132,6 +132,49 @@ public class HocVanFragment extends Fragment {
                 });
     }
 
+    public void fetchdataShoolRealTime(String uid) {
+        // Khởi tạo Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Lắng nghe sự thay đổi của collection "school"
+        db.collection("users").document(uid)
+                .collection("role").document("candidate")
+                .collection("school") // Truy cập vào collection "school"
+                .addSnapshotListener((snapshots, error) -> {
+                    try {
+                        if (error != null) {
+                            throw error;
+                        }
+
+                        // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
+                        truongHocs.clear();
+
+                        if (snapshots != null) {
+                            for (QueryDocumentSnapshot document : snapshots) {
+                                // Chuyển đổi dữ liệu từ Firestore thành đối tượng TruongHoc
+                                TruongHoc truongHoc = document.toObject(TruongHoc.class);
+                                truongHocs.add(truongHoc);
+                            }
+                        }
+
+                        // Kiểm tra nếu truongHocs trống
+                        if (truongHocs.isEmpty()) {
+                            Log.d("Firestore", "Bạn chưa có thông tin nào.");
+                            binding.btnCapnhatProfile.setVisibility(View.VISIBLE);
+                            binding.gioithiebanthan.setVisibility(View.VISIBLE);
+                            binding.themhocvan.setVisibility(View.GONE);
+                        } else {
+                            // Cập nhật giao diện khi có dữ liệu
+                            binding.gioithiebanthan.setVisibility(View.GONE);
+                            binding.btnCapnhatProfile.setVisibility(View.GONE);
+                            binding.themhocvan.setVisibility(View.VISIBLE);
+                            truongHocAdapter.notifyDataSetChanged();
+                        }
+                    } catch (Exception e) {
+                        Log.e("Firestore", "Lỗi khi lắng nghe sự kiện thay đổi dữ liệu", e);
+                    }
+                });
+    }
+
     private void sendIUDFragmenr(String uid) {
         Bundle bundle = new Bundle();
         bundle.putString("USER_ID", uid);
@@ -143,6 +186,7 @@ public class HocVanFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
+
     public void deleteSkill(String skillId) {
 //        UserSessionManager userSession = new UserSessionManager();
 //        String uid = userSession.getUserUid();
@@ -154,7 +198,7 @@ public class HocVanFragment extends Fragment {
                     .collection("school").document(skillId)
                     .delete()
                     .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "Xóa kỹ năng thành công"+skillId);
+                        Log.d("Firestore", "Xóa kỹ năng thành công" + skillId);
                         Toast.makeText(getContext(), "Đã xóa kỹ năng", Toast.LENGTH_SHORT).show();
                         // Cập nhật lại danh sách kỹ năng nếu cần
                         LoadLaiData();
@@ -167,11 +211,13 @@ public class HocVanFragment extends Fragment {
             Log.e("DeleteSkill", "User ID hoặc Skill ID bị null");
         }
     }
-    public void LoadLaiData(){
+
+    public void LoadLaiData() {
         truongHocAdapter.notifyDataSetChanged();
         loadSchoolData(uid);
 
     }
+
     private void removeSkillFromList(String skillId) {
         for (int i = 0; i < truongHocs.size(); i++) {
             // Kiểm tra nếu id của phần tử khác null trước khi gọi equals
