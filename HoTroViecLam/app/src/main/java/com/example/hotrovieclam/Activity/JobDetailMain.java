@@ -1,8 +1,10 @@
 package com.example.hotrovieclam.Activity;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.RadialGradient;
@@ -102,7 +104,7 @@ public class JobDetailMain extends AppCompatActivity {
         // Gọi phương thức để lấy chi tiết công việc
 //        fỉebaseJobDetails();
         if (sourceId == 3) {
-            fỉebaseJobDetails();
+            firebaseJobDetails();
         } else {
             Web_APIJobDetails();
 
@@ -123,7 +125,7 @@ public class JobDetailMain extends AppCompatActivity {
         });
     }
 
-    private void fỉebaseJobDetails() {
+    private void firebaseJobDetails() {
         // Thay "jobs" bằng tên của collection trong Firestore
         db.collection("jobs").document(jobID)
                 .addSnapshotListener((documentSnapshot, e) -> {
@@ -307,34 +309,34 @@ public class JobDetailMain extends AppCompatActivity {
         TextView tvsdt = dialog.findViewById(R.id.tvSDT);
         TextView seeCV = dialog.findViewById(R.id.seeCV);
 
-//        uploadLayout.setVisibility(View.GONE);
-//        cvLibraryLayout.setVisibility(View.GONE);
-//        rbLibrary.setOnClickListener(v -> {
-//            rbLibrary.setChecked(true);
-//            rbUpload.setChecked(false);
-//            cvLibraryLayout.setVisibility(View.VISIBLE);
-//            uploadLayout.setVisibility(View.GONE);
-//        });
-//        rbUpload.setOnClickListener(v -> {
-//            rbUpload.setChecked(true);
-//            rbLibrary.setChecked(false);
-//            uploadLayout.setVisibility(View.VISIBLE);
-//            cvLibraryLayout.setVisibility(View.GONE);
-//        });
-        file.setVisibility(View.GONE);
+        uploadLayout.setVisibility(View.GONE);
         cvLibraryLayout.setVisibility(View.GONE);
         rbLibrary.setOnClickListener(v -> {
-            isRbLibraryChecked = !isRbLibraryChecked;
-            rbLibrary.setChecked(isRbLibraryChecked);
-
-            if (isRbLibraryChecked) {
-                // Hiển thị layout khi được chọn
-                cvLibraryLayout.setVisibility(View.VISIBLE);
-            } else {
-                // Ẩn layout khi hủy chọn
-                cvLibraryLayout.setVisibility(View.GONE);
-            }
+            rbLibrary.setChecked(true);
+            rbUpload.setChecked(false);
+            cvLibraryLayout.setVisibility(View.VISIBLE);
+            uploadLayout.setVisibility(View.GONE);
         });
+        rbUpload.setOnClickListener(v -> {
+            rbUpload.setChecked(true);
+            rbLibrary.setChecked(false);
+            uploadLayout.setVisibility(View.VISIBLE);
+            cvLibraryLayout.setVisibility(View.GONE);
+        });
+//        file.setVisibility(View.GONE);
+//        cvLibraryLayout.setVisibility(View.GONE);
+//        rbLibrary.setOnClickListener(v -> {
+//            isRbLibraryChecked = !isRbLibraryChecked;
+//            rbLibrary.setChecked(isRbLibraryChecked);
+//
+//            if (isRbLibraryChecked) {
+//                // Hiển thị layout khi được chọn
+//                cvLibraryLayout.setVisibility(View.VISIBLE);
+//            } else {
+//                // Ẩn layout khi hủy chọn
+//                cvLibraryLayout.setVisibility(View.GONE);
+//            }
+//        });
         UserSessionManager sessionManager = new UserSessionManager();
         String uid = sessionManager.getUserUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -382,16 +384,23 @@ public class JobDetailMain extends AppCompatActivity {
             openFilePicker();
         });
 
-        // Xử lý sự kiện khi click vào CV Library
-        cvLibraryLayout.setOnClickListener(v -> {
-            useAppCV();
-        });
+
 
         // Xử lý sự kiện khi nhấn nút ứng tuyển
         btnApply.setOnClickListener(v -> {
             if (!isRbLibraryChecked) {
                 // Thông báo nhắc người dùng chọn rbLibrary trước
-                Toast.makeText(this, "Vui lòng chọn vào rbLibrary trước khi nhấn 'Apply'", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(this)
+                        .setTitle("Thông báo")
+                        .setMessage("Vui lòng chọn phương thức ứng tuyển")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Xử lý khi nhấn nút OK
+                                dialog.dismiss(); // Đóng dialog
+                            }
+                        })
+                        .show();
                 return;
             }
 
@@ -407,7 +416,17 @@ public class JobDetailMain extends AppCompatActivity {
                     .addOnSuccessListener(querySnapshot -> {
                         if (!querySnapshot.isEmpty()) {
                             // Nếu đã ứng tuyển, thông báo cho người dùng và không lưu nữa
-                            Toast.makeText(this, "Bạn đã ứng tuyển công việc này trước đó", Toast.LENGTH_SHORT).show();
+                            new AlertDialog.Builder(this)
+                                    .setTitle("Thông báo")
+                                    .setMessage("Công việc đã được ứng tuyển")
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // Xử lý khi nhấn nút OK
+                                            dialog.dismiss(); // Đóng dialog
+                                        }
+                                    })
+                                    .show();
                         } else {
                             // Nếu chưa ứng tuyển, tiếp tục lưu thông tin ứng tuyển
                             Map<String, Object> newData = new HashMap<>();
@@ -441,14 +460,13 @@ public class JobDetailMain extends AppCompatActivity {
         dialog.show();
     }
 
-    private void useAppCV() {
-        // TODO: Xử lý logic sử dụng CV trong app
-        Toast.makeText(this, "Đang sử dụng CV trong app", Toast.LENGTH_SHORT).show();
-    }
 
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        intent.setType("*/*"); // Chấp nhận tất cả các tệp
+        String[] mimeTypes = {"application/pdf", "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         try {
             pdfPicker.launch(Intent.createChooser(intent, "Chọn CV"));
@@ -457,44 +475,44 @@ public class JobDetailMain extends AppCompatActivity {
         }
     }
 
-    private void uploadFileToFirebase(Uri fileUri) {
-        if (fileUri != null) {
-            // Hiển thị progress dialog
-            ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Đang tải lên");
-            progressDialog.setMessage("Vui lòng đợi...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-
-            // Tạo reference đến vị trí lưu trữ file
-            String fileName = "cv_" + System.currentTimeMillis() + ".pdf";
-            StorageReference fileRef = storageRef.child("cvs/" + fileName);
-
-            // Upload file
-            fileRef.putFile(fileUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        // Lấy download URL
-                        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String downloadUrl = uri.toString();
-                            // TODO: Lưu URL vào database
-                            progressDialog.dismiss();
-                            Toast.makeText(this, "Tải lên CV thành công", Toast.LENGTH_SHORT).show();
-
-                            // Lưu thông tin ứng tuyển vào Firestore
-                            saveJobApplication(downloadUrl);
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        progressDialog.dismiss();
-                        Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    })
-                    .addOnProgressListener(snapshot -> {
-                        // Tính phần trăm quá trình upload
-                        double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
-                        progressDialog.setMessage("Đã tải lên " + (int) progress + "%");
-                    });
-        }
-    }
+//    private void uploadFileToFirebase(Uri fileUri) {
+//        if (fileUri != null) {
+//            // Hiển thị progress dialog
+//            ProgressDialog progressDialog = new ProgressDialog(this);
+//            progressDialog.setTitle("Đang tải lên");
+//            progressDialog.setMessage("Vui lòng đợi...");
+//            progressDialog.setCancelable(false);
+//            progressDialog.show();
+//
+//            // Tạo reference đến vị trí lưu trữ file
+//            String fileName = "cv_" + System.currentTimeMillis() + ".pdf";
+//            StorageReference fileRef = storageRef.child("cvs/" + fileName);
+//
+//            // Upload file
+//            fileRef.putFile(fileUri)
+//                    .addOnSuccessListener(taskSnapshot -> {
+//                        // Lấy download URL
+//                        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+//                            String downloadUrl = uri.toString();
+//                            // TODO: Lưu URL vào database
+//                            progressDialog.dismiss();
+//                            Toast.makeText(this, "Tải lên CV thành công", Toast.LENGTH_SHORT).show();
+//
+//                            // Lưu thông tin ứng tuyển vào Firestore
+//                            saveJobApplication(downloadUrl);
+//                        });
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        progressDialog.dismiss();
+//                        Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                    })
+//                    .addOnProgressListener(snapshot -> {
+//                        // Tính phần trăm quá trình upload
+//                        double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+//                        progressDialog.setMessage("Đã tải lên " + (int) progress + "%");
+//                    });
+//        }
+//    }
 
     private void SaveJob(String uid, String idJob) {
         try {
@@ -514,7 +532,17 @@ public class JobDetailMain extends AppCompatActivity {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
                                     // Nếu document tồn tại, hiển thị thông báo rằng công việc đã được lưu
-                                    Toast.makeText(this, "Công việc này đã được lưu trước đó", Toast.LENGTH_SHORT).show();
+                                    new AlertDialog.Builder(this)
+                                            .setTitle("Thông báo")
+                                            .setMessage("Công việc đã được lưu")
+                                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    // Xử lý khi nhấn nút OK
+                                                    dialog.dismiss(); // Đóng dialog
+                                                }
+                                            })
+                                            .show();
                                 } else {
                                     // Nếu document chưa tồn tại, lưu công việc vào Firestore
                                     Map<String, Object> jobData = new HashMap<>();
@@ -529,8 +557,17 @@ public class JobDetailMain extends AppCompatActivity {
                                             .set(jobData)
                                             .addOnSuccessListener(aVoid -> {
                                                 Log.d("SaveJob", "Job saved successfully with ID: " + idJob);
-                                                Toast.makeText(this, "Lưu công việc thành công", Toast.LENGTH_SHORT).show();
-                                            })
+                                                new AlertDialog.Builder(this)
+                                                        .setTitle("Thông báo")
+                                                        .setMessage("Lưu công việc thành công!")
+                                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                // Xử lý khi nhấn nút OK
+                                                                dialog.dismiss(); // Đóng dialog
+                                                            }
+                                                        })
+                                                        .show();                                            })
                                             .addOnFailureListener(e -> {
                                                 Log.e("SaveJob", "Error saving job", e);
                                                 Toast.makeText(this, "Lỗi khi lưu công việc", Toast.LENGTH_SHORT).show();
@@ -551,25 +588,125 @@ public class JobDetailMain extends AppCompatActivity {
     }
 
     // Thêm phương thức để lưu thông tin ứng tuyển
-    private void saveJobApplication(String cvUrl) {
-        // Tạo một document mới trong collection "applications"
+//    private void saveJobApplication(String cvUrl) {
+//        // Tạo một document mới trong collection "applications"
+//        Map<String, Object> application = new HashMap<>();
+//        application.put("jobId", jobID);
+//        application.put("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()); // Giả sử user đã đăng nhập
+//        application.put("cvUrl", cvUrl);
+//        application.put("applicationDate", new Date());
+//        application.put("status", "Pending"); // Trạng thái mặc định
+//        db.collection("applications")
+//                .add(application)
+//                .addOnSuccessListener(documentReference -> {
+//                    Toast.makeText(this, "Ứng tuyển thành công!", Toast.LENGTH_SHORT).show();
+//                })
+//                .addOnFailureListener(e -> {
+//                    Toast.makeText(this, "Lỗi khi lưu thông tin ứng tuyển: " + e.getMessage(),
+//                            Toast.LENGTH_SHORT).show();
+//                });
+//    }
+    private void uploadFileToFirebase(Uri fileUri) {
+        if (fileUri != null) {
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Đang tải lên");
+            progressDialog.setMessage("Vui lòng đợi...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
+            // Tạo tên file độc nhất bao gồm userId để dễ quản lý
+            UserSessionManager sessionManager = new UserSessionManager();
+            String userId = sessionManager.getUserUid();
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            String fileName = "cv_" + userId + "_" + timestamp + ".pdf";
+
+            // Tạo reference với cấu trúc thư mục rõ ràng hơn
+            StorageReference fileRef = storageRef.child("users/" + userId + "/cvs/" + fileName);
+
+            fileRef.putFile(fileUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            String downloadUrl = uri.toString();
+                            // Lưu thông tin CV vào Firestore
+                            saveJobApplication(downloadUrl, fileName);
+                            progressDialog.dismiss();
+                            Toast.makeText(this, "Tải lên CV thành công", Toast.LENGTH_SHORT).show();
+                        });
+                    })
+                    .addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(this, "Lỗi tải lên: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnProgressListener(snapshot -> {
+                        double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                        progressDialog.setMessage("Đã tải lên " + (int) progress + "%");
+                    });
+        }
+    }
+
+    private void saveJobApplication(String cvUrl, String fileName) {
+        UserSessionManager sessionManager = new UserSessionManager();
+        String userId = sessionManager.getUserUid();
+        Date currentDate = new Date();
+
+        // Tạo object chứa thông tin ứng tuyển
         Map<String, Object> application = new HashMap<>();
         application.put("jobId", jobID);
-        application.put("userId", FirebaseAuth.getInstance().getCurrentUser().getUid()); // Giả sử user đã đăng nhập
+        application.put("candidateId", userId);
         application.put("cvUrl", cvUrl);
-        application.put("applicationDate", new Date());
-        application.put("status", "Pending"); // Trạng thái mặc định
-        db.collection("applications")
-                .add(application)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Ứng tuyển thành công!", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Lỗi khi lưu thông tin ứng tuyển: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
+        application.put("cvFileName", fileName);
+        application.put("applicationDate", currentDate);
+        application.put("status", -1); // Trạng thái chờ xử lý
+        application.put("lastUpdated", currentDate);
+
+        // Kiểm tra xem người dùng đã ứng tuyển công việc này chưa
+        db.collection("jobs")
+                .document(jobID)
+                .collection("applications")
+                .whereEqualTo("candidateId", userId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (task.getResult().isEmpty()) {
+                            // Chưa ứng tuyển - thêm mới
+                            db.collection("jobs")
+                                    .document(jobID)
+                                    .collection("applications")
+                                    .add(application)
+                                    .addOnSuccessListener(documentReference -> {
+                                        // Lưu reference của application vào user profile
+                                        saveApplicationToUserProfile(documentReference.getId(), application);
+                                        Toast.makeText(this, "Ứng tuyển thành công!", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Lỗi khi ứng tuyển: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            // Đã ứng tuyển - thông báo
+                            new AlertDialog.Builder(this)
+                                    .setTitle("Thông báo")
+                                    .setMessage("Bạn đã ứng tuyển công việc này rồi")
+                                    .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                                    .show();
+                        }
+                    }
                 });
     }
 
+    private void saveApplicationToUserProfile(String applicationId, Map<String, Object> application) {
+        UserSessionManager sessionManager = new UserSessionManager();
+        String userId = sessionManager.getUserUid();
+
+        // Lưu thông tin ứng tuyển vào profile người dùng
+        db.collection("users")
+                .document(userId)
+                .collection("applications")
+                .document(applicationId)
+                .set(application)
+                .addOnFailureListener(e -> {
+                    Log.e("SaveApplication", "Error saving to user profile", e);
+                });
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
