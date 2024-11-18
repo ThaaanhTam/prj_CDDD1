@@ -46,7 +46,6 @@ public class Detail_Job extends AppCompatActivity {
                             break;
                         case 1:
                             tab.setText("Danh sách ứng tuyển");
-
                             break;
                     }
                 }).attach();

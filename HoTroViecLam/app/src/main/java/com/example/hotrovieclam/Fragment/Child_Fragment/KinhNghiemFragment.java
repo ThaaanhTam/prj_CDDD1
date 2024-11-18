@@ -44,7 +44,7 @@ public class KinhNghiemFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
          uid = userSessionManager.getUserUid();
         setupRecyclerView();
-        //lay req va cap lại du lieu
+        //lay req va cap lại du lieuy
         getParentFragmentManager().setFragmentResultListener("addSucess", this, (requestKey, bundle) -> {
             boolean isUpdated = bundle.getBoolean("add");
             if (isUpdated) {
@@ -85,6 +85,8 @@ public class KinhNghiemFragment extends Fragment {
                         .commit();
             }
         });
+        loadexpErienceData(uid);
+        loaddataRealTime(uid);
         return view;
     }
 
@@ -148,7 +150,7 @@ public class KinhNghiemFragment extends Fragment {
 
 
 
-    private void loadExperienceData(String uid) {
+    public void loaddataRealTime(String uid) {
         // Khởi tạo Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -198,14 +200,14 @@ public class KinhNghiemFragment extends Fragment {
                     .delete()
                     .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "Xóa kinh nghiem thành công"+ex_id);
-                        Toast.makeText(getContext(), "Đã xóa kỹ năng", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Đã xóa kinh nghiem", Toast.LENGTH_SHORT).show();
                         // Cập nhật lại danh sách kinh nghiem nếu cần
 
                         removeExperienceFromList(ex_id);
                         LoadLaiData();
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("Firestore", "Lỗi khi xóa kỹ năng", e);
+                        Log.e("Firestore", "Lỗi khi xóa kinh nghiem", e);
                     });
         } else {
             Log.e("Delete", "User ID hoặc Skill ID bị null");
@@ -213,7 +215,7 @@ public class KinhNghiemFragment extends Fragment {
     }
     public void LoadLaiData(){
         experienceAdapter.notifyDataSetChanged();
-        loadExperienceData(uid);
+        loadexpErienceData(uid);
 
     }
     private void removeExperienceFromList(String ex_id) {

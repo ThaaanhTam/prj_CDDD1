@@ -1,16 +1,15 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.Model.UserSessionManager;
@@ -19,56 +18,56 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
 
 public class Information_management extends Fragment {
 
-
     FragmentInformationManagementBinding binding;
     Job_Management adapter;
     ArrayList<Job> jobs = new ArrayList<>();
-    FirebaseFirestore db = FirebaseFirestore.getInstance(); // Khởi tạo Firestore instance
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static String anhcccdTruoc = null;
 
-    public Information_management() {
-        // Required empty public constructor
-    }
-
-    public static Information_management newInstance(String param1, String param2) {
-        Information_management fragment = new Information_management();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        loadCompanyInformation();
-    }
+    public Information_management() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentInformationManagementBinding.inflate(inflater, container, false);
 
-        // Gọi hàm load thông tin công ty
+        // Gọi hàm load thông tin công ty trong onCreateView
         loadCompanyInformation();
+
+        binding.tvLegalDocumentFront.setOnClickListener(v -> {
+            CCCD_MatTruoc_Fragment cccdMatTruocFragment = new CCCD_MatTruoc_Fragment();
+            cccdMatTruocFragment.show(getParentFragmentManager(), "cccdMatTruocFragment");
+        });
+
+        binding.tvLegalDocumentBack.setOnClickListener(v -> {
+            CCCD_MatSau_Fragment cccdMatSauFragment = new CCCD_MatSau_Fragment();
+            cccdMatSauFragment.show(getParentFragmentManager(), "cccdMatSauFragment");
+        });
+
+        binding.tvCertificationDocument.setOnClickListener(v -> {
+            Giay_Phep_Kinh_Doanh giayPhepKinhDoanh = new Giay_Phep_Kinh_Doanh();
+            giayPhepKinhDoanh.show(getParentFragmentManager(), "giayPhepKinhDoanh");
+        });
 
         return binding.getRoot();
     }
 
     private void loadCompanyInformation() {
-        // Lấy UID của người dùng hiện tại
         UserSessionManager userSessionManager = new UserSessionManager();
         String uid = userSessionManager.getUserUid();
 
-        // Tham chiếu đến document "employer" của user
-        DocumentReference docRef = db.collection("users").document(uid)
-                .collection("roles").document("employer");
+        if (uid == null || uid.isEmpty()) {
+            Log.e("Information_management", "UID không hợp lệ.");
+            return;
+        }
 
-        // Thêm snapshot listener để lắng nghe thay đổi
+        DocumentReference docRef = db.collection("users").document(uid)
+                .collection("role").document("employer");
+
         docRef.addSnapshotListener((documentSnapshot, error) -> {
             if (error != null) {
                 Toast.makeText(getContext(), "Lỗi khi nghe thay đổi dữ liệu: " + error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -76,7 +75,6 @@ public class Information_management extends Fragment {
             }
 
             if (documentSnapshot != null && documentSnapshot.exists()) {
-                // Cập nhật dữ liệu vào TextView khi có thay đổi
                 binding.tvCompanyName.setText(documentSnapshot.getString("companyName"));
                 binding.tvContactPerson.setText(documentSnapshot.getString("contactPerson"));
                 binding.tvPhoneNumber.setText(documentSnapshot.getString("companyPhone"));
@@ -85,27 +83,23 @@ public class Information_management extends Fragment {
                 binding.tvWebsite.setText(documentSnapshot.getString("website"));
                 binding.tvStatus.setText(documentSnapshot.getString("statusId"));
 
-                // Hiển thị link tài liệu giấy tờ
-                binding.tvLegalDocumentFront.setText(documentSnapshot.getString("legalDocumentFront"));
+                anhcccdTruoc = documentSnapshot.getString("legalDocumentFront");
+                binding.tvLegalDocumentFront.setText(anhcccdTruoc);
+                binding.tvLegalDocumentFront.setPaintFlags(binding.tvLegalDocumentFront.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
                 binding.tvLegalDocumentBack.setText(documentSnapshot.getString("legalDocumentBack"));
+                binding.tvLegalDocumentBack.setPaintFlags(binding.tvLegalDocumentBack.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
                 binding.tvCertificationDocument.setText(documentSnapshot.getString("certificationDocument"));
+                binding.tvCertificationDocument.setPaintFlags(binding.tvCertificationDocument.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
-                // Tải và hiển thị logo công ty
-                String logoPath = "images/" + documentSnapshot.getString("logo");
-
+                String logoPath = documentSnapshot.getString("logo") != null ? "images/" + documentSnapshot.getString("logo") : null;
                 if (logoPath != null) {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
-                    StorageReference storageRef = storage.getReference();
-                    StorageReference logoRef = storageRef.child(logoPath);
+                    StorageReference logoRef = storage.getReference().child(logoPath);
 
-                    // Tải ảnh logo từ Firebase Storage
-                    logoRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        Glide.with(this)
-                                .load(uri.toString())
-                                .into(binding.companyLogo);
-                    }).addOnFailureListener(e -> {
-                        Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
-                    });
+                    logoRef.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(this).load(uri).into(binding.companyLogo))
+                            .addOnFailureListener(e -> Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show());
                 } else {
                     Glide.with(this)
                             .load("https://123job.vn/images/no_company.png")
@@ -116,11 +110,4 @@ public class Information_management extends Fragment {
             }
         });
     }
-
-
-
-
-
-
-
 }

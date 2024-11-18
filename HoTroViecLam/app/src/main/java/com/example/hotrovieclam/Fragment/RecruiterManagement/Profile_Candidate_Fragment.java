@@ -15,7 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.hotrovieclam.Model.Experiences;
+import com.example.hotrovieclam.Model.Experience;
 import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.Model.UserSessionManager;
@@ -40,10 +40,10 @@ public class Profile_Candidate_Fragment extends Fragment {
     String id_candidate = null;
     String id_Job=null;
     ArrayList<TruongHoc> truonghoc = new ArrayList<>();
-    ArrayList<Experiences> experiences = new ArrayList<>();
+    ArrayList<Experience> experiences = new ArrayList<>();
     ArrayList<KiNang>kiNangs= new ArrayList<>();
     ArrayAdapter<TruongHoc> truongHocAdapter;
-    ArrayAdapter<Experiences> kinhnghiemAdater;
+    ArrayAdapter<Experience> kinhnghiemAdater;
     ArrayAdapter<KiNang>kiNangArrayAdapter;
 
     @Override
@@ -213,43 +213,41 @@ public class Profile_Candidate_Fragment extends Fragment {
 
                                         Log.d("Firestore", "Không tìm thấy dữ liệu profile.");
                                     }
+                                    DocumentReference doc = db.collection("users").document(id_candidate)
+                                            .collection("role").document("candidate")
+                                            .collection("introduction").document("introductdata");
+
+                                    doc.addSnapshotListener((documentSnapshot, e) -> {
+                                        if (e != null) {
+                                            // Xử lý lỗi nếu có
+                                            Log.e("Firestore", "Error listening to document", e);
+                                            return;
+                                        }
+
+                                        if (documentSnapshot != null && documentSnapshot.exists()) {
+                                            // Kiểm tra xem trường "introduction" đã có data hay chưa
+                                            String introduction = documentSnapshot.getString("introduction");
+                                            if (introduction != null && !introduction.isEmpty()) {
+                                                binding.gioithieu.setText(introduction);
+                                                // Nếu có data thì ẩn nút thêm thông tin giới thiệu bản thân và hiện nút và ngược lại
+                                                Log.d("Firestore", "Đã có data: " + introduction);
+                                            } else {
+                                                binding.gioithieu.setText("Chưa cập nhật");
+                                                binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
+                                            }
+                                        } else {
+                                            Log.d("Firestore", "Không có document với UID này trong bảng Introduces");
+                                            binding.gioithieu.setText("Chưa cập nhật");
+                                            binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
+                                        }
+                                    });
                                 } else {
                                     Log.d("Firestore", "Lỗi khi truy vấn dữ liệu profile.", task.getException());
                                 }
                             }
                         });
-                        DocumentReference doc = db.collection("users").document(id_candidate)
-                                .collection("role").document("candidate")
-                                .collection("introduction").document("introductdata");
-                        doc.get().addOnCompleteListener(taskgioithieu -> {
-                            if (taskgioithieu.isSuccessful()) {
-                                DocumentSnapshot documentGioithieu = taskgioithieu.getResult();
-                                if (documentGioithieu.exists()) {
-                                    // Kiểm tra xem trường "introduction" đã có data hay chưa
-                                    String introduction = documentGioithieu.getString("introduction");
-                                    if (introduction != null && !introduction.isEmpty()) {
-                                        binding.gioithieu.setText(introduction);
-                                        //nếu có data thì ẩn nút thêm thông tin giới thiệu bản thân và hiện nút và ngược lại
 
-                                        Log.d("Firestore", "Đã có data: " + introduction);
-                                    }
-                                } else {
-                                    Log.d("Firestore", "Không có document với UID này trong bảng Introduces");
-                                    binding.gioithieu.setText("Chưa cập nhật");
-                                    binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
 
-                                }
-                            } else {
-                                // Xử lý khi bảng "Introduces" không tồn tại hoặc lỗi kết nối Firestore
-                                Exception e = task.getException();
-                                if (e instanceof FirebaseFirestoreException &&
-                                        ((FirebaseFirestoreException) e).getCode() == FirebaseFirestoreException.Code.NOT_FOUND) {
-                                    Log.d("Firestore", "Bảng Introduces không tồn tại.");
-                                } else {
-                                    Log.d("Firestore", "Lỗi khi truy xuất document", e);
-                                }
-                            }
-                        });
 
                         CollectionReference docSchool = db.collection("users")
                                 .document(id_candidate)
@@ -292,7 +290,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                 .document(id_candidate)
                                 .collection("role")
                                 .document("candidate")
-                                .collection("experiences");
+                                .collection("experience");
                         getKinhNghiem.get()
                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
@@ -301,7 +299,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                             experiences.clear(); // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
                                             if (task.getResult().isEmpty()) {
                                                 // Hiển thị thông báo nếu không có dữ liệu
-                                                experiences.add(new Experiences(null, "", "", "", "Chưa cập nhật kinh nghiệm", "", null));
+                                                experiences.add(new Experience(null, "", "", "", "Chưa cập nhật kinh nghiệm", "", null));
                                                 kinhnghiemAdater.notifyDataSetChanged();
                                                 //binding.lisviewHocVan.setVisibility(View.VISIBLE); // Hiển thị ListView
                                             } else {
@@ -312,7 +310,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                     String timeStart = document.getString("time_start");
                                                     String timeEnd = document.getString("time_end");
 
-                                                    Experiences experie = new Experiences(null, timeEnd, timeStart, position, name_organization, null, null);
+                                                    Experience experie = new Experience(null, timeEnd, timeStart, position, name_organization, null, null);
 
                                                     experiences.add(experie); // Thêm vào danh sách
                                                 }

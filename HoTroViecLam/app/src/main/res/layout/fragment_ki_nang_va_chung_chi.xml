@@ -6,6 +6,7 @@
     android:padding="10dp"
     tools:context=".Fragment.Child_Fragment.KiNangVaChungChiFragment">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,11 +14,13 @@
         android:gravity="center"
         android:orientation="vertical">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:gravity="center"
             android:layout_height="wrap_content">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -25,12 +28,14 @@
                 android:orientation="horizontal"
                 android:padding="15dp">
 
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Kĩ năng"
                     android:textStyle="bold" />
+
 
                 <ImageView
                     android:id="@+id/themSkill"
@@ -40,6 +45,7 @@
                     android:src="@drawable/add_circle" />
             </LinearLayout>
 
+
             <TextView
                 android:id="@+id/gioithiebanthan"
                 android:layout_width="match_parent"
@@ -48,7 +54,9 @@
                 android:text="Chưa có thông tin kĩ năng"
                 android:textAlignment="center" />
 
+
             <androidx.appcompat.widget.AppCompatButton
+
 
                 android:id="@+id/themkinang"
                 android:layout_width="wrap_content"
@@ -59,14 +67,19 @@
                 android:textColor="@color/black" />
         </LinearLayout>
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/Item_KiNang"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp">
 
+
         </androidx.recyclerview.widget.RecyclerView>
+
 
     </LinearLayout>
 
+
 </FrameLayout>
+
