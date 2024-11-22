@@ -1,30 +1,38 @@
 package com.example.hotrovieclam.Adapter;
 
-import android.os.Bundle;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.hotrovieclam.Fragment.MessageFrament;
-import com.example.hotrovieclam.Model.Message;
+import com.bumptech.glide.Glide;
+import com.example.hotrovieclam.Fragment.MessageActivity;
+import com.example.hotrovieclam.Model.ListMess;
+import com.example.hotrovieclam.Model.User;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
-import com.example.hotrovieclam.Fragment.MessageFrament; // Đổi thành MessageActivity nếu cần
 import com.example.hotrovieclam.databinding.ItemConversationBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
 public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.ConversationViewHolder> {
-    private ArrayList<Message> conversationList;
+    private ArrayList<ListMess> conversationList;
     private FragmentActivity context;
     private  FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();;
     UserSessionManager sessionManager = new UserSessionManager();
     String currentUserId = sessionManager.getUserUid();
-    public ConversationAdapter(ArrayList<Message> conversationList, FragmentActivity context) {
+    public ConversationAdapter(ArrayList<ListMess> conversationList, FragmentActivity context) {
         this.conversationList = conversationList;
         this.context = context;
     }
@@ -35,53 +43,52 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
       return   new ConversationViewHolder(ItemConversationBinding.inflate(context.getLayoutInflater(), parent, false));
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull ConversationViewHolder holder, int position) {
-        Message message = conversationList.get(position);
-        String rec = message.getReceiver_id();
-        if (currentUserId.equals(rec)){
-            rec = message.getSender_id();
+        ListMess listMess = conversationList.get(position);
+        if (listMess.getName()!=null) {
+            holder.binding.textViewUserName.setText(listMess.getName());
+        }
+        if(listMess.getAvatar()!=null){
+            Log.d("ff", listMess.getAvatar());
+            Glide.with(context)
+                    .load(listMess.getAvatar())
+                    .circleCrop() // Bo tròn hình ảnh
+                    .placeholder(R.drawable.user_solid) // Ảnh thay thế trong khi tải
+                    .error(R.drawable.user_solid) // Ảnh lỗi nếu tải thất bại
+                    .into(holder.binding.imageViewAvatar);
+
+        }
+        holder.binding.body.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, MessageActivity.class);
+                intent.putExtra("messageID", listMess.getMessID());
+                intent.putExtra("receiverID", listMess.getReicever_id());
+                context.startActivity(intent);
+
+            }
+        });
+        if (listMess.getStatus()=="0"){
+            holder.binding.textViewLastMessage.setTextColor(R.color.black);
+        }else {
+            holder.binding.textViewLastMessage.setTextColor(R.color.gray_light);
         }
 
 
-        // Set an OnClickListener on the itemView to handle click events
-        holder.itemView.setOnClickListener(v -> {
-            // Lấy senderId và receiverId
-            String senderId = message.getSender_id();
-            String receiverId = message.getReceiver_id();
 
-            // Tạo Bundle để truyền dữ liệu
-            Bundle bundle = new Bundle();
-            bundle.putString("senderId", senderId);
-            bundle.putString("receiverId", receiverId);
 
-            // Tạo MessageFragment mới và truyền dữ liệu qua Bundle
-            MessageFrament messageFragment = new MessageFrament();
-            messageFragment.setArguments(bundle);
 
-            // Chuyển đến MessageFragment
-            if (context != null) {
-                FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, messageFragment);  // Chuyển sang MessageFragment
-                transaction.addToBackStack(null);  // Cho phép quay lại fragment cũ
-                transaction.commit();
-            }
-        });
 
-     //   holder.binding.textViewUserName.setText(documentSnapshot.getString("name"));
-        db.collection("users").document(rec)
-                .addSnapshotListener((documentSnapshot, e) -> {
-                    if (e != null) {
-                        return;
-                    }
-
-                    if (documentSnapshot != null && documentSnapshot.exists()) {
-                       holder.binding.textViewUserName.setText(documentSnapshot.getString("name"));
-                    } else {
-
-                    }
-                });
-
+    }
+    private void loadImage(StorageReference storageReference, String path, ImageView imageView) {
+        if (path != null && !path.isEmpty()) {
+            StorageReference imageRef = storageReference.child(path);
+            imageRef.getDownloadUrl()
+                    .addOnSuccessListener(uri -> Glide.with(context).load(uri).into(imageView))
+                    .addOnFailureListener(e -> Toast.makeText(context, "Không thể tải ảnh", Toast.LENGTH_SHORT).show());
+        }
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.example.hotrovieclam.Model;
 
+import com.google.firebase.Timestamp;
+
+import java.util.Date;
 import java.util.Objects;
 
 public class Message {
@@ -7,10 +10,10 @@ public class Message {
     private String content;
     private String receiver_id;
     private String sender_id;
-    private Long sent_at;
+    private Date sent_at;
 
     // Constructor với tham số
-    public Message(String content, String receiver_id, String sender_id, Long sent_at) {
+    public Message(String content, String receiver_id, String sender_id, Date sent_at) {
         this.content = content;
         this.receiver_id = receiver_id;
         this.sender_id = sender_id;
@@ -54,11 +57,11 @@ public class Message {
         this.sender_id = sender_id;
     }
 
-    public Long getSent_at() {
+    public Date getSent_at() {
         return sent_at;
     }
 
-    public void setSent_at(Long sent_at) {
+    public void setSent_at(Date sent_at) {
         this.sent_at = sent_at;
     }
 
