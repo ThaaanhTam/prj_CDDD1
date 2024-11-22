@@ -73,6 +73,10 @@ dependencies {
     implementation ("com.google.android.gms:play-services-location:18.0.0")
     implementation ("com.google.android.material:material:1.4.0")
 
+    //thông báo cho nhà tuyển dụng
+    implementation (platform("com.google.firebase:firebase-bom:32.0.0"))
+    implementation ("com.google.firebase:firebase-messaging")
+
 
 
 
