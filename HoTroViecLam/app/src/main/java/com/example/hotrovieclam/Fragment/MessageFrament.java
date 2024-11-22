@@ -48,8 +48,8 @@ public class MessageFrament extends Fragment {
         // Lấy dữ liệu senderId và receiverId từ Bundle
         Bundle arguments = getArguments();
         if (arguments != null) {
-            senderId = arguments.getString("senderId", "");
-            receiverId = arguments.getString("receiverId", "");
+            senderId = arguments.getString("senderId");
+            receiverId = arguments.getString("receiverId");
         }
 
 
@@ -112,9 +112,10 @@ public class MessageFrament extends Fragment {
     private void loadMessages() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Lắng nghe tin nhắn theo thời gian thực
+        // Lắng nghe tin nhắn gửi từ sender đến receiver
         db.collection("messages")
-                .whereEqualTo("sender_id",senderId).whereEqualTo("receiver_id", receiverId)
+                .whereEqualTo("sender_id", senderId)
+                .whereEqualTo("receiver_id", receiverId)
                 .orderBy("sent_at")
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
@@ -124,26 +125,47 @@ public class MessageFrament extends Fragment {
 
                     if (querySnapshot != null) {
                         for (QueryDocumentSnapshot document : querySnapshot) {
-                            String msgSenderId = document.getString("sender_id");
-                            String msgReceiverId = document.getString("receiver_id");
-                            String content = document.getString("content");
-                            Long sentAt = document.getLong("sent_at");
-
-                            Message message = new Message();
-                            message.setContent(content);
-                            message.setReceiver_id(msgReceiverId);
-                            message.setSender_id(msgSenderId);
-                            message.setSent_at(sentAt);
-
-                            // Chỉ thêm tin nhắn mới vào danh sách nếu chưa tồn tại
-                            if (!messageList.contains(message)) {
-                                messageList.add(message);
-                                messageAdapter.notifyItemInserted(messageList.size() - 1);
-                                recyclerViewMessages.scrollToPosition(messageList.size() - 1);
-                            }
+                            addMessageToList(document);
                         }
                     }
                 });
 
+        // Lắng nghe tin nhắn gửi từ receiver đến sender
+        db.collection("messages")
+                .whereEqualTo("sender_id", receiverId)
+                .whereEqualTo("receiver_id", senderId)
+                .orderBy("sent_at")
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.e("ChatApp", "Lỗi tải tin nhắn: " + e.getMessage());
+                        return;
+                    }
+                    if (querySnapshot != null) {
+                        for (QueryDocumentSnapshot document : querySnapshot) {
+                            addMessageToList(document);
+                        }
+                    }
+                });
     }
+
+    private void addMessageToList(QueryDocumentSnapshot document) {
+        String msgSenderId = document.getString("sender_id");
+        String msgReceiverId = document.getString("receiver_id");
+        String content = document.getString("content");
+        Long sentAt = document.getLong("sent_at");
+
+        Message message = new Message();
+        message.setContent(content);
+        message.setReceiver_id(msgReceiverId);
+        message.setSender_id(msgSenderId);
+        message.setSent_at(sentAt);
+
+        // Chỉ thêm tin nhắn mới vào danh sách nếu chưa tồn tại
+        if (!messageList.contains(message)) {
+            messageList.add(message);
+            messageAdapter.notifyItemInserted(messageList.size() - 1);
+            recyclerViewMessages.scrollToPosition(messageList.size() - 1);
+        }
+    }
+
 }
