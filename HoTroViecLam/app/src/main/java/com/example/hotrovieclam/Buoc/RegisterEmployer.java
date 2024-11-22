@@ -76,15 +76,15 @@ public class RegisterEmployer extends AppCompatActivity {
     // Hiển thị trạng thái tải
     private void showLoadingState(boolean isLoading) {
         if (isLoading) {
-            binding.btnSubmit.setEnabled(false);  // Vô hiệu hóa nút
-            binding.btnSubmit.animate().alpha(0f).setDuration(200).start(); // Làm mờ nút
+            binding.btnSubmit.setEnabled(false);
+            binding.btnSubmit.animate().alpha(0f).setDuration(200).start();
             binding.progressBar.setVisibility(View.VISIBLE);
-            binding.progressBar.animate().alpha(1f).setDuration(200).start(); // Hiện vòng tròn tải
+            binding.progressBar.animate().alpha(1f).setDuration(200).start();
         } else {
-            binding.progressBar.animate().alpha(0f).setDuration(200).start(); // Làm mờ vòng tròn tải
+            binding.progressBar.animate().alpha(0f).setDuration(200).start();
             binding.progressBar.setVisibility(View.GONE);
             binding.btnSubmit.setEnabled(true);
-            binding.btnSubmit.animate().alpha(1f).setDuration(200).start(); // Hiện lại nút
+            binding.btnSubmit.animate().alpha(1f).setDuration(200).start();
         }
     }
 
@@ -208,7 +208,9 @@ public class RegisterEmployer extends AppCompatActivity {
                 .set(companyInfo)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Lưu dữ liệu thành công", Toast.LENGTH_SHORT).show();
-                    clearInputs(); // Xóa các input sau khi lưu thành công
+                    clearInputs();
+                    showLoadingState(false);
+                    // Xóa các input sau khi lưu thành công
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Lưu dữ liệu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -275,7 +277,7 @@ public class RegisterEmployer extends AppCompatActivity {
         companyCertUri = null;
         logoUri = null;
         binding.progressBar.setVisibility(View.GONE);
-        // binding.btnSubmit.setVisibility(View.VISIBLE);
+
 
     }
 
