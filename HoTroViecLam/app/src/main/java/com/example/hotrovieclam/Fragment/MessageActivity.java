@@ -11,7 +11,6 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,17 +18,18 @@ import com.example.hotrovieclam.Adapter.MessageAdapter;
 import com.example.hotrovieclam.Model.Message;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
-import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class MessageFrament extends AppCompatActivity {
+public class MessageActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewMessages;
     private MessageAdapter messageAdapter;
@@ -38,113 +38,128 @@ public class MessageFrament extends AppCompatActivity {
     private ImageButton imageButtonSend;
 
     private String currentUserId;
-    private String senderId ;
-    private String receiverId;
-
+    private String messageID;
+    private String receiverID;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_messege, container, false);
-
-        // Lấy dữ liệu senderId và receiverId từ Bundle
-        Bundle arguments = getArguments();
-        if (arguments != null) {
-            senderId = arguments.getString("senderId", "");
-            receiverId = arguments.getString("receiverId", "");
-        }
-
-
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_messege);
+        messageID = getIntent().getStringExtra("messageID");
+        receiverID = getIntent().getStringExtra("receiverID");
         UserSessionManager sessionManager = new UserSessionManager();
         currentUserId = sessionManager.getUserUid();
-
-        recyclerViewMessages = view.findViewById(R.id.recyclerViewMessages);
-        editTextMessage = view.findViewById(R.id.editTextMessage);
-        imageButtonSend = view.findViewById(R.id.imageButtonSend);
-
+        recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
+        editTextMessage = findViewById(R.id.editTextMessage);
+        imageButtonSend = findViewById(R.id.imageButtonSend);
+        Log.d("ii", messageID);
         setupRecyclerView();
         loadMessages();
 
-        imageButtonSend.setOnClickListener(view1 -> {
+
+        // Xử lý sự kiện gửi tin nhắn
+        imageButtonSend.setOnClickListener(view -> {
             String content = editTextMessage.getText().toString().trim();
             if (!content.isEmpty()) {
                 sendMessage(content);
                 editTextMessage.setText("");
             }
         });
-
-        return view;
     }
 
     private void setupRecyclerView() {
         messageAdapter = new MessageAdapter(messageList, currentUserId);
         recyclerViewMessages.setAdapter(messageAdapter);
-        recyclerViewMessages.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void sendMessage(String content) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Tạo ID cho tin nhắn mới
-        String messageId = db.collection("messages").document().getId();
 
         // Tạo Map chứa dữ liệu tin nhắn
         Map<String, Object> messageData = new HashMap<>();
-        messageData.put("sender_id", senderId);
-        messageData.put("receiver_id", receiverId);
+        messageData.put("sender_id", currentUserId);  // Gửi tin nhắn từ người dùng hiện tại
         messageData.put("content", content);
         messageData.put("sent_at", System.currentTimeMillis());
-        messageData.put("read", false); // Bạn có thể theo dõi trạng thái tin nhắn đã đọc
 
-        // Lưu tin nhắn vào Firestore
-        db.collection("messages").document(messageId)
-                .set(messageData)
+        db.collection("Message").document(messageID)
+                .collection("messages")
+                .add(messageData)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d("ChatApp", "Tin nhắn đã được gửi.");
-                        loadMessages();
+                        loadMessages();  // Tải lại danh sách tin nhắn
                     } else {
                         Log.e("ChatApp", "Lỗi gửi tin nhắn: " + task.getException().getMessage());
                     }
                 });
 
 
+//        Map<String, Object> status = new HashMap<>();
+//        status.put("status", "0");
+//
+//        db.collection("users").document(receiverID)
+//                .collection("conversation")
+//                .document(currentUserId)
+//                .set(status) // Giữ lại các trường hiện có
+//                .addOnSuccessListener(aVoid -> {
+//                    Log.d("Firestore", "Thêm trường mới thành công!");
+//                })
+//                .addOnFailureListener(err -> {
+//                    Log.e("Firestore", "Lỗi khi thêm trường mới: " + err.getMessage());
+//                });
     }
+
 
     private void loadMessages() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        Map<String, Object> status = new HashMap<>();
+//        status.put("status", "1");
+//
+//        db.collection("users").document(currentUserId)
+//                .collection("conversation")
+//                .document(receiverID)
+//                .set(status) // Giữ lại các trường hiện có
+//                .addOnSuccessListener(aVoid -> {
+//                    Log.d("Firestore", "Thêm trường mới thành công!");
+//                })
+//                .addOnFailureListener(err -> {
+//                    Log.e("Firestore", "Lỗi khi thêm trường mới: " + err.getMessage());
+//                });
 
-        // Lắng nghe tin nhắn theo thời gian thực
-        db.collection("messages")
-                .whereEqualTo("sender_id",senderId).whereEqualTo("receiver_id", receiverId)
+        db.collection("Message").document(messageID)
+                .collection("messages")
                 .orderBy("sent_at")
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.e("ChatApp", "Lỗi tải tin nhắn: " + e.getMessage());
                         return;
                     }
-
                     if (querySnapshot != null) {
+                        messageList.clear();
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             String msgSenderId = document.getString("sender_id");
-                            String msgReceiverId = document.getString("receiver_id");
                             String content = document.getString("content");
-                            Long sentAt = document.getLong("sent_at");
-
+                            Date sentAt = null;
+                            Object sentAtObject = document.get("sent_at");
+                            if (sentAtObject instanceof com.google.firebase.Timestamp) {
+                                sentAt = ((com.google.firebase.Timestamp) sentAtObject).toDate();
+                            } else if (sentAtObject instanceof Long) {
+                                sentAt = new Date((Long) sentAtObject);
+                            }
                             Message message = new Message();
                             message.setContent(content);
-                            message.setReceiver_id(msgReceiverId);
                             message.setSender_id(msgSenderId);
                             message.setSent_at(sentAt);
 
-                            // Chỉ thêm tin nhắn mới vào danh sách nếu chưa tồn tại
-                            if (!messageList.contains(message)) {
-                                messageList.add(message);
-                                messageAdapter.notifyItemInserted(messageList.size() - 1);
-                                recyclerViewMessages.scrollToPosition(messageList.size() - 1);
-                            }
+                            messageList.add(message);
                         }
+                        messageAdapter.notifyDataSetChanged();
+                        recyclerViewMessages.scrollToPosition(messageList.size() - 1);
                     }
                 });
-
     }
+
 }
