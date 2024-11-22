@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MessageFrament extends Fragment {
+public class MessageFrament extends AppCompatActivity {
 
     private RecyclerView recyclerViewMessages;
     private MessageAdapter messageAdapter;
@@ -40,7 +41,7 @@ public class MessageFrament extends Fragment {
     private String senderId ;
     private String receiverId;
 
-    @Nullable
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_messege, container, false);
