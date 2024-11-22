@@ -291,20 +291,6 @@ public class RegisterEmployer extends AppCompatActivity {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    private void populateDefaultUserInfo() {
-        UserSessionManager userSessionManager = new UserSessionManager();
-        String name = userSessionManager.getName();
-        String phoneNumber = userSessionManager.getPhoneNumber();
-        String email = userSessionManager.getEmail();
-
-        Log.d("UserInfo", "Name: " + name + ", Phone: " + phoneNumber + ", Email: " + email);
-
-        binding.etRecruiterName.setText(name);
-        binding.etPhoneNumber.setText(phoneNumber);
-        binding.etCompanyMail.setText(email);
-    }
-
-
     public void HienThiThongTin() {
         // Tạo session để lấy UID người dùng hiện tại.
         UserSessionManager sessionManager = new UserSessionManager();

@@ -2,20 +2,18 @@ package com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.hotrovieclam.Model.Experience;
-import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
-import com.example.hotrovieclam.databinding.FragmentEducationBinding;
 import com.example.hotrovieclam.databinding.FragmentExperienceBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,28 +37,44 @@ public class ExperienceFragment extends Fragment {
 //        UserSessionManager user = new UserSessionManager();
 //        id=user.getUserUid();
         Bundle bundle = getArguments();
-        Log.d("VV", "onCreateView: "+id);
+        Log.d("VV", "onCreateView: " + id);
         if (bundle != null) {
             id = bundle.getString("USER_ID");
             id_experience = bundle.getString("EXPERIENCE_ID");
             Log.d("AA", "onCreateView: " + id + "-----------------" + id_experience);
-            if (id_experience!=null){
+            if (id_experience != null) {
                 loadData(id_experience);
             }
             //loadData(id,id_school);
             binding.btnUpdateExperience.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   // Log.d("VX", "onClick: " + id);
-                    if (id != null) {
-                        binding.loading.setVisibility(View.VISIBLE);
-                        saveExperience();
-                    } else if (id_experience != null) {
-                        binding.loading.setVisibility(View.VISIBLE);
-                        updateExperience(id_experience);
+                    // Log.d("VX", "onClick: " + id);
+                    // Kiểm tra nếu các trường bị trống
+                    if (binding.nameToChuc.getText().toString().trim().isEmpty()) {
+                        binding.nameToChuc.setError("Tên tổ chức không được để trống");
+                        return;
                     }
 
+                    if (binding.start.getText().toString().trim().isEmpty()) {
+                        binding.start.setError("Ngày bắt đầu không được để trống");
+                        return;
+                    }
+
+                    if (binding.editTextCongViec.getText().toString().trim().isEmpty()) {
+                        binding.editTextCongViec.setError("Tên công việc không được để trống");
+                        return;
+                    }
+
+                    // Nếu tất cả các trường đã có giá trị
+                    binding.loading.setVisibility(View.VISIBLE);
+                    if (id_experience == null) {
+                        saveExperience(); // Gọi hàm lưu kinh nghiệm mới
+                    } else {
+                        updateExperience(id_experience); // Gọi hàm cập nhật kinh nghiệm
+                    }
                 }
+
             });
         }
 
@@ -161,10 +175,23 @@ public class ExperienceFragment extends Fragment {
         String start = binding.start.getText().toString().trim();
         String end = binding.end.getText().toString().trim();
         String description = binding.editTextDC.getText().toString().trim();
-       // Integer type = binding.check.isChecked() ? 1 : 0; // 1 cho đang học, 0 cho không học
 
-        // Tạo một đối tượng TruongHoc
-        Experience experience = new Experience(description,end,start,namejob,name_organization,null,id);
+        if (name_organization.isEmpty()) {
+            setupFieldFocusListener(binding.nameToChuc, "Vui lòng nhập tên tổ chức");
+            return;
+        }
+        if ( start.isEmpty()) {
+            setupFieldFocusListener(binding.editTextCongViec, "Vui lòng nhập tên công việc hoặc kinh nghiệm của bạn");
+            return;
+        }
+        if (namejob.isEmpty()) {
+            setupFieldFocusListener(binding.start, "Vui lòng chọn ngày bắt đầu ki nghiệm");
+            return;
+        }
+
+
+        // Tạo một đối tượng
+        Experience experience = new Experience(description, end, start, namejob, name_organization, null, id);
 
         // Lưu dữ liệu vào Firestore
         db.collection("users").document(UID)
@@ -182,7 +209,7 @@ public class ExperienceFragment extends Fragment {
                                 getParentFragmentManager().setFragmentResult("addSucess", bundle);
                                 getParentFragmentManager().popBackStack();
                                 Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
-                                Toast.makeText(getContext(),"Lưu kinh nghiệm thành công", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Lưu kinh nghiệm thành công", Toast.LENGTH_SHORT).show();
                             });
                 })
                 .addOnFailureListener(e -> {
@@ -190,16 +217,16 @@ public class ExperienceFragment extends Fragment {
                 });
     }
 
-    private void loadData( String id_experience) {
+    private void loadData(String id_experience) {
         // Khởi tạo Firestore
-        UserSessionManager user =new UserSessionManager();
+        UserSessionManager user = new UserSessionManager();
         String uid = user.getUserUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Lấy dữ liệu từ Firestore
         db.collection("users").document(uid)
                 .collection("role").document("candidate")
-                .collection("experience").document(id_experience) // Truy cập đến document với id_school
+                .collection("experience").document(id_experience) // Truy cập đến document với id_experience
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
@@ -241,7 +268,7 @@ public class ExperienceFragment extends Fragment {
         String description = binding.editTextDC.getText().toString().trim();
 
         // Tạo một đối tượng kinh nghiệm với dữ liệu mới
-        Experience experience = new Experience(description,end,start,namejob,name_organization,id_experience,uid);
+        Experience experience = new Experience(description, end, start, namejob, name_organization, id_experience, uid);
 
         // Cập nhật dữ liệu vào Firestore
         db.collection("users").document(uid)
@@ -265,4 +292,11 @@ public class ExperienceFragment extends Fragment {
     }
 
 
+    private void setupFieldFocusListener(EditText editText, String errorMessage) {
+        editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus && editText.getText().toString().trim().isEmpty()) {
+                editText.setError(errorMessage); // Hiển thị lỗi nếu bỏ trống
+            }
+        });
+    }
 }
