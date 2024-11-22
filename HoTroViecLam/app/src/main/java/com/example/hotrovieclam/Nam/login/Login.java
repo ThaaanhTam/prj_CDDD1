@@ -1,11 +1,14 @@
 package com.example.hotrovieclam.Nam.login;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -24,6 +27,7 @@ import com.example.hotrovieclam.Nam.forgotpassword.ForgotPassWord;
 import com.example.hotrovieclam.Nam.register.Register;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityLoginBinding;
+import com.example.hotrovieclam.databinding.CustomToastSuccessBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -84,6 +88,7 @@ public class Login extends AppCompatActivity {
         binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 login();
             }
         });
@@ -104,19 +109,27 @@ public class Login extends AppCompatActivity {
     }
 
     private void login() {
-
+Toast toast = new Toast(Login.this);
         String email = binding.editTextEmail.getText().toString().trim();
         String pass = binding.editTextPassword.getText().toString().trim();
 
         // Kiểm tra nếu email hoặc password trống
-        if (email.isEmpty() || pass.isEmpty()) {
-            Toast.makeText(Login.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+        if (email.isEmpty()) {
+            binding.editTextEmail.setError("Vui lòng nhập địa chỉ Email"); // Hiển thị lỗi trên trường "Số điện thoại"
+            binding.editTextEmail.requestFocus();
             return; // Dừng lại nếu chưa nhập đầy đủ
+        }
+        if (pass.isEmpty()){
+            binding.editTextPassword.setError("Vui lòng nhập mật khẩu"); // Hiển thị lỗi trên trường "Số điện thoại"
+            binding.editTextPassword.requestFocus();
+            return; // Dừng lại nếu chưa nhập đầy đ
         }
 
         // Kiểm tra định dạng email
         if (!register.isValidEmail(email)) {
-            Toast.makeText(Login.this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+            ThongBaoThatBai(toast,"Email không hợp lệ");
+            binding.editTextEmail.requestFocus();
+
             return;
         }
 
@@ -140,7 +153,9 @@ public class Login extends AppCompatActivity {
     }
 
     private void signIn(String email, String password) {
-        binding.progressBarLogin.setVisibility(View.VISIBLE);
+        LoadingNhanhHon();
+        binding.progressBar.setVisibility(View.VISIBLE);
+        Toast toast = new Toast(Login.this);
         // Kiểm tra đăng nhập với Firebase Authentication
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
@@ -152,28 +167,31 @@ public class Login extends AppCompatActivity {
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("user_uid", user.getUid());
                             editor.apply();  // Lưu thay đổi
-                            Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                            ThongBaoThanhCong(toast, "Đăng nhập thành công!");
+                            //Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
                             String uid = user.getUid();
                             // Lưu UID vào UserSessionManager
                             UserSessionManager sessionManager = new UserSessionManager();
                             sessionManager.setUserUid(uid);
-                            String i= sessionManager.getUserUid();
-                            Log.d("UUU", "signIn: "+i);// Lưu UID vào session
+                            String i = sessionManager.getUserUid();
+                            Log.d("UUU", "signIn: " + i);// Lưu UID vào session
                             // Chuyển đến MainActivity
                             Intent intent = new Intent(Login.this, Navigation.class);
                             startActivity(intent);
                             finish();
                         } else {
                             // Email chưa được xác thực
-                            Toast.makeText(Login.this, "Vui lòng xác thực email trước khi đăng nhập!", Toast.LENGTH_SHORT).show();
-                            binding.progressBarLogin.setVisibility(View.GONE);
+                            //Toast.makeText(Login.this, "Vui lòng xác thực email trước khi đăng nhập!", Toast.LENGTH_SHORT).show();
+                            ThongBaoThatBai(toast,"Vui lòng xác thực email trước khi đăng nhập!");
+                            binding.progressBar.setVisibility(View.GONE);
                             mAuth.signOut(); // Đăng xuất người dùng chưa xác thực
                         }
                     } else {
                         // Nếu đăng nhập thất bại
-                        Toast.makeText(Login.this, "Tài khoản hoặc mật khẩu không chính xác: ", Toast.LENGTH_SHORT).show();
-                        binding.progressBarLogin.setVisibility(View.GONE);
+                        //Toast.makeText(Login.this, "Tài khoản hoặc mật khẩu không chính xác: ", Toast.LENGTH_SHORT).show();
+                        ThongBaoThatBai(toast,"Tài khoản hoặc mật khẩu không chính xác!");
+                        binding.progressBar.setVisibility(View.GONE);
 
                     }
                 });
@@ -211,5 +229,67 @@ public class Login extends AppCompatActivity {
         });
     }
 
+    public void LoadingNhanhHon() {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(binding.progressBar, "rotation", 0f, 360f);
+        animator.setDuration(300);
+        animator.setRepeatCount(ObjectAnimator.INFINITE);
+        animator.start();
+    }
 
+    public void ThongBaoThanhCong(Toast toast, String nameTB) {
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_toast_success, null);
+        CustomToastSuccessBinding binding = CustomToastSuccessBinding.bind(view);
+
+        toast.setView(view);
+        binding.messs.setText(nameTB);
+        view.setBackgroundResource(R.drawable.custom_toast_success); // Màu xanh cho thành công
+
+        // Cập nhật toast để hiển thị Toast giữa Gravity.TOP và Gravity.CENTER
+        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, getResources().getDisplayMetrics().heightPixels / 6);
+        toast.setDuration(Toast.LENGTH_SHORT);  // Dài hơn một chút để Toast không biến mất quá nhanh
+
+        // Hiển thị toast
+        toast.show();
+        view.bringToFront();
+
+
+        // Thêm hiệu ứng di chuyển lên sau khi Toast hiển thị
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationY", 0, -300);
+                animator.setDuration(500);
+                animator.start();
+            }
+        }, 1000);
+    }
+    public void ThongBaoThatBai(Toast toast, String nameTB) {
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_toast_success, null);
+        CustomToastSuccessBinding binding = CustomToastSuccessBinding.bind(view);
+
+        toast.setView(view);
+        binding.messs.setText(nameTB);
+        view.setBackgroundResource(R.drawable.custom_toast_error); // Màu xanh cho thành công
+        binding.sgv.setImageResource(R.drawable.error_svgrepo_com);
+        // Cập nhật toast để hiển thị Toast giữa Gravity.TOP và Gravity.CENTER
+        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, getResources().getDisplayMetrics().heightPixels / 6);
+        toast.setDuration(Toast.LENGTH_SHORT);  // Dài hơn một chút để Toast không biến mất quá nhanh
+
+        // Hiển thị toast
+        toast.show();
+        view.bringToFront();
+
+
+        // Thêm hiệu ứng di chuyển lên sau khi Toast hiển thị
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationY", 0, -300);
+                animator.setDuration(500);
+                animator.start();
+            }
+        }, 1000);
+    }
 }

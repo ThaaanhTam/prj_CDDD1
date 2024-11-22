@@ -55,23 +55,22 @@
             android:orientation="vertical">
 
             <ProgressBar
-                android:id="@+id/loading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:id="@+id/loading"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@drawable/custom_processing"
+                android:visibility="gone"/>
 
-            <ScrollView
+            <EditText
+                android:id="@+id/nameToChuc"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_text_input_truong_hoc"
+                android:hint="Tên tổ chức"
 
-                <EditText
-                    android:id="@+id/nameToChuc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/custom_text_input_truong_hoc"
-                    android:hint="Tên tổ chức"
-                    android:padding="10dp" />
-            </ScrollView>
+                android:padding="10dp" />
+
         </LinearLayout>
 
         <LinearLayout

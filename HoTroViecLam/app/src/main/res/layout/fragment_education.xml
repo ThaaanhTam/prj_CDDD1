@@ -155,23 +155,31 @@
                         android:gravity="top"
                         android:hint=" Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm
 việc"
-                        android:minLines="6"
-                        android:overScrollMode="always"
-                        android:padding="7dp"
-                        android:scrollbars="vertical" />
-                </ScrollView>
+        android:minLines="6"
+        android:overScrollMode="always"
+        android:padding="7dp"
+        android:scrollbars="vertical" />
+</ScrollView>
 
 
-            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:id="@+id/delete"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="Xóa học vấn">
+
+            </androidx.appcompat.widget.AppCompatButton>
 
         </LinearLayout>
 
-    </ScrollView>
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_update_education"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:background="@color/navigation"
         android:text="cập nhật"

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
@@ -62,9 +63,11 @@ public class EducationFragment extends Fragment {
                     binding.btnUpdateEducation.setVisibility(View.GONE);
                     Log.d("VX", "onClick: " + id);
                     if (id != null) {
+                        HieuUngThongBao.startLoadingAnimation(binding.loading);
                         binding.loading.setVisibility(View.VISIBLE);
                         saveSchool();
                     } else if (id_school != null) {
+                        HieuUngThongBao.startLoadingAnimation(binding.loading);
                         binding.loading.setVisibility(View.VISIBLE);
                         updateSchool(id_school);
                     }
@@ -120,7 +123,7 @@ public class EducationFragment extends Fragment {
         // Xử lý sự kiện khi người dùng bấm nút Cancel
         datePickerDialog.setOnCancelListener(dialog -> {
             // Xử lý khi người dùng bấm hủy
-            Toast.makeText(getContext(), "Bạn đã hủy chọn ngày", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Bạn đã hủy chọn ngày", Toast.LENGTH_SHORT).show();
         });
 
         // Hiển thị DatePickerDialog
@@ -147,7 +150,7 @@ public class EducationFragment extends Fragment {
         // Xử lý sự kiện khi người dùng bấm nút Cancel
         datePickerDialog.setOnCancelListener(dialog -> {
             // Xử lý khi người dùng bấm hủy
-            Toast.makeText(getContext(), "Bạn đã hủy chọn ngày", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Bạn đã hủy chọn ngày", Toast.LENGTH_SHORT).show();
         });
 
         // Hiển thị DatePickerDialog
@@ -164,48 +167,45 @@ public class EducationFragment extends Fragment {
             String nameSchool = binding.nameSchool.getText().toString().trim();
             String nameMajor = binding.nameMajor.getText().toString().trim();
             String start = binding.start.getText().toString().trim();
-            String end = null; // Đặt giá trị mặc định cho end là null
+            String end = binding.end.getText().toString().trim();
             String description = binding.editTextDC.getText().toString().trim();
             Integer type = binding.check.isChecked() ? 1 : 0; // 1 cho đang học, 0 cho không học
 
-            // Kiểm tra nếu `CheckBox` được chọn, đặt `end` là null và bỏ qua kiểm tra
+            // Kiểm tra dữ liệu không được để trống và thiết lập lỗi
             boolean hasError = false;
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-            if (!binding.check.isChecked()) {
-                // Nếu `CheckBox` không được chọn, lấy giá trị từ `EditText` của `end`
-                end = binding.end.getText().toString().trim();
+            try {
+                // Lấy chuỗi từ EditText và chuyển sang đối tượng Date
+                Date startDate = dateFormat.parse(start);
+                Date endDate = dateFormat.parse(end);
 
-                // Kiểm tra tính hợp lệ của ngày bắt đầu và ngày kết thúc
-                try {
-                    // Chuyển `start` và `end` sang đối tượng `Date`
-                    Date startDate = dateFormat.parse(start);
-                    Date endDate = dateFormat.parse(end);
+                // Kiểm tra ngày bắt đầu có nhỏ hơn ngày kết thúc không
+                if (startDate != null && endDate != null) {
+                    if (startDate.after(endDate)) {
+                        // Nếu ngày bắt đầu lớn hơn ngày kết thúc, báo lỗi
+                        //Toast.makeText(getContext(), "Ngày bắt đầu không được lớn hơn ngày kết thúc", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(binding.getRoot(), "Ngày bắt đầu không được lớn hơn ngày kết thúc", Snackbar.LENGTH_SHORT).show();
 
-                    // Kiểm tra ngày bắt đầu có lớn hơn ngày kết thúc không
-                    if (startDate != null && endDate != null) {
-                        if (startDate.after(endDate)) {
-                            Snackbar.make(binding.getRoot(), "Ngày bắt đầu không được lớn hơn ngày kết thúc", Snackbar.LENGTH_SHORT).show();
-                            binding.start.setError("Thời gian bắt đầu không được lớn hơn thời gian kết thúc");
-                            hasError = true;
-                        }
+                        binding.start.setError("Thời gian bắt đầu không được lớn hơn thời gian kết thúc");
+
+
+                        hasError = true;
+                    } else {
+                        // Xử lý khi ngày bắt đầu hợp lệ
+                        Log.d("Ngày", "Ngày bắt đầu nhỏ hơn hoặc bằng ngày kết thúc");
                     }
-                } catch (ParseException e) {
-                    Log.e("Ngày", "Lỗi khi phân tích ngày", e);
-                    hasError = true;
                 }
-
-                // Kiểm tra nếu `end` trống khi `CheckBox` không được chọn
-                if (end.isEmpty()) {
-                    binding.end.setError("Thời gian kết thúc không được để trống");
-                    hasError = true;
-                }
+            } catch (ParseException e) {
+                Log.e("Ngày", "Lỗi khi phân tích ngày", e);
+                //Toast.makeText(getContext(), "Định dạng ngày không hợp lệ", Toast.LENGTH_SHORT).show();
+                hasError = true;
             }
 
             if (UID == null || UID.isEmpty()) {
                 Toast.makeText(getContext(), "Lỗi ID người dùng", Toast.LENGTH_SHORT).show();
                 binding.loading.setVisibility(View.GONE);
-                return;
+                return; // UID là thông tin quan trọng, nên cần kiểm tra và thoát sớm nếu null
             }
 
             if (nameSchool.isEmpty()) {
@@ -220,6 +220,11 @@ public class EducationFragment extends Fragment {
 
             if (start.isEmpty()) {
                 binding.start.setError("Thời gian bắt đầu không được để trống");
+                hasError = true;
+            }
+
+            if (end.isEmpty()) {
+                binding.end.setError("Thời gian kết thúc không được để trống");
                 hasError = true;
             }
 
@@ -240,24 +245,28 @@ public class EducationFragment extends Fragment {
                         try {
                             truongHoc.setId_Shool(documentReference.getId());
 
-                            documentReference.set(truongHoc) // Cập nhật với ID mới
-                                    .addOnSuccessListener(aVoid -> {
-                                        // Gửi req khi quay lại màn hình trước đó (HocVanFragment)
-                                        Bundle bundle = new Bundle();
-                                        bundle.putBoolean("add", true);
-                                        getParentFragmentManager().setFragmentResult("addSchool", bundle);
-                                        getParentFragmentManager().popBackStack();
-                                        Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
-                                        Toast.makeText(getContext(), "Lưu Trường học thành công", Toast.LENGTH_SHORT).show();
-                                    });
-                        } catch (Exception e) {
-                            Log.e("Firestore", "Lỗi khi cập nhật ID của trường học", e);
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("Firestore", "Lỗi khi lưu dữ liệu", e);
-                        Toast.makeText(getContext(), "Lỗi khi lưu dữ liệu", Toast.LENGTH_SHORT).show();
-                    });
+            db.collection("users").document(UID).collection("role").document("candidate").collection("school").add(truongHoc).addOnSuccessListener(documentReference -> {
+                try {
+                    truongHoc.setId_Shool(documentReference.getId());
+
+                    documentReference.set(truongHoc) // Cập nhật với ID mới
+                            .addOnSuccessListener(aVoid -> {
+                                // Gửi req khi quay lại màn hình trước đó (HocVanFragment)
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean("add", true);
+                                getParentFragmentManager().setFragmentResult("addSchool", bundle);
+                                getParentFragmentManager().popBackStack();
+                                Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
+                                HieuUngThongBao.showSuccessToast(requireContext(),"Lưu Trường học thành công");
+                                //Toast.makeText(getContext(), "Lưu Trường học thành công", Toast.LENGTH_SHORT).show();
+                            });
+                } catch (Exception e) {
+                    Log.e("Firestore", "Lỗi khi cập nhật ID của trường học", e);
+                }
+            }).addOnFailureListener(e -> {
+                Log.e("Firestore", "Lỗi khi lưu dữ liệu", e);
+                Toast.makeText(getContext(), "Lỗi khi lưu dữ liệu", Toast.LENGTH_SHORT).show();
+            });
 
         } catch (Exception e) {
             Log.e("saveSchool", "Lỗi trong quá trình lưu thông tin trường học", e);
@@ -382,7 +391,8 @@ public class EducationFragment extends Fragment {
                     .addOnSuccessListener(aVoid -> {
                         // Cập nhật thành công
                         Log.d("Firestore", "Dữ liệu đã được cập nhật thành công cho ID: " + id_school);
-                        Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                        HieuUngThongBao.showSuccessToast(requireContext(),"Cập nhật thành công");
+                        //Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("update", true);
                         getParentFragmentManager().setFragmentResult("updateTruongHoc", bundle);
@@ -390,15 +400,14 @@ public class EducationFragment extends Fragment {
                     }).addOnFailureListener(e -> {
                         // Xử lý lỗi khi cập nhật
                         Log.e("Firestore", "Lỗi khi cập nhật dữ liệu", e);
-                        Toast.makeText(getContext(), "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                        HieuUngThongBao.showErrorToast(requireContext(),"Cập nhật thất bại");
+                        //Toast.makeText(getContext(), "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
                     });
         } catch (Exception e) {
             Log.e("updateSchool", "Lỗi trong quá trình cập nhật thông tin trường học", e);
             Toast.makeText(getContext(), "Đã xảy ra lỗi khi cập nhật thông tin", Toast.LENGTH_SHORT).show();
         }
     }
-public void HienThongBao(String namethongbao){
 
-}
 
 }

@@ -18,10 +18,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HoTroViecLam"
         android:usesCleartextTraffic="true"
-        tools:targetApi="31" >
-        <activity
-            android:name=".Activity.Messege_Activity"
-            android:exported="false" />
+        tools:targetApi="31">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.hotrovieclam.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
             android:name=".Activity.DetailJobSave"
             android:exported="false" />
