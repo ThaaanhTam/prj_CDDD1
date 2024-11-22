@@ -175,7 +175,7 @@ việc"
         </LinearLayout>
 
     </LinearLayout>
-
+    </ScrollView>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_update_education"
         android:layout_width="match_parent"
