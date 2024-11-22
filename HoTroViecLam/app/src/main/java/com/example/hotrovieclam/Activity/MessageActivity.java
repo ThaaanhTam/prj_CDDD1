@@ -1,15 +1,10 @@
-package com.example.hotrovieclam.Fragment;
+package com.example.hotrovieclam.Activity;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,13 +13,12 @@ import com.example.hotrovieclam.Adapter.MessageAdapter;
 import com.example.hotrovieclam.Model.Message;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
-import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,38 +91,42 @@ public class MessageActivity extends AppCompatActivity {
                 });
 
 
-//        Map<String, Object> status = new HashMap<>();
-//        status.put("status", "0");
-//
-//        db.collection("users").document(receiverID)
-//                .collection("conversation")
-//                .document(currentUserId)
-//                .set(status) // Giữ lại các trường hiện có
-//                .addOnSuccessListener(aVoid -> {
-//                    Log.d("Firestore", "Thêm trường mới thành công!");
-//                })
-//                .addOnFailureListener(err -> {
-//                    Log.e("Firestore", "Lỗi khi thêm trường mới: " + err.getMessage());
-//                });
+        Map<String, Object> status = new HashMap<>();
+        status.put("status", "0");
+
+
+        DocumentReference docRef = db.collection("users").document(receiverID)
+                .collection("conversation").document(currentUserId);
+        docRef.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        docRef.update(status)
+                                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Cập nhật trường thành công!"))
+                                .addOnFailureListener(err -> Log.e("Firestore", "Lỗi khi cập nhật trường: " + err.getMessage()));
+                    } else {
+                        docRef.set(status)
+                                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Tạo mới tài liệu thành công!"))
+                                .addOnFailureListener(err -> Log.e("Firestore", "Lỗi khi tạo tài liệu: " + err.getMessage()));
+                    }
+                })
+                .addOnFailureListener(err -> Log.e("Firestore", "Lỗi khi kiểm tra tài liệu: " + err.getMessage()));
+
     }
 
 
     private void loadMessages() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        Map<String, Object> status = new HashMap<>();
-//        status.put("status", "1");
-//
-//        db.collection("users").document(currentUserId)
-//                .collection("conversation")
-//                .document(receiverID)
-//                .set(status) // Giữ lại các trường hiện có
-//                .addOnSuccessListener(aVoid -> {
-//                    Log.d("Firestore", "Thêm trường mới thành công!");
-//                })
-//                .addOnFailureListener(err -> {
-//                    Log.e("Firestore", "Lỗi khi thêm trường mới: " + err.getMessage());
-//                });
+        Map<String, Object> status = new HashMap<>();
+        status.put("status", "1");
 
+        DocumentReference docRef = db.collection("users").document(currentUserId)
+                .collection("conversation").document(receiverID);
+
+        docRef.set(status, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Cập nhật trạng thái thành công!"))
+                .addOnFailureListener(err -> Log.e("Firestore", "Lỗi khi cập nhật trạng thái: " + err.getMessage()));
+
+        // Lắng nghe thay đổi dữ liệu tin nhắn theo thời gian thực
         db.collection("Message").document(messageID)
                 .collection("messages")
                 .orderBy("sent_at")
@@ -137,18 +135,26 @@ public class MessageActivity extends AppCompatActivity {
                         Log.e("ChatApp", "Lỗi tải tin nhắn: " + e.getMessage());
                         return;
                     }
+
                     if (querySnapshot != null) {
+                        // Xóa danh sách cũ và cập nhật dữ liệu mới
                         messageList.clear();
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             String msgSenderId = document.getString("sender_id");
                             String content = document.getString("content");
+
+                            // Xử lý thời gian gửi tin nhắn
                             Date sentAt = null;
                             Object sentAtObject = document.get("sent_at");
                             if (sentAtObject instanceof com.google.firebase.Timestamp) {
                                 sentAt = ((com.google.firebase.Timestamp) sentAtObject).toDate();
                             } else if (sentAtObject instanceof Long) {
                                 sentAt = new Date((Long) sentAtObject);
+                            } else {
+                                Log.w("ChatApp", "sent_at không hợp lệ: " + sentAtObject);
                             }
+
+                            // Tạo đối tượng Message
                             Message message = new Message();
                             message.setContent(content);
                             message.setSender_id(msgSenderId);
@@ -156,10 +162,14 @@ public class MessageActivity extends AppCompatActivity {
 
                             messageList.add(message);
                         }
+
                         messageAdapter.notifyDataSetChanged();
-                        recyclerViewMessages.scrollToPosition(messageList.size() - 1);
+                        if (!messageList.isEmpty()) {
+                            recyclerViewMessages.scrollToPosition(messageList.size() - 1);
+                        }
                     }
                 });
     }
+
 
 }

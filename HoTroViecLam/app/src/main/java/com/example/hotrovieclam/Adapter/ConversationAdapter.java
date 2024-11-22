@@ -9,21 +9,24 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.hotrovieclam.Fragment.MessageActivity;
+import com.example.hotrovieclam.Activity.MessageActivity;
 import com.example.hotrovieclam.Model.ListMess;
-import com.example.hotrovieclam.Model.User;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ItemConversationBinding;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.ConversationViewHolder> {
     private ArrayList<ListMess> conversationList;
@@ -60,6 +63,11 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
                     .into(holder.binding.imageViewAvatar);
 
         }
+        holder.binding.textViewLastMessage.setText(listMess.getLastMes());
+
+        if(listMess.getDate() != null){
+            Log.d("date",listMess.getDate() );
+        holder.binding.textViewTime.setText(listMess.getDate());}
         holder.binding.body.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,10 +78,17 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
 
             }
         });
-        if (listMess.getStatus()=="0"){
-            holder.binding.textViewLastMessage.setTextColor(R.color.black);
-        }else {
-            holder.binding.textViewLastMessage.setTextColor(R.color.gray_light);
+
+
+        if (listMess.getStatus().equals("0")) {
+            Log.d("vvv", listMess.getStatus());
+            holder.binding.textViewLastMessage.setTextColor(
+                    ContextCompat.getColor(holder.itemView.getContext(), R.color.black)
+            );
+        } else {
+            holder.binding.textViewLastMessage.setTextColor(
+                    ContextCompat.getColor(holder.itemView.getContext(), R.color.gray_light)
+            );
         }
 
 

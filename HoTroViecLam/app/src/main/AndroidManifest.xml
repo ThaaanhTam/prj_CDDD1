@@ -42,13 +42,13 @@
             android:name=".Fragment.Application_candidate"
             android:exported="false" />
         <activity
-            android:name=".Fragment.RecruiterManagement.EditJob"
+            android:name=".Activity.EditJob"
             android:exported="false" />
         <activity
-            android:name=".Fragment.RecruiterManagement.PostJob"
+            android:name=".Activity.PostJob"
             android:exported="false" />
         <activity
-            android:name=".Fragment.RecruiterManagement.Detail_Job"
+            android:name=".Activity.Detail_Job"
             android:exported="false" />
         <activity
             android:name=".Activity.MainActivity"
@@ -72,7 +72,7 @@
             android:name=".Buoc.RegisterEmployer"
             android:exported="false" />
         <activity
-            android:name=".Fragment.MessageActivity"
+            android:name=".Activity.MessageActivity"
             android:exported="false" />
         <activity
             android:name=".Nam.login.Login"
