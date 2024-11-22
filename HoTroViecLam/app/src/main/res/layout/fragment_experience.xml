@@ -53,6 +53,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/loading"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@drawable/custom_processing"
                 android:visibility="gone"/>
 
             <EditText

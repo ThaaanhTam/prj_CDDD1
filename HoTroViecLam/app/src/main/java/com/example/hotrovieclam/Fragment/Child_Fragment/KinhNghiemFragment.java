@@ -16,6 +16,7 @@ import com.example.hotrovieclam.Adapter.TruongHocAdapter;
 import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.EducationFragment;
 import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.ExperienceFragment;
 import com.example.hotrovieclam.Model.Experience;
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
@@ -198,7 +199,8 @@ public class KinhNghiemFragment extends Fragment {
                     .delete()
                     .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "Xóa kinh nghiem thành công"+ex_id);
-                        Toast.makeText(getContext(), "Đã xóa kỹ năng", Toast.LENGTH_SHORT).show();
+                        HieuUngThongBao.showSuccessToast(requireContext(),"Xóa kinh nghiem thành công");
+                        //Toast.makeText(getContext(), "Đã xóa kỹ năng", Toast.LENGTH_SHORT).show();
                         // Cập nhật lại danh sách kinh nghiem nếu cần
 
                         removeExperienceFromList(ex_id);

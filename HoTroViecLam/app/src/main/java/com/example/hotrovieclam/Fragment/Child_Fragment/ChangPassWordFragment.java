@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Nam.ChangePassword.ChangePassWord;
 import com.example.hotrovieclam.Nam.login.Login;
 import com.example.hotrovieclam.R;
@@ -59,6 +60,7 @@ private FragmentChangPassWordBinding binding;
         FirebaseUser user = mAuth.getCurrentUser();
 
         if (user != null) {
+            HieuUngThongBao.startLoadingAnimation(binding.progressBar);
             binding.progressBar.setVisibility(View.VISIBLE);
             // Xác thực lại người dùng với mật khẩu hiện tại
             AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPassword);
@@ -70,7 +72,9 @@ private FragmentChangPassWordBinding binding;
                             user.updatePassword(newPassword)
                                     .addOnCompleteListener(updateTask -> {
                                         if (updateTask.isSuccessful()) {
-                                            Toast.makeText(getContext(), "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
+                                            HieuUngThongBao.showSuccessToast(requireContext(),"Đổi mật khẩu thành công!");
+
+                                            //Toast.makeText(getContext(), "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
                                             // Chuyển về màn hình đăng nhập sau khi đổi mật khẩu
                                             Intent intent = new Intent(getActivity(), Login.class);
                                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -81,12 +85,16 @@ private FragmentChangPassWordBinding binding;
                                         }
                                     });
                         } else {
-                            Toast.makeText(getContext(), "Mật khẩu hiện tại không đúng.", Toast.LENGTH_SHORT).show();
+                            HieuUngThongBao.showErrorToast(requireContext(),"Mật khẩu hiện tại không đúng");
+
+                            //Toast.makeText(getContext(), "Mật khẩu hiện tại không đúng.", Toast.LENGTH_SHORT).show();
                             binding.progressBar.setVisibility(View.GONE);
                         }
                     });
         } else {
-            Toast.makeText(getContext(), "Có lỗi xảy ra. Vui lòng đăng nhập lại.", Toast.LENGTH_SHORT).show();
+            HieuUngThongBao.showErrorToast(requireContext(),"Có lỗi xảy ra. Vui lòng đăng nhập lại");
+
+            //Toast.makeText(getContext(), "Có lỗi xảy ra. Vui lòng đăng nhập lại.", Toast.LENGTH_SHORT).show();
             // Chuyển người dùng về màn hình đăng nhập nếu không tìm thấy user
             Intent intent = new Intent(getActivity(), Login.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -137,7 +145,8 @@ private FragmentChangPassWordBinding binding;
                 return;
             }
             if (!newPassword.equals(confirmPassword)) {
-                Toast.makeText(getContext(), "Mật khẩu mới không khớp", Toast.LENGTH_SHORT).show();
+                HieuUngThongBao.showErrorToast(requireContext(),"Mật khẩu mới không khớp");
+                //Toast.makeText(getContext(), "Mật khẩu mới không khớp", Toast.LENGTH_SHORT).show();
                 binding.progressBar.setVisibility(View.GONE);
                 return;
             }
