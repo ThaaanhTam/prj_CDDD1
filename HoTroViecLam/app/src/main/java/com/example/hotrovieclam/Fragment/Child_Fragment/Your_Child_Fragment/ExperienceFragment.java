@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.hotrovieclam.Model.Experience;
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
@@ -53,9 +54,11 @@ public class ExperienceFragment extends Fragment {
                 public void onClick(View v) {
                    // Log.d("VX", "onClick: " + id);
                     if (id != null) {
+                        HieuUngThongBao.startLoadingAnimation(binding.loading);
                         binding.loading.setVisibility(View.VISIBLE);
                         saveExperience();
                     } else if (id_experience != null) {
+                        HieuUngThongBao.startLoadingAnimation(binding.loading);
                         binding.loading.setVisibility(View.VISIBLE);
                         updateExperience(id_experience);
                     }
@@ -143,7 +146,7 @@ public class ExperienceFragment extends Fragment {
         // Xử lý sự kiện khi người dùng bấm nút Cancel
         datePickerDialog.setOnCancelListener(dialog -> {
             // Xử lý khi người dùng bấm hủy
-            Toast.makeText(getContext(), "Bạn đã hủy chọn ngày", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Bạn đã hủy chọn ngày", Toast.LENGTH_SHORT).show();
         });
 
         // Hiển thị DatePickerDialog
@@ -182,7 +185,8 @@ public class ExperienceFragment extends Fragment {
                                 getParentFragmentManager().setFragmentResult("addSucess", bundle);
                                 getParentFragmentManager().popBackStack();
                                 Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
-                                Toast.makeText(getContext(),"Lưu kinh nghiệm thành công", Toast.LENGTH_SHORT).show();
+                                HieuUngThongBao.showSuccessToast(requireContext(),"Lưu kinh nghiệm thành công");
+                                //Toast.makeText(getContext(),"Lưu kinh nghiệm thành công", Toast.LENGTH_SHORT).show();
                             });
                 })
                 .addOnFailureListener(e -> {
@@ -251,7 +255,9 @@ public class ExperienceFragment extends Fragment {
                 .addOnSuccessListener(aVoid -> {
                     // Cập nhật thành công
                     Log.d("Firestore", "Dữ liệu đã được cập nhật thành công cho ID: " + id_experience);
-                    Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+                    HieuUngThongBao.showSuccessToast(requireContext(),"Cập nhật kinh nghiệm thành công");
+
                     Bundle bundle = new Bundle();
                     bundle.putBoolean("update", true);
                     getParentFragmentManager().setFragmentResult("updateSuccess", bundle);
@@ -260,7 +266,9 @@ public class ExperienceFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     // Xử lý lỗi khi cập nhật
                     Log.e("Firestore", "Lỗi khi cập nhật dữ liệu", e);
-                    Toast.makeText(getContext(), "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                    HieuUngThongBao.showErrorToast(requireContext(),"Cập nhật thất bại");
+
+                    //Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
                 });
     }
 

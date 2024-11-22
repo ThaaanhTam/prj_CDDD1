@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.hotrovieclam.Adapter.TruongHocAdapter;
 import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.AddPersonalInfoFragment;
 import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.EducationFragment;
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
@@ -187,7 +188,7 @@ public class HocVanFragment extends Fragment {
                 .commit();
     }
 
-    public void deleteSkill(String skillId) {
+    public void deleteScool(String skillId) {
 //        UserSessionManager userSession = new UserSessionManager();
 //        String uid = userSession.getUserUid();
 
@@ -198,8 +199,9 @@ public class HocVanFragment extends Fragment {
                     .collection("school").document(skillId)
                     .delete()
                     .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "Xóa kỹ năng thành công" + skillId);
-                        Toast.makeText(getContext(), "Đã xóa kỹ năng", Toast.LENGTH_SHORT).show();
+                        //Log.d("Firestore", "Xóa kỹ năng thành công" + skillId);
+                        HieuUngThongBao.showSuccessToast(requireContext(),"Đã xóa trường học");
+                        //Toast.makeText(getContext(), "Đã xóa trường học", Toast.LENGTH_SHORT).show();
                         // Cập nhật lại danh sách kỹ năng nếu cần
                         LoadLaiData();
                         removeSkillFromList(skillId);
