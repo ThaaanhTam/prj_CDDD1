@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/body"
     android:padding="12dp">
 
-    <!-- Ảnh đại diện người dùng -->
+
     <ImageView
         android:id="@+id/imageViewAvatar"
         android:layout_width="50dp"
@@ -24,6 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="User Name"
+        android:layout_marginLeft="12dp"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textColor="@android:color/black"
@@ -37,6 +39,7 @@
         android:id="@+id/textViewLastMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
         android:text="This is the last message"
         android:textSize="14sp"
         android:textColor="@android:color/darker_gray"
