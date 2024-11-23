@@ -61,7 +61,7 @@ private FragmentCCCDMatSauBinding binding;
 
         // Tham chiếu đến document "employer" của user
         DocumentReference docRef = db.collection("users").document(uid)
-                .collection("roles").document("employer");
+                .collection("role").document("employer");
 
         // Thêm snapshot listener để lắng nghe thay đổi
         docRef.addSnapshotListener((documentSnapshot, error) -> {
@@ -88,7 +88,7 @@ private FragmentCCCDMatSauBinding binding;
                                 .load(uri.toString())
                                 .into(binding.cccdMatSau);
                         Log.d("TAMM", "loadCompanyInformation: "+uri.toString());
-                        Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
                     }).addOnFailureListener(e -> {
                         Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
                     });

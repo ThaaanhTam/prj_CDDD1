@@ -43,7 +43,7 @@ public class CCCD_MatTruoc_Fragment extends DialogFragment {
         String uid = user.getUserUid();
         // Tham chiếu đến document "employer" của user
         DocumentReference docRef = db.collection("users").document(uid)
-                .collection("roles").document("employer");
+                .collection("role").document("employer");
 
         // Thêm snapshot listener để lắng nghe thay đổi
         docRef.addSnapshotListener((documentSnapshot, error) -> {
@@ -69,9 +69,9 @@ public class CCCD_MatTruoc_Fragment extends DialogFragment {
                         Glide.with(this)
                                 .load(uri.toString())
                                 .into(binding.cccdMatTruoc);
-                        Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
                     }).addOnFailureListener(e -> {
-                        Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
                     });
                 } else {
                     Glide.with(this)
