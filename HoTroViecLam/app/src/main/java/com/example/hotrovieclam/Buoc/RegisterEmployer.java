@@ -72,8 +72,8 @@ public class RegisterEmployer extends AppCompatActivity {
         binding.back.setOnClickListener(v -> finish());
 
 
-
     }
+
     // Hiển thị trạng thái tải
     private void showLoadingState(boolean isLoading) {
         if (isLoading) {
@@ -283,6 +283,7 @@ public class RegisterEmployer extends AppCompatActivity {
        // binding.btnSubmit.setVisibility(View.VISIBLE);
 
     }
+
     // Kiểm tra xem số điện thoại có phải 10 chữ số không
     private boolean isPhoneNumberValid(String phoneNumber) {
         return phoneNumber.matches("^\\d{10}$");
@@ -292,6 +293,7 @@ public class RegisterEmployer extends AppCompatActivity {
     private boolean isEmailValid(String email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
+
     private void populateDefaultUserInfo() {
         UserSessionManager userSessionManager = new UserSessionManager();
         String name = userSessionManager.getName();
@@ -321,7 +323,7 @@ public class RegisterEmployer extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) { // Kiểm tra nếu truy vấn thành công.
                     DocumentSnapshot document = task.getResult();
-                    if (document.exists()) { // Kiểm tra nếu tài liệu tồn tại.
+                    if (document.exists())  { // Kiểm tra nếu tài liệu tồn tại.
                         // Lấy thông tin người dùng từ tài liệu.
                         String name = document.getString("name");
                         String email = document.getString("email");
@@ -334,7 +336,7 @@ public class RegisterEmployer extends AppCompatActivity {
 
                         // Ghi log thông tin người dùng để kiểm tra.
                         Log.d("PPPP", "onComplete: " + email + name);
-                    } else {
+                    } else{
                         // Thông báo nếu không tìm thấy dữ liệu người dùng.
                         Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
                     }

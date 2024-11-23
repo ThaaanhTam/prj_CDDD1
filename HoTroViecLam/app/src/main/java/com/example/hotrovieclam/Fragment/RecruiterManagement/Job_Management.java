@@ -13,6 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.hotrovieclam.Activity.Detail_Job;
+import com.example.hotrovieclam.Activity.EditJob;
+import com.example.hotrovieclam.Activity.PostJob;
 import com.example.hotrovieclam.Adapter.JobManagementAdapter;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.Model.UserSessionManager;

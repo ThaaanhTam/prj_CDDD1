@@ -86,6 +86,8 @@ public class KinhNghiemFragment extends Fragment {
                         .commit();
             }
         });
+        loadexpErienceData(uid);
+        loaddataRealTime(uid);
         return view;
     }
 
@@ -149,7 +151,7 @@ public class KinhNghiemFragment extends Fragment {
 
 
 
-    private void loadExperienceData(String uid) {
+    public void loaddataRealTime(String uid) {
         // Khởi tạo Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -215,7 +217,7 @@ public class KinhNghiemFragment extends Fragment {
     }
     public void LoadLaiData(){
         experienceAdapter.notifyDataSetChanged();
-        loadExperienceData(uid);
+        loadexpErienceData(uid);
 
     }
     private void removeExperienceFromList(String ex_id) {

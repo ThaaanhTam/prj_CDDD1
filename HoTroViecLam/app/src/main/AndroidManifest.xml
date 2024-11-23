@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools" >
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -42,13 +42,13 @@
             android:name=".Fragment.Application_candidate"
             android:exported="false" />
         <activity
-            android:name=".Fragment.RecruiterManagement.EditJob"
+            android:name=".Activity.EditJob"
             android:exported="false" />
         <activity
-            android:name=".Fragment.RecruiterManagement.PostJob"
+            android:name=".Activity.PostJob"
             android:exported="false" />
         <activity
-            android:name=".Fragment.RecruiterManagement.Detail_Job"
+            android:name=".Activity.Detail_Job"
             android:exported="false" />
         <activity
             android:name=".Activity.MainActivity"
@@ -72,11 +72,11 @@
             android:name=".Buoc.RegisterEmployer"
             android:exported="false" />
         <activity
-            android:name=".Message"
+            android:name=".Activity.MessageActivity"
             android:exported="false" />
         <activity
             android:name=".Nam.login.Login"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

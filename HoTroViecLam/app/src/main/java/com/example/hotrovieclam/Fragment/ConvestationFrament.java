@@ -9,120 +9,176 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.hotrovieclam.Adapter.ConversationAdapter;
-import com.example.hotrovieclam.Model.Conversation;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import java.util.ArrayList;
-import java.util.List;
+import com.example.hotrovieclam.Model.ListMess;
+import com.example.hotrovieclam.Model.User;
+import com.example.hotrovieclam.Model.UserSessionManager;
+import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityConversationBinding;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+
 public class ConvestationFrament extends Fragment {
 
     private ActivityConversationBinding binding;
-    private List<Conversation> conversationList = new ArrayList<>();
-    private ConversationAdapter conversationAdapter;
-    private String currentUserId = "7yRXcjnLPhfDr3OJG8FpEdSsWv83"; // ID người dùng hiện tại
-    private DatabaseReference conversationRef;
+    private ArrayList<ListMess> conversationList = new ArrayList<>();
+    private String currentUserId;
+    private FirebaseFirestore db;
+    private ConversationAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = ActivityConversationBinding.inflate(inflater, container, false);
 
-        // Kết nối đến Firebase Realtime Database
-        conversationRef = FirebaseDatabase.getInstance().getReference("conversations");
-        setupRecyclerView();
-        loadConversations();
+        UserSessionManager sessionManager = new UserSessionManager();
+        currentUserId = sessionManager.getUserUid();
+
+        adapter = new ConversationAdapter(conversationList, (FragmentActivity) getContext());
+        binding.recyclerViewConversations.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewConversations.setAdapter(adapter);
+if(currentUserId!=null){
+    fetchJobsFromFirestore();
+}
+
+
+
+
+
 
         return binding.getRoot();
     }
 
-    private void setupRecyclerView() {
-        binding.recyclerViewConversations.setLayoutManager(new LinearLayoutManager(requireContext()));
-        conversationAdapter = new ConversationAdapter(conversationList, requireContext());
-        binding.recyclerViewConversations.setAdapter(conversationAdapter);
-    }
 
-    private void loadConversations() {
-        // Lấy các cuộc hội thoại của người dùng hiện tại
-        conversationRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                conversationList.clear();
-                if (snapshot.exists()) {
-                    for (DataSnapshot receiverSnapshot : snapshot.getChildren()) {
-                        String receiverId = receiverSnapshot.getKey();
-                        String userName = receiverSnapshot.child("userName").getValue(String.class);
-                        String avatar = receiverSnapshot.child("avatar").getValue(String.class);
-                        String content = receiverSnapshot.child("content").getValue(String.class);
-                        Long sentAt = receiverSnapshot.child("sentAt").getValue(Long.class);
-                        Boolean seen = receiverSnapshot.child("seen").getValue(Boolean.class);
 
-                        if (receiverId != null && content != null && sentAt != null) {
-                            Conversation conversation = new Conversation(
-                                    receiverId,
-                                    currentUserId,
-                                    content,
-                                    sentAt,
-                                    seen != null && seen,
-                                    userName,
-                                    avatar
-                            );
-                            conversationList.add(conversation);
-                        } else {
-                            Log.w("ConversationFragment", "Thiếu dữ liệu trong cuộc hội thoại: " + receiverId);
-                        }
+    private void fetchJobsFromFirestore() {
+        db = FirebaseFirestore.getInstance();
+        db.collection("users").document(currentUserId)
+                .collection("conversation")
+                .addSnapshotListener((querySnapshot, error) -> {
+                    if (error != null) {
+                        Log.e("Firestore", "Lỗi khi lắng nghe dữ liệu conversation: " + error.getMessage());
+                        return;
                     }
-                } else {
-                    Log.w("ConversationFragment", "Không có cuộc hội thoại nào.");
-                }
-                conversationAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("ConversationFragment", "Lỗi khi tải cuộc hội thoại: " + error.getMessage());
-            }
-        });
-    }
+                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                            String documentId = document.getId();
+                            String messageID = document.getString("messageID");
+                            String status = document.getString("status");
 
-    private void addConversation(String receiverId, String userName, String avatar, String content) {
-        Long sentAt = System.currentTimeMillis();
-        boolean seen = false;
+                            // Lắng nghe thay đổi từ bảng "users"
+                            db.collection("users").document(documentId)
+                                    .addSnapshotListener((userSnapshot, userError) -> {
+                                        if (userError != null) {
+                                            Log.e("Firestore", "Lỗi khi lắng nghe dữ liệu user: " + userError.getMessage());
+                                            return;
+                                        }
 
-        DatabaseReference newConversationRef = conversationRef.child(currentUserId).child(receiverId);
-        Conversation conversation = new Conversation(receiverId, currentUserId, content, sentAt, seen, userName, avatar);
+                                        if (userSnapshot != null && userSnapshot.exists()) {
+                                            String name = userSnapshot.getString("name");
+                                            String avatar = userSnapshot.getString("avatar");
 
-        newConversationRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    newConversationRef.setValue(conversation).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d("ConversationFragment", "Thêm cuộc hội thoại thành công");
-                        } else {
-                            Log.e("ConversationFragment", "Lỗi khi thêm cuộc hội thoại: " + task.getException().getMessage());
+                                            // Lắng nghe thay đổi tin nhắn cuối cùng
+                                            db.collection("Message")
+                                                    .document(messageID)
+                                                    .collection("messages")
+                                                    .orderBy("sent_at", Query.Direction.DESCENDING)
+                                                    .limit(1)
+                                                    .addSnapshotListener((messageSnapshot, messageError) -> {
+                                                        if (messageError != null) {
+                                                            Log.e("LastMessage", "Lỗi khi lắng nghe tin nhắn cuối: " + messageError.getMessage());
+                                                            return;
+                                                        }
+
+                                                        if (messageSnapshot != null && !messageSnapshot.isEmpty()) {
+                                                            DocumentSnapshot lastMessageDoc = messageSnapshot.getDocuments().get(0);
+                                                            String lastMessageContent = lastMessageDoc.getString("content");
+                                                            long timestamp = lastMessageDoc.getLong("sent_at");
+
+
+                                                            // Giá trị timestamp cần chuyển đổi
+
+                                                            // Chuyển đổi từ timestamp sang đối tượng Date
+                                                            Date date = new Date(timestamp);
+
+                                                            // Định dạng ngày giờ thành chuỗi
+                                                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM HH:mm", Locale.getDefault());
+                                                            String formattedDate = sdf.format(date);
+
+
+                                                            Log.d("FormattedDate", "Thời gian định dạng: " + formattedDate);
+                                                            updateConversationList(
+                                                                    documentId, messageID, status, name, avatar, lastMessageContent,formattedDate
+                                                            );
+                                                        }
+                                                    });
+                                        } else {
+                                            Log.d("Firestore", "Document user không tồn tại với ID: " + documentId);
+                                        }
+                                    });
                         }
-                    });
-                } else {
-                    Log.w("ConversationFragment", "Cuộc hội thoại đã tồn tại với ID: " + receiverId);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("ConversationFragment", "Lỗi khi kiểm tra cuộc hội thoại: " + databaseError.getMessage());
-            }
-        });
+                    } else {
+                        Log.d("Firestore", "Collection 'conversation' trống hoặc không tồn tại.");
+                    }
+                });
     }
+
+    private void updateConversationList(String documentId, String messageID, String status,
+                                        String name, String avatar, String lastMessageContent,String formattedDate) {
+        boolean isUpdated = false;
+
+
+        for (int i = 0; i < conversationList.size(); i++) {
+            ListMess listMess = conversationList.get(i);
+            if (listMess.getReicever_id().equals(documentId)) {
+                // Cập nhật hội thoại đã tồn tại
+                listMess.setMessID(messageID);
+                listMess.setStatus(status);
+                listMess.setName(name);
+                listMess.setAvatar(avatar);
+                listMess.setLastMes(lastMessageContent);
+                listMess.setDate(formattedDate);
+
+                isUpdated = true;
+
+                // Cập nhật giao diện
+                adapter.notifyItemChanged(i);
+                break;
+            }
+        }
+
+        // Nếu chưa tồn tại, thêm mới vào danh sách
+        if (!isUpdated) {
+            ListMess newListMess = new ListMess();
+            newListMess.setReicever_id(documentId);
+            newListMess.setMessID(messageID);
+            newListMess.setStatus(status);
+            newListMess.setName(name);
+            newListMess.setAvatar(avatar);
+            newListMess.setLastMes(lastMessageContent);
+            newListMess.setDate(formattedDate);
+            conversationList.add(newListMess);
+            adapter.notifyItemInserted(conversationList.size() - 1);
+        }
+    }
+
+
+
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Giải phóng binding khi view bị hủy
+        binding = null;
     }
 }
