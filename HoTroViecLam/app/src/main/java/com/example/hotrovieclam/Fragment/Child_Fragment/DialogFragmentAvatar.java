@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Activity.Navigation;
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentDialogAvatarBinding;
@@ -73,6 +74,7 @@ public class DialogFragmentAvatar extends DialogFragment {
 
         // Xử lý khi bấm nút Cập Nhật
         binding.btnCapNhat.setOnClickListener(v -> {
+            HieuUngThongBao.startLoadingAnimation(binding.loadding);
             binding.loadding.setVisibility(View.VISIBLE);
             binding.btnCapNhat.setVisibility(View.GONE);
 
@@ -126,7 +128,8 @@ public class DialogFragmentAvatar extends DialogFragment {
             builder.setPositiveButton("Đóng", (dialog, which) -> dialog.dismiss());
             builder.show();
         } else {
-            Toast.makeText(getContext(), "Không có ảnh để xem", Toast.LENGTH_SHORT).show();
+            HieuUngThongBao.showErrorToast(requireContext(),"Không có ảnh để xem");
+            //Toast.makeText(getContext(), "Không có ảnh để xem", Toast.LENGTH_SHORT).show();
         }
     }
 
