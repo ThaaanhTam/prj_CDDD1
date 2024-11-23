@@ -79,18 +79,18 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
             }
         });
 
-
-        if (listMess.getStatus().equals("0")) {
-            Log.d("vvv", listMess.getStatus());
-            holder.binding.textViewLastMessage.setTextColor(
-                    ContextCompat.getColor(holder.itemView.getContext(), R.color.black)
-            );
-        } else {
-            holder.binding.textViewLastMessage.setTextColor(
-                    ContextCompat.getColor(holder.itemView.getContext(), R.color.gray_light)
-            );
+        if (listMess.getStatus()!=null) {
+            if (listMess.getStatus().equals("0")) {
+                Log.d("vvv", listMess.getStatus());
+                holder.binding.textViewLastMessage.setTextColor(
+                        ContextCompat.getColor(holder.itemView.getContext(), R.color.black)
+                );
+            } else {
+                holder.binding.textViewLastMessage.setTextColor(
+                        ContextCompat.getColor(holder.itemView.getContext(), R.color.gray_light)
+                );
+            }
         }
-
 
 
 
