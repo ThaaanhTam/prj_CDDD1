@@ -38,13 +38,13 @@ import java.util.ArrayList;
 public class Profile_Candidate_Fragment extends Fragment {
     private FragmentProfileCandidateBinding binding;
     String id_candidate = null;
-    String id_Job=null;
+    String id_Job = null;
     ArrayList<TruongHoc> truonghoc = new ArrayList<>();
     ArrayList<Experience> experiences = new ArrayList<>();
-    ArrayList<KiNang>kiNangs= new ArrayList<>();
+    ArrayList<KiNang> kiNangs = new ArrayList<>();
     ArrayAdapter<TruongHoc> truongHocAdapter;
     ArrayAdapter<Experience> kinhnghiemAdater;
-    ArrayAdapter<KiNang>kiNangArrayAdapter;
+    ArrayAdapter<KiNang> kiNangArrayAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,7 +59,7 @@ public class Profile_Candidate_Fragment extends Fragment {
         kinhnghiemAdater = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, experiences);
         binding.kinhnghiem.setAdapter(kinhnghiemAdater);
 
-        kiNangArrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1,kiNangs);
+        kiNangArrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, kiNangs);
         binding.kinang.setAdapter(kiNangArrayAdapter);
 
         Bundle bundle = getArguments();
@@ -67,7 +67,7 @@ public class Profile_Candidate_Fragment extends Fragment {
             id_candidate = bundle.getString("id_candidate");
             id_Job = bundle.getString("ID_JOB");
         }
-        Log.d("KOK", "yyyyyyyyy "+id_Job);
+        Log.d("KOK", "yyyyyyyyy " + id_Job);
         LoadDataToFireBase(id_candidate);
         binding.deleteCandidate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +75,12 @@ public class Profile_Candidate_Fragment extends Fragment {
                 deleteCandidate(id_Job, id_candidate);
             }
         });
-
+        binding.chapnhan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TTTT", "onClick: " + id_candidate);
+            }
+        });
         return view;
     }
 
@@ -151,7 +156,6 @@ public class Profile_Candidate_Fragment extends Fragment {
 
 
     public void LoadDataToFireBase(String id_candidate) {
-        //Log.d("EEE", "LoadDataToFireBase: "+id_candidate);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(id_candidate);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -160,15 +164,19 @@ public class Profile_Candidate_Fragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+                        // Lấy thông tin người dùng
                         String name = document.getString("name");
                         String email = document.getString("email");
                         String phoneNumber = document.getString("phoneNumber");
 
-                        // Hiển thị thông tin người dùng
-                        binding.name.setText(name);
-                        binding.email.setText(email);
-                        binding.phoneNumber.setText(phoneNumber);
-                        //Log.d("PPPP", "onComplete: "+email+name);
+                        // Kiểm tra nếu Fragment còn đính kèm
+                        if (isAdded()) {
+                            binding.name.setText(name);
+                            binding.email.setText(email);
+                            binding.phoneNumber.setText(phoneNumber);
+                        }
+
+                        // Truy vấn thông tin profile
                         DocumentReference profileRef = db.collection("users").document(id_candidate)
                                 .collection("role").document("candidate")
                                 .collection("profile").document(id_candidate);
@@ -178,212 +186,212 @@ public class Profile_Candidate_Fragment extends Fragment {
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot profileDocument = task.getResult();
                                     if (profileDocument.exists()) {
-                                        String ngaysinh = profileDocument.getString("birthday"); // Lấy ngày sinh
-                                        String diachi = profileDocument.getString("address"); // Lấy địa chỉ
-                                        int gioitinh = profileDocument.getLong("gioitinh").intValue(); // Lấy giới tính dưới dạng số
+                                        String ngaysinh = profileDocument.getString("birthday");
+                                        String diachi = profileDocument.getString("address");
+                                        int gioitinh = profileDocument.getLong("gioitinh").intValue();
 
-                                        // Hiển thị thông tin profile
-                                        binding.born.setText(ngaysinh); // Hiển thị ngày sinh
-                                        binding.born.setTextColor(getResources().getColor(R.color.black));// Hiển thị tên giới tính
-// Hiển thị địa chỉ
+                                        // Kiểm tra nếu Fragment còn đính kèm
+                                        if (isAdded()) {
+                                            binding.born.setText(ngaysinh);
+                                            binding.born.setTextColor(getResources().getColor(R.color.black));
 
-                                        // Truy vấn bảng genders để lấy tên giới tính
-                                        db.collection("genders").document(String.valueOf(gioitinh))
-                                                .get()
-                                                .addOnCompleteListener(genderTask -> {
-                                                    if (genderTask.isSuccessful()) {
-                                                        DocumentSnapshot genderDocument = genderTask.getResult();
-                                                        if (genderDocument.exists()) {
-                                                            String genderName = genderDocument.getString("name");
-                                                            binding.gender.setText(genderName);
-                                                            binding.gender.setTextColor(getResources().getColor(R.color.black));// Hiển thị tên giới tính
+                                            // Truy vấn bảng genders để lấy tên giới tính
+                                            db.collection("genders").document(String.valueOf(gioitinh))
+                                                    .get()
+                                                    .addOnCompleteListener(genderTask -> {
+                                                        if (genderTask.isSuccessful()) {
+                                                            DocumentSnapshot genderDocument = genderTask.getResult();
+                                                            if (genderDocument.exists()) {
+                                                                String genderName = genderDocument.getString("name");
+
+                                                                // Kiểm tra nếu Fragment còn đính kèm
+                                                                if (isAdded()) {
+                                                                    binding.gender.setText(genderName);
+                                                                    binding.gender.setTextColor(getResources().getColor(R.color.black));
+                                                                }
+                                                            } else {
+                                                                Log.d("Firestore", "Không tìm thấy giới tính cho ID: " + gioitinh);
+                                                            }
                                                         } else {
-                                                            Log.d("Firestore", "Không tìm thấy giới tính cho ID: " + gioitinh);
+                                                            Log.e("Firestore", "Lỗi khi truy vấn bảng genders.", genderTask.getException());
                                                         }
-                                                    } else {
-                                                        Log.e("Firestore", "Lỗi khi truy vấn bảng genders.", genderTask.getException());
-                                                    }
-                                                });
+                                                    });
+                                        }
 
                                     } else {
-                                        binding.gender.setText("Chưa cập nhật");
-                                        binding.gender.setTextColor(getResources().getColor(R.color.chuacapnhat));
-                                        binding.born.setText("Chưa cập nhật");
-                                        binding.born.setTextColor(getResources().getColor(R.color.chuacapnhat));
-
+                                        // Kiểm tra nếu Fragment còn đính kèm
+                                        if (isAdded()) {
+                                            binding.gender.setText("Chưa cập nhật");
+                                            binding.gender.setTextColor(getResources().getColor(R.color.chuacapnhat));
+                                            binding.born.setText("Chưa cập nhật");
+                                            binding.born.setTextColor(getResources().getColor(R.color.chuacapnhat));
+                                        }
                                         Log.d("Firestore", "Không tìm thấy dữ liệu profile.");
                                     }
+
+                                    // Lấy thông tin giới thiệu
                                     DocumentReference doc = db.collection("users").document(id_candidate)
                                             .collection("role").document("candidate")
                                             .collection("introduction").document("introductdata");
 
                                     doc.addSnapshotListener((documentSnapshot, e) -> {
                                         if (e != null) {
-                                            // Xử lý lỗi nếu có
                                             Log.e("Firestore", "Error listening to document", e);
                                             return;
                                         }
 
                                         if (documentSnapshot != null && documentSnapshot.exists()) {
-                                            // Kiểm tra xem trường "introduction" đã có data hay chưa
                                             String introduction = documentSnapshot.getString("introduction");
-                                            if (introduction != null && !introduction.isEmpty()) {
-                                                binding.gioithieu.setText(introduction);
-                                                // Nếu có data thì ẩn nút thêm thông tin giới thiệu bản thân và hiện nút và ngược lại
-                                                Log.d("Firestore", "Đã có data: " + introduction);
-                                            } else {
+                                            // Kiểm tra nếu Fragment còn đính kèm
+                                            if (isAdded()) {
+                                                if (introduction != null && !introduction.isEmpty()) {
+                                                    binding.gioithieu.setText(introduction);
+                                                } else {
+                                                    binding.gioithieu.setText("Chưa cập nhật");
+                                                    binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
+                                                }
+                                            }
+                                        } else {
+                                            // Kiểm tra nếu Fragment còn đính kèm
+                                            if (isAdded()) {
                                                 binding.gioithieu.setText("Chưa cập nhật");
                                                 binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
                                             }
-                                        } else {
-                                            Log.d("Firestore", "Không có document với UID này trong bảng Introduces");
-                                            binding.gioithieu.setText("Chưa cập nhật");
-                                            binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
                                         }
                                     });
+
                                 } else {
                                     Log.d("Firestore", "Lỗi khi truy vấn dữ liệu profile.", task.getException());
                                 }
                             }
                         });
 
-
-
+                        // Truy vấn thông tin trường học
                         CollectionReference docSchool = db.collection("users")
                                 .document(id_candidate)
                                 .collection("role")
                                 .document("candidate")
                                 .collection("school");
-                        docSchool.get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            truonghoc.clear(); // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
-                                            if (task.getResult().isEmpty()) {
-                                                // Hiển thị thông báo nếu không có dữ liệu
-                                                truonghoc.add(new TruongHoc(null, null, "Chưa cập nhật trường học", "", "", "", null, null));
-                                                truongHocAdapter.notifyDataSetChanged();
-                                                //binding.lisviewHocVan.setVisibility(View.VISIBLE); // Hiển thị ListView
-                                            } else {
-                                                for (DocumentSnapshot document : task.getResult()) {
-                                                    // Lấy dữ liệu từ document và chuyển vào đối tượng TruongHoc
-                                                    String nameSchool = document.getString("nameSchool");
-                                                    String nganhHoc = document.getString("nganhHoc");
-                                                    String timeStart = document.getString("timeStart");
-                                                    String timeEnd = document.getString("timeEnd");
+                        docSchool.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    truonghoc.clear();
+                                    if (task.getResult().isEmpty()) {
+                                        truonghoc.add(new TruongHoc(null, null, "Chưa cập nhật trường học", "", "", "", null, null));
 
-                                                    TruongHoc truongHoc = new TruongHoc(null, null, nameSchool, nganhHoc, timeStart, timeEnd, null, null);
-                                                    truonghoc.add(truongHoc); // Thêm vào danh sách
-                                                }
-                                            }
+                                        // Kiểm tra nếu Fragment còn đính kèm
+                                        if (isAdded()) {
+                                            truongHocAdapter.notifyDataSetChanged();
+                                        }
+                                    } else {
+                                        for (DocumentSnapshot document : task.getResult()) {
+                                            String nameSchool = document.getString("nameSchool");
+                                            String nganhHoc = document.getString("nganhHoc");
+                                            String timeStart = document.getString("timeStart");
+                                            String timeEnd = document.getString("timeEnd");
 
-                                            truongHocAdapter.notifyDataSetChanged(); // Cập nhật adapter sau khi thêm dữ liệu mới
-                                        } else {
-                                            Log.d("Firestore", "Error getting documents: ", task.getException());
+                                            TruongHoc truongHoc = new TruongHoc(null, null, nameSchool, nganhHoc, timeStart, timeEnd, null, null);
+                                            truonghoc.add(truongHoc);
+                                        }
+
+                                        // Kiểm tra nếu Fragment còn đính kèm
+                                        if (isAdded()) {
+                                            truongHocAdapter.notifyDataSetChanged();
                                         }
                                     }
-                                });
+                                } else {
+                                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
 
-
+                        // Truy vấn thông tin kinh nghiệm
                         CollectionReference getKinhNghiem = db.collection("users")
                                 .document(id_candidate)
                                 .collection("role")
                                 .document("candidate")
                                 .collection("experience");
-                        getKinhNghiem.get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            experiences.clear(); // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
-                                            if (task.getResult().isEmpty()) {
-                                                // Hiển thị thông báo nếu không có dữ liệu
-                                                experiences.add(new Experience(null, "", "", "", "Chưa cập nhật kinh nghiệm", "", null));
-                                                kinhnghiemAdater.notifyDataSetChanged();
-                                                //binding.lisviewHocVan.setVisibility(View.VISIBLE); // Hiển thị ListView
-                                            } else {
-                                                for (DocumentSnapshot document : task.getResult()) {
-                                                    // Lấy dữ liệu từ document và chuyển vào đối tượng TruongHoc
-                                                    String name_organization = document.getString("name_organization");
-                                                    String position = document.getString("position");
-                                                    String timeStart = document.getString("time_start");
-                                                    String timeEnd = document.getString("time_end");
+                        getKinhNghiem.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    experiences.clear();
+                                    if (task.getResult().isEmpty()) {
+                                        experiences.add(new Experience(null, "", "", "", "Chưa cập nhật kinh nghiệm", "", null));
 
-                                                    Experience experie = new Experience(null, timeEnd, timeStart, position, name_organization, null, null);
+                                        // Kiểm tra nếu Fragment còn đính kèm
+                                        if (isAdded()) {
+                                            kinhnghiemAdater.notifyDataSetChanged();
+                                        }
+                                    } else {
+                                        for (DocumentSnapshot document : task.getResult()) {
+                                            String name_organization = document.getString("name_organization");
+                                            String position = document.getString("position");
+                                            String timeStart = document.getString("time_start");
+                                            String timeEnd = document.getString("time_end");
 
-                                                    experiences.add(experie); // Thêm vào danh sách
-                                                }
-                                            }
+                                            Experience experie = new Experience(null, timeEnd, timeStart, position, name_organization, null, null);
+                                            experiences.add(experie);
+                                        }
 
-                                            kinhnghiemAdater.notifyDataSetChanged(); // Cập nhật adapter sau khi thêm dữ liệu mới
-                                        } else {
-                                            Log.d("Firestore", "Error getting documents: ", task.getException());
+                                        // Kiểm tra nếu Fragment còn đính kèm
+                                        if (isAdded()) {
+                                            kinhnghiemAdater.notifyDataSetChanged();
                                         }
                                     }
-                                });
+                                } else {
+                                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+
+                        // Truy vấn thông tin kỹ năng
                         CollectionReference getSkill = db.collection("users")
                                 .document(id_candidate)
                                 .collection("role")
                                 .document("candidate")
                                 .collection("skills");
-                        getSkill.get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            kiNangs.clear(); // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
-                                            if (task.getResult().isEmpty()) {
-                                                // Hiển thị thông báo nếu không có dữ liệu
-                                                kiNangs.add(new KiNang(null, null, "Chưa cập nhật kĩ năng", null));
-                                                kiNangArrayAdapter.notifyDataSetChanged();
-                                                //binding.lisviewHocVan.setVisibility(View.VISIBLE); // Hiển thị ListView
-                                            } else {
-                                                for (DocumentSnapshot document : task.getResult()) {
-                                                    // Lấy dữ liệu từ document và chuyển vào đối tượng TruongHoc
-                                                    String name = document.getString("name");
+                        getSkill.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    kiNangs.clear();
+                                    if (task.getResult().isEmpty()) {
+                                        kiNangs.add(new KiNang(null, null, "Chưa cập nhật kĩ năng", null));
 
+                                        // Kiểm tra nếu Fragment còn đính kèm
+                                        if (isAdded()) {
+                                            kiNangArrayAdapter.notifyDataSetChanged();
+                                        }
+                                    } else {
+                                        for (DocumentSnapshot document : task.getResult()) {
+                                            String skillName = document.getString("name");
+                                            String skillDescription = document.getString("description");
 
-                                                    KiNang kiNang = new KiNang( null, null,name,null);
+                                            String name = document.getString("name");
+                                            KiNang kiNang = new KiNang(null, null, skillName, skillDescription);
+                                            kiNangs.add(kiNang);
+                                        }
 
-                                                    kiNangs.add(kiNang); // Thêm vào danh sách
-                                                }
-                                            }
-
-                                            kiNangArrayAdapter.notifyDataSetChanged(); // Cập nhật adapter sau khi thêm dữ liệu mới
-                                        } else {
-                                            Log.d("Firestore", "Error getting documents: ", task.getException());
+                                        // Kiểm tra nếu Fragment còn đính kèm
+                                        if (isAdded()) {
+                                            kiNangArrayAdapter.notifyDataSetChanged();
                                         }
                                     }
-                                });
-                        db.collection("users").document(id_candidate).get()
-                                .addOnSuccessListener(documentSnapshot -> {
-                                    if (documentSnapshot.exists()) {
-                                        String avatarUrl = documentSnapshot.getString("avatar");
-                                        if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                                            // Dùng Glide để tải ảnh từ URL và hiển thị vào ImageView
-                                            Glide.with(getContext())
-                                                    .load(avatarUrl)
-                                                    .centerCrop()
-                                                    .into(binding.imageProfile); // imageView là ImageView của bạn
-                                            Log.d("ii", "onComplete: lay dc anh vs uid"+id_candidate );
-                                        }
-                                    }
-                                })
-                                .addOnFailureListener(e -> {
-                                    // Xử lý lỗi nếu có
-                                    Log.e("FirestoreError", "Lỗi khi lấy dữ liệu", e);
-                                });
+                                } else {
+                                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
 
                     } else {
-                        Log.d("Firestore", "Không tìm thấy dữ liệu người dùng.");
+                        Log.d("Firestore", "Không tìm thấy tài liệu.");
                     }
                 } else {
-                    Log.d("Firestore", "Lỗi khi truy vấn dữ liệu.", task.getException());
+                    Log.d("Firestore", "Lỗi khi lấy dữ liệu: ", task.getException());
                 }
             }
         });
-
-
     }
 }
