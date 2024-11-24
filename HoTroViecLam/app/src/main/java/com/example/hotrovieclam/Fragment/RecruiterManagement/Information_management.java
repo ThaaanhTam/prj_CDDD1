@@ -98,8 +98,7 @@ public class Information_management extends Fragment {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     StorageReference logoRef = storage.getReference().child(logoPath);
 
-                    logoRef.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(this).load(uri).into(binding.companyLogo))
-                            .addOnFailureListener(e -> Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show());
+                    logoRef.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(this).load(uri).into(binding.companyLogo));
                 } else {
                     Glide.with(this)
                             .load("https://123job.vn/images/no_company.png")
