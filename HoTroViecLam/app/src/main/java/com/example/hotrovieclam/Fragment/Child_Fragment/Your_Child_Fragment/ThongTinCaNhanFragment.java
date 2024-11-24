@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.Profile;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
@@ -81,6 +82,7 @@ public class ThongTinCaNhanFragment extends Fragment {
         // Xử lý cập nhật thông tin người dùng
         binding.btnUpdateInfo.setOnClickListener(v -> {
             binding.btnUpdateInfo.setVisibility(View.GONE);
+            HieuUngThongBao.startLoadingAnimation(binding.loadding);
             binding.loadding.setVisibility(View.VISIBLE);
             Log.d("uid", "onClick: " + uid);
             String ngaysinh = binding.editTextDate.getText().toString().trim();
@@ -96,7 +98,8 @@ public class ThongTinCaNhanFragment extends Fragment {
             // Kiểm tra dữ liệu
             if (ngaysinh.isEmpty() || diachi.isEmpty() || gioitinh == 0) {
                 binding.loadding.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                HieuUngThongBao.showErrorToast(requireContext(),"Vui lòng nhập đầy đủ thông tin");
+                //Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
                 binding.btnUpdateInfo.setVisibility(View.VISIBLE);
 
                 return;
@@ -145,8 +148,6 @@ public class ThongTinCaNhanFragment extends Fragment {
                     binding.editTextDate.setText(selectedDate);
                 }, year, month, day);
 
-        datePickerDialog.setOnCancelListener(dialog ->
-                Toast.makeText(getContext(), "Bạn đã hủy chọn ngày", Toast.LENGTH_SHORT).show());
         datePickerDialog.show();
     }
 
@@ -200,7 +201,8 @@ public class ThongTinCaNhanFragment extends Fragment {
                 .set(profile)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + uid);
-                    Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                    HieuUngThongBao.showSuccessToast(requireContext(),"Cập nhật thành công");
+                    //Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                     Bundle result = new Bundle();
                     result.putBoolean("update", true);
                     getParentFragmentManager().setFragmentResult("isupdate", result);
@@ -212,33 +214,6 @@ public class ThongTinCaNhanFragment extends Fragment {
                 });
     }
 
-//    private void getLastLocation() {
-//        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(requireActivity(),
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-//            return;
-//        }
-//
-//        fusedLocationClient.getLastLocation()
-//                .addOnSuccessListener(location -> {
-//                    if (location != null) {
-//                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-//                        try {
-//                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-//                            if (addresses != null && !addresses.isEmpty()) {
-//                                Address address = addresses.get(0);
-//                                String addressString = address.getAddressLine(0);
-//                                binding.editTextDC.setText(addressString);
-//                            }
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                            Toast.makeText(getContext(), "Không thể lấy địa chỉ", Toast.LENGTH_SHORT).show();
-//                        }
-//                    } else {
-//                        Toast.makeText(getContext(), "Không thể lấy vị trí hiện tại", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
     public void updateAddress(String diachi) {
         // Kiểm tra nếu binding đã được khởi tạo
         if (binding != null) {

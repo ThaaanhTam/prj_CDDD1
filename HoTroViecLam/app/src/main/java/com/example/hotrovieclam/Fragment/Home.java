@@ -20,9 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,16 +28,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.hotrovieclam.Activity.JobDetailMain;
-import com.example.hotrovieclam.Adapter.JobManagementAdapter;
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.example.hotrovieclam.Connect.API;
 import com.example.hotrovieclam.Connect.Website;
-import com.example.hotrovieclam.Fragment.RecruiterManagement.Detail_Job;
 import com.example.hotrovieclam.Model.Job;
 
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentHomeBinding;
-import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 

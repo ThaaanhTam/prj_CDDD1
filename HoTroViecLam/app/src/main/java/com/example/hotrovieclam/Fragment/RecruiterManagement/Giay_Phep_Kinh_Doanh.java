@@ -1,15 +1,16 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
-import androidx.fragment.app.DialogFragment;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.fragment.app.DialogFragment;
+
 import com.bumptech.glide.Glide;
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.databinding.FragmentGiayPhepKinhDoanhBinding;
 import com.google.firebase.firestore.DocumentReference;
@@ -19,29 +20,35 @@ import com.google.firebase.storage.StorageReference;
 
 
 public class Giay_Phep_Kinh_Doanh extends DialogFragment {
-private FragmentGiayPhepKinhDoanhBinding binding;
+    private FragmentGiayPhepKinhDoanhBinding binding;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding= FragmentGiayPhepKinhDoanhBinding.inflate(inflater,container,false);
-        View view =binding.getRoot();
+        binding = FragmentGiayPhepKinhDoanhBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
         loadCompanyInformation();
         return view;
     }
+
     private void loadCompanyInformation() {
+        HieuUngThongBao.startLoadingAnimation(binding.loadImage);
+        binding.loadImage.setVisibility(View.VISIBLE);
         UserSessionManager user = new UserSessionManager();
         String uid = user.getUserUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Tham chiếu đến document "employer" của user
         DocumentReference docRef = db.collection("users").document(uid)
-                .collection("roles").document("employer");
+                .collection("role").document("employer");
 
         // Thêm snapshot listener để lắng nghe thay đổi
         docRef.addSnapshotListener((documentSnapshot, error) -> {
             if (error != null) {
                 Toast.makeText(getContext(), "Lỗi khi nghe thay đổi dữ liệu: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                binding.loadImage.setVisibility(View.GONE);
+
                 return;
             }
 
@@ -62,10 +69,14 @@ private FragmentGiayPhepKinhDoanhBinding binding;
                         Glide.with(this)
                                 .load(uri.toString())
                                 .into(binding.giayphepkd);
-                        Log.d("TAMM", "loadCompanyInformation: "+uri.toString());
-                        Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
+                        Log.d("TAMM", "loadCompanyInformation: " + uri.toString());
+                        binding.loadImage.setVisibility(View.GONE);
+
+                        //Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
                     }).addOnFailureListener(e -> {
-                        Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
+                        binding.loadImage.setVisibility(View.GONE);
+                        HieuUngThongBao.showErrorToast(requireContext(), "Không thể tải ảnh giấy phép");
+                        //Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
                     });
                 } else {
                     Glide.with(this)
@@ -74,6 +85,8 @@ private FragmentGiayPhepKinhDoanhBinding binding;
                 }
             } else {
                 Toast.makeText(getContext(), "Không tìm thấy dữ liệu công ty", Toast.LENGTH_SHORT).show();
+                binding.loadImage.setVisibility(View.GONE);
+
             }
         });
     }

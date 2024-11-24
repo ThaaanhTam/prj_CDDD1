@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hotrovieclam.Model.CompanyInfo;
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.databinding.RegisterEmployerBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -76,15 +77,15 @@ public class RegisterEmployer extends AppCompatActivity {
     // Hiển thị trạng thái tải
     private void showLoadingState(boolean isLoading) {
         if (isLoading) {
-            binding.btnSubmit.setEnabled(false);  // Vô hiệu hóa nút
-            binding.btnSubmit.animate().alpha(0f).setDuration(200).start(); // Làm mờ nút
+            binding.btnSubmit.setEnabled(false);
+            binding.btnSubmit.animate().alpha(0f).setDuration(200).start();
             binding.progressBar.setVisibility(View.VISIBLE);
-            binding.progressBar.animate().alpha(1f).setDuration(200).start(); // Hiện vòng tròn tải
+            binding.progressBar.animate().alpha(1f).setDuration(200).start();
         } else {
-            binding.progressBar.animate().alpha(0f).setDuration(200).start(); // Làm mờ vòng tròn tải
+            binding.progressBar.animate().alpha(0f).setDuration(200).start();
             binding.progressBar.setVisibility(View.GONE);
             binding.btnSubmit.setEnabled(true);
-            binding.btnSubmit.animate().alpha(1f).setDuration(200).start(); // Hiện lại nút
+            binding.btnSubmit.animate().alpha(1f).setDuration(200).start();
         }
     }
 
@@ -180,40 +181,43 @@ public class RegisterEmployer extends AppCompatActivity {
     }
 
     // Lưu thông tin vào Firestore
-    private void saveToFirestore(String logoFileName, String frontFileName, String backFileName, String certFileName) {
-        UserSessionManager userSessionManager = new UserSessionManager();
-        String uid = userSessionManager.getUserUid();
+        private void saveToFirestore(String logoFileName, String frontFileName, String backFileName, String certFileName) {
+            UserSessionManager userSessionManager = new UserSessionManager();
+            String uid = userSessionManager.getUserUid();
 
-        // Tạo đối tượng thông tin công ty
-        Map<String, Object> companyInfo = new HashMap<>();
-        companyInfo.put("companyName", binding.etCompanyName.getText().toString().trim());
-        companyInfo.put("contactPerson", binding.etRecruiterName.getText().toString().trim());
-        companyInfo.put("companyPhone", binding.etPhoneNumber.getText().toString().trim());
-        companyInfo.put("companyEmail", binding.etCompanyMail.getText().toString().trim());
-        companyInfo.put("address", binding.etLocation.getText().toString().trim());
-        companyInfo.put("website", binding.etWebsite.getText().toString().trim());
-        companyInfo.put("logo", logoFileName);
-        companyInfo.put("legalDocumentFront", frontFileName);
-        companyInfo.put("legalDocumentBack", backFileName);
-        companyInfo.put("certificationDocument", certFileName);
-        companyInfo.put("statusId", "1");
-        companyInfo.put("createdAt", FieldValue.serverTimestamp());
-        companyInfo.put("updatedAt", FieldValue.serverTimestamp());
+            // Tạo đối tượng thông tin công ty
+            Map<String, Object> companyInfo = new HashMap<>();
+            companyInfo.put("companyName", binding.etCompanyName.getText().toString().trim());
+            companyInfo.put("contactPerson", binding.etRecruiterName.getText().toString().trim());
+            companyInfo.put("companyPhone", binding.etPhoneNumber.getText().toString().trim());
+            companyInfo.put("companyEmail", binding.etCompanyMail.getText().toString().trim());
+            companyInfo.put("address", binding.etLocation.getText().toString().trim());
+            companyInfo.put("website", binding.etWebsite.getText().toString().trim());
+            companyInfo.put("logo", logoFileName);
+            companyInfo.put("legalDocumentFront", frontFileName);
+            companyInfo.put("legalDocumentBack", backFileName);
+            companyInfo.put("certificationDocument", certFileName);
+            companyInfo.put("statusId", "1");
+            companyInfo.put("createdAt", FieldValue.serverTimestamp());
+            companyInfo.put("updatedAt", FieldValue.serverTimestamp());
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-        db.collection("users").document(uid)
-                .collection("role").document("employer")
-                .set(companyInfo)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Lưu dữ liệu thành công", Toast.LENGTH_SHORT).show();
-                    clearInputs(); // Xóa các input sau khi lưu thành công
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Lưu dữ liệu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
+            db.collection("users").document(uid)
+                    .collection("role").document("employer")
+                    .set(companyInfo)
+                    .addOnSuccessListener(aVoid -> {
+                        HieuUngThongBao.showSuccessToast(this,"Đăng kí nhà thành công");
+                        //Toast.makeText(this, "Lưu dữ liệu thành công", Toast.LENGTH_SHORT).show();
+                        clearInputs(); // Xóa các input sau khi lưu thành công
+                    })
+                    .addOnFailureListener(e -> {
+                        //Toast.makeText(this, "Lưu dữ liệu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        HieuUngThongBao.showErrorToast(this,"Lưu dữ liệu thất bại");
+
+                    });
+        }
 
     // Tải ảnh lên Firebase Storage
     private void uploadImage(Uri uri, String path, OnSuccessListener<String> onSuccess) {
@@ -275,7 +279,7 @@ public class RegisterEmployer extends AppCompatActivity {
         companyCertUri = null;
         logoUri = null;
         binding.progressBar.setVisibility(View.GONE);
-        // binding.btnSubmit.setVisibility(View.VISIBLE);
+
 
     }
 

@@ -1,20 +1,13 @@
-package com.example.hotrovieclam.Fragment.RecruiterManagement;
+package com.example.hotrovieclam.Activity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import com.example.hotrovieclam.Adapter.DetailAdapter;
-import com.example.hotrovieclam.Adapter.JobManagementAdapter;
-import com.example.hotrovieclam.Adapter.ViewPagerAdapter_recruiterManagement;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityDetailJobBinding;
 import com.google.android.material.tabs.TabLayoutMediator;

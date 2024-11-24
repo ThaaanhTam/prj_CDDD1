@@ -3,7 +3,6 @@ package com.example.hotrovieclam.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -13,24 +12,26 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotrovieclam.Adapter.ConversationAdapter;
-import com.example.hotrovieclam.Model.Message;
+import com.example.hotrovieclam.Model.ListMess;
+import com.example.hotrovieclam.Model.User;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ActivityConversationBinding;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.Query;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
+import java.util.Locale;
 
 public class ConvestationFrament extends Fragment {
 
     private ActivityConversationBinding binding;
-    private ArrayList<Message> conversationList = new ArrayList<>();
+    private ArrayList<ListMess> conversationList = new ArrayList<>();
     private String currentUserId;
     private FirebaseFirestore db;
     private ConversationAdapter adapter;
@@ -46,114 +47,134 @@ public class ConvestationFrament extends Fragment {
         adapter = new ConversationAdapter(conversationList, (FragmentActivity) getContext());
         binding.recyclerViewConversations.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerViewConversations.setAdapter(adapter);
+if(currentUserId!=null){
+    fetchJobsFromFirestore();
+}
 
-        // Gọi hàm để tải các tin nhắn từ Firestore
-        fetchJobsFromFirestore();
 
-        // Lắng nghe sự kiện nhấn vào các mục trong RecyclerView
-        binding.recyclerViewConversations.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
-                View childView = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
-                if (childView != null && motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    int position = recyclerView.getChildAdapterPosition(childView);
-                    Message message = conversationList.get(position);
 
-                    String senderId;
-                    String receiverId;
 
-                    // Kiểm tra để xác định đúng vai trò của senderId và receiverId
-                    if (message.getSender_id().equals(currentUserId)) {
-                        senderId = currentUserId;
-                        receiverId = message.getReceiver_id();
-                    } else {
-                        senderId = message.getSender_id();
-                        receiverId = currentUserId;
-                    }
-
-                    // Chuyển sang MessageFragment với senderId và receiverId đã xác định đúng
-                    openMessageFragment(senderId, receiverId);
-                    Log.d("Conversation", "Sender ID: " + senderId + " | Receiver ID: " + receiverId);
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
-                // Không cần xử lý ở đây
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-                // Không cần xử lý ở đây
-            }
-        });
 
 
         return binding.getRoot();
     }
 
-    private void openMessageFragment(String senderId, String receiverId) {
-        MessageFrament messageFragment = new MessageFrament();
-        Bundle bundle = new Bundle();
-        bundle.putString("senderId", senderId);
-        bundle.putString("receiverId", receiverId);
-        messageFragment.setArguments(bundle);
 
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, messageFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
 
     private void fetchJobsFromFirestore() {
         db = FirebaseFirestore.getInstance();
-        db.collection("messages").addSnapshotListener((snapshots, error) -> {
-            if (error != null) {
-                Log.w("zz", "Listen failed.", error);
-                return;
-            }
-
-            if (snapshots != null && !snapshots.isEmpty()) {
-                conversationList.clear();
-
-                for (QueryDocumentSnapshot document : snapshots) {
-                    Message message = document.toObject(Message.class);
-
-                    // Kiểm tra nếu người dùng hiện tại là người gửi hoặc người nhận
-                    if ((message.getSender_id() != null && message.getSender_id().equals(currentUserId)) ||
-                            (message.getReceiver_id() != null && message.getReceiver_id().equals(currentUserId))) {
-                        Log.d("zz", "Listen x.");
-                        // Xác định ID của đối tác trò chuyện
-                        String chatPartnerId = message.getSender_id().equals(currentUserId)
-                                ? message.getReceiver_id() : message.getSender_id();
-
-                        // Kiểm tra xem conversationList đã chứa cuộc hội thoại với đối tác này chưa
-                        boolean exists = false;
-                        for (Message existingMessage : conversationList) {
-                            String existingPartnerId = existingMessage.getSender_id().equals(currentUserId)
-                                    ? existingMessage.getReceiver_id() : existingMessage.getSender_id();
-                            if (existingPartnerId.equals(chatPartnerId)) {
-                                exists = true;
-                                break;
-                            }
-                        }
-
-                        // Nếu chưa có, thêm vào danh sách conversationList
-                        if (!exists) {
-                            conversationList.add(message);
-                        }
+        db.collection("users").document(currentUserId)
+                .collection("conversation")
+                .addSnapshotListener((querySnapshot, error) -> {
+                    if (error != null) {
+                        Log.e("Firestore", "Lỗi khi lắng nghe dữ liệu conversation: " + error.getMessage());
+                        return;
                     }
-                }
 
-                // Cập nhật adapter
-                adapter.notifyDataSetChanged();
-            } else {
-                Log.d("zz", "No current data in the collection");
-            }
-        });
+                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                            String documentId = document.getId();
+                            String messageID = document.getString("messageID");
+                            String status = document.getString("status");
+
+                            // Lắng nghe thay đổi từ bảng "users"
+                            db.collection("users").document(documentId)
+                                    .addSnapshotListener((userSnapshot, userError) -> {
+                                        if (userError != null) {
+                                            Log.e("Firestore", "Lỗi khi lắng nghe dữ liệu user: " + userError.getMessage());
+                                            return;
+                                        }
+
+                                        if (userSnapshot != null && userSnapshot.exists()) {
+                                            String name = userSnapshot.getString("name");
+                                            String avatar = userSnapshot.getString("avatar");
+
+                                            // Lắng nghe thay đổi tin nhắn cuối cùng
+                                            db.collection("Message")
+                                                    .document(messageID)
+                                                    .collection("messages")
+                                                    .orderBy("sent_at", Query.Direction.DESCENDING)
+                                                    .limit(1)
+                                                    .addSnapshotListener((messageSnapshot, messageError) -> {
+                                                        if (messageError != null) {
+                                                            Log.e("LastMessage", "Lỗi khi lắng nghe tin nhắn cuối: " + messageError.getMessage());
+                                                            return;
+                                                        }
+
+                                                        if (messageSnapshot != null && !messageSnapshot.isEmpty()) {
+                                                            DocumentSnapshot lastMessageDoc = messageSnapshot.getDocuments().get(0);
+                                                            String lastMessageContent = lastMessageDoc.getString("content");
+                                                            long timestamp = lastMessageDoc.getLong("sent_at");
+
+
+                                                            // Giá trị timestamp cần chuyển đổi
+
+                                                            // Chuyển đổi từ timestamp sang đối tượng Date
+                                                            Date date = new Date(timestamp);
+
+                                                            // Định dạng ngày giờ thành chuỗi
+                                                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM HH:mm", Locale.getDefault());
+                                                            String formattedDate = sdf.format(date);
+
+
+                                                            Log.d("FormattedDate", "Thời gian định dạng: " + formattedDate);
+                                                            updateConversationList(
+                                                                    documentId, messageID, status, name, avatar, lastMessageContent,formattedDate
+                                                            );
+                                                        }
+                                                    });
+                                        } else {
+                                            Log.d("Firestore", "Document user không tồn tại với ID: " + documentId);
+                                        }
+                                    });
+                        }
+                    } else {
+                        Log.d("Firestore", "Collection 'conversation' trống hoặc không tồn tại.");
+                    }
+                });
     }
+
+    private void updateConversationList(String documentId, String messageID, String status,
+                                        String name, String avatar, String lastMessageContent,String formattedDate) {
+        boolean isUpdated = false;
+
+
+        for (int i = 0; i < conversationList.size(); i++) {
+            ListMess listMess = conversationList.get(i);
+            if (listMess.getReicever_id().equals(documentId)) {
+                // Cập nhật hội thoại đã tồn tại
+                listMess.setMessID(messageID);
+                listMess.setStatus(status);
+                listMess.setName(name);
+                listMess.setAvatar(avatar);
+                listMess.setLastMes(lastMessageContent);
+                listMess.setDate(formattedDate);
+
+                isUpdated = true;
+
+                // Cập nhật giao diện
+                adapter.notifyItemChanged(i);
+                break;
+            }
+        }
+
+        // Nếu chưa tồn tại, thêm mới vào danh sách
+        if (!isUpdated) {
+            ListMess newListMess = new ListMess();
+            newListMess.setReicever_id(documentId);
+            newListMess.setMessID(messageID);
+            newListMess.setStatus(status);
+            newListMess.setName(name);
+            newListMess.setAvatar(avatar);
+            newListMess.setLastMes(lastMessageContent);
+            newListMess.setDate(formattedDate);
+            conversationList.add(newListMess);
+            adapter.notifyItemInserted(conversationList.size() - 1);
+        }
+    }
+
+
+
 
     @Override
     public void onDestroyView() {

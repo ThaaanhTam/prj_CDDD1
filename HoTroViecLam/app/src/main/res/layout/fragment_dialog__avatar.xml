@@ -25,7 +25,10 @@
         android:id="@+id/loadding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/custom_processing"
+        />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnCapNhat"

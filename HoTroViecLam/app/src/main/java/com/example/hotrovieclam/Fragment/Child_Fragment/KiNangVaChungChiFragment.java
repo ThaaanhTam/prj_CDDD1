@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.hotrovieclam.Adapter.KiNangAdapter;
 import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.SkillsAndCertificationFragment;
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
@@ -146,7 +147,9 @@ public class KiNangVaChungChiFragment extends Fragment {
                     .delete()
                     .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "Xóa kỹ năng thành công"+skillId);
-                        Toast.makeText(getContext(), "Đã xóa kỹ năng", Toast.LENGTH_SHORT).show();
+                        HieuUngThongBao.showSuccessToast(requireContext(),"Đã xóa kỹ năng");
+
+                        //Toast.makeText(getContext(), "Đã xóa kỹ năng", Toast.LENGTH_SHORT).show();
                         // Cập nhật lại danh sách kỹ năng nếu cần
                         LoadLaiData();
                         removeSkillFromList(skillId);

@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.hotrovieclam.Model.HieuUngThongBao;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentCCCDMatTruocBinding;
@@ -39,16 +41,20 @@ public class CCCD_MatTruoc_Fragment extends DialogFragment {
         return view;
     }
     private void loadCompanyInformation() {
+        HieuUngThongBao.startLoadingAnimation(binding.loadImage);
+        binding.loadImage.setVisibility(View.VISIBLE);
         UserSessionManager user = new UserSessionManager();
         String uid = user.getUserUid();
         // Tham chiếu đến document "employer" của user
         DocumentReference docRef = db.collection("users").document(uid)
-                .collection("roles").document("employer");
+                .collection("role").document("employer");
 
         // Thêm snapshot listener để lắng nghe thay đổi
         docRef.addSnapshotListener((documentSnapshot, error) -> {
             if (error != null) {
                 Toast.makeText(getContext(), "Lỗi khi nghe thay đổi dữ liệu: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                binding.loadImage.setVisibility(View.GONE);
+
                 return;
             }
 
@@ -69,9 +75,12 @@ public class CCCD_MatTruoc_Fragment extends DialogFragment {
                         Glide.with(this)
                                 .load(uri.toString())
                                 .into(binding.cccdMatTruoc);
-                        Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
+                        binding.loadImage.setVisibility(View.GONE);
+                        //Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
                     }).addOnFailureListener(e -> {
-                        Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
+                        HieuUngThongBao.showErrorToast(requireContext(),"Không thể tải căn cước công dân mặt trước");
+                        binding.loadImage.setVisibility(View.GONE);
+                        //Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
                     });
                 } else {
                     Glide.with(this)
@@ -80,6 +89,8 @@ public class CCCD_MatTruoc_Fragment extends DialogFragment {
                 }
             } else {
                 Toast.makeText(getContext(), "Không tìm thấy dữ liệu công ty", Toast.LENGTH_SHORT).show();
+                binding.loadImage.setVisibility(View.GONE);
+
             }
         });
     }

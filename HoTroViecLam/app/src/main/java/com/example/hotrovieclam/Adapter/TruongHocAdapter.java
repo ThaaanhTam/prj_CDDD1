@@ -72,7 +72,7 @@ public class TruongHocAdapter extends RecyclerView.Adapter<TruongHocAdapter.Truo
         holder.binding.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), "iiii", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(v.getContext(), "iiii", Toast.LENGTH_SHORT).show();
                 Log.d("GGGG", "onClick: "+truongHoc.getId_Shool());
                 new AlertDialog.Builder(v.getContext())
                         .setTitle("Xác nhận xóa")
@@ -82,7 +82,7 @@ public class TruongHocAdapter extends RecyclerView.Adapter<TruongHocAdapter.Truo
                             public void onClick(DialogInterface dialog, int which) {
                                 // Gọi hàm delete khi người dùng xác nhận xóa
 
-                                hocvan.deleteSkill(truongHoc.getId_Shool());
+                                hocvan.deleteScool(truongHoc.getId_Shool());
                             }
                         })
                         .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
