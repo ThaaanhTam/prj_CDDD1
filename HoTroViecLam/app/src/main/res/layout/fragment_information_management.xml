@@ -98,17 +98,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"/>
 
-            <!-- Trạng thái -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/trangthai"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"/>
+<!--            &lt;!&ndash; Trạng thái &ndash;&gt;-->
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/trangthai"-->
+<!--                android:textStyle="bold"/>-->
+<!--            <TextView-->
+<!--                android:id="@+id/tvStatus"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="8dp"/>-->
 
             <!-- Giấy tờ Pháp lý - Mặt Trước -->
             <TextView
