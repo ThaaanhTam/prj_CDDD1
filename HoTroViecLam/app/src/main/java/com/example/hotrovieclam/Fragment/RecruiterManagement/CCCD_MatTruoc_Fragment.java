@@ -47,7 +47,7 @@ public class CCCD_MatTruoc_Fragment extends DialogFragment {
         String uid = user.getUserUid();
         // Tham chiếu đến document "employer" của user
         DocumentReference docRef = db.collection("users").document(uid)
-                .collection("roles").document("employer");
+                .collection("role").document("employer");
 
         // Thêm snapshot listener để lắng nghe thay đổi
         docRef.addSnapshotListener((documentSnapshot, error) -> {
