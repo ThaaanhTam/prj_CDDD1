@@ -2,6 +2,10 @@ package com.example.hotrovieclam.Activity;
 
 import static android.app.PendingIntent.getActivity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -9,6 +13,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.activity.EdgeToEdge;
+import androidx.core.app.NotificationCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -125,26 +130,47 @@ public class Navigation extends AppCompatActivity {
                 Long typeUser = documentSnapshot.getLong("userTypeId");
                 Log.d("VANTAR", "UserType thay đổi: " + typeUser);
 
+                // Gửi thông báo nếu có thay đổi
+                sendNotification("Dữ liệu đã thay đổi", "Loại người dùng mới: " + typeUser);
+
+                // Tiếp tục logic kiểm tra menu
                 if (binding.navButtom != null) {
                     MenuItem menuItem = binding.navButtom.getMenu().findItem(R.id.managerPost);
-
-                    // Kiểm tra nếu `menuItem` không null trước khi gọi `setVisible`
                     if (menuItem != null) {
-                        if (typeUser != null && typeUser == 1) {
-                            menuItem.setVisible(false);
-                        } else {
-                            menuItem.setVisible(true);
-                        }
-                    } else {
-                        Log.e("Menu", "MenuItem với ID 'managerPost' không tồn tại.");
+                        menuItem.setVisible(typeUser == null || typeUser != 1);
                     }
-                } else {
-                    Log.e("NavBottom", "Navigation Bottom chưa được khởi tạo.");
                 }
             } else {
                 Log.d("Firestore", "Tài liệu không tồn tại.");
             }
         });
+
+    }
+    private void sendNotification(String title, String message) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String channelId = "default_channel_id";
+
+        // Tạo kênh thông báo cho Android >= Oreo
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    "Thông báo",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("Thông báo từ ứng dụng");
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        // Tạo thông báo
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.check_circle) // Thay bằng icon của bạn
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true);
+
+        // Gửi thông báo
+        notificationManager.notify(1, builder.build());
     }
 
 
