@@ -156,31 +156,6 @@
                 android:textColor="#195ED5"
                 android:layout_marginBottom="8dp"/>
 
-
-<!--            &lt;!&ndash; Ngày tạo &ndash;&gt;-->
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Created At"-->
-<!--                android:textStyle="bold"/>-->
-<!--            <TextView-->
-<!--                android:id="@+id/tvCreatedAt"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginBottom="8dp"/>-->
-
-<!--            &lt;!&ndash; Ngày cập nhật &ndash;&gt;-->
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Updated At"-->
-<!--                android:textStyle="bold"/>-->
-<!--            <TextView-->
-<!--                android:id="@+id/tvUpdatedAt"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginBottom="8dp"/>-->
-
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

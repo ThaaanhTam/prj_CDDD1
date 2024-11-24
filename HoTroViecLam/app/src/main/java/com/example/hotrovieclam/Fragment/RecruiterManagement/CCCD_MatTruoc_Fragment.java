@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Model.HieuUngThongBao;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentCCCDMatTruocBinding;
@@ -46,7 +47,7 @@ public class CCCD_MatTruoc_Fragment extends DialogFragment {
         String uid = user.getUserUid();
         // Tham chiếu đến document "employer" của user
         DocumentReference docRef = db.collection("users").document(uid)
-                .collection("role").document("employer");
+                .collection("roles").document("employer");
 
         // Thêm snapshot listener để lắng nghe thay đổi
         docRef.addSnapshotListener((documentSnapshot, error) -> {
