@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Nền màu xanh -->
+    <solid android:color="@color/red" /> <!-- Chọn màu xanh lá cây -->
+
+    <!-- Bo góc -->
+    <corners android:radius="16dp" />
+
+    <!-- Padding để tạo khoảng cách giữa nội dung và viền -->
+</shape>

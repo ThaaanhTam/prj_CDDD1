@@ -34,4 +34,7 @@
     <color name="gray_light">#E0E0E0</color>
 
     <color name="red_cancel">#F44336</color>
+    <color name="success">#41B346</color>
+
+
 </resources>

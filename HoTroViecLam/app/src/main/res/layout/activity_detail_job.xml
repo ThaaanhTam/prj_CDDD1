@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context=".Fragment.RecruiterManagement.Detail_Job">
+    tools:context=".Activity.Detail_Job">
 <LinearLayout
     android:layout_width="match_parent"
     android:padding="5dp"

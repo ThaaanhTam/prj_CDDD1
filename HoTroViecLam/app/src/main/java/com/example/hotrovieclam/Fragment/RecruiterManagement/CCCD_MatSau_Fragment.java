@@ -15,6 +15,7 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentCCCDMatSauBinding;
@@ -33,6 +34,7 @@ private FragmentCCCDMatSauBinding binding;
         // Inflate the layout for this fragment
         binding = FragmentCCCDMatSauBinding.inflate(inflater,container,false);
         View view = binding.getRoot();
+
         loadCompanyInformation();
         return  view;
 
@@ -55,18 +57,22 @@ private FragmentCCCDMatSauBinding binding;
         }
     }
     private void loadCompanyInformation() {
+        HieuUngThongBao.startLoadingAnimation(binding.loadImage);
+        binding.loadImage.setVisibility(View.VISIBLE);
         UserSessionManager user = new UserSessionManager();
         String uid = user.getUserUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Tham chiếu đến document "employer" của user
         DocumentReference docRef = db.collection("users").document(uid)
-                .collection("roles").document("employer");
+                .collection("role").document("employer");
 
         // Thêm snapshot listener để lắng nghe thay đổi
         docRef.addSnapshotListener((documentSnapshot, error) -> {
             if (error != null) {
                 Toast.makeText(getContext(), "Lỗi khi nghe thay đổi dữ liệu: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                binding.loadImage.setVisibility(View.GONE);
+
                 return;
             }
 
@@ -88,9 +94,14 @@ private FragmentCCCDMatSauBinding binding;
                                 .load(uri.toString())
                                 .into(binding.cccdMatSau);
                         Log.d("TAMM", "loadCompanyInformation: "+uri.toString());
-                        Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
+                        binding.loadImage.setVisibility(View.GONE);
                     }).addOnFailureListener(e -> {
-                        Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
+                        HieuUngThongBao.showErrorToast(requireContext(),"Không thể tải căn cước công dân mặt sau");
+
+                        binding.loadImage.setVisibility(View.GONE);
+
                     });
                 } else {
                     Glide.with(this)

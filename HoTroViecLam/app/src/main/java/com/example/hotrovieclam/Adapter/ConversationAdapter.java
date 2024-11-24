@@ -9,13 +9,13 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.hotrovieclam.Fragment.MessageActivity;
+import com.example.hotrovieclam.Activity.MessageActivity;
 import com.example.hotrovieclam.Model.ListMess;
-import com.example.hotrovieclam.Model.User;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.ItemConversationBinding;
@@ -28,10 +28,12 @@ import java.util.ArrayList;
 public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.ConversationViewHolder> {
     private ArrayList<ListMess> conversationList;
     private FragmentActivity context;
-    private  FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseStorage storage = FirebaseStorage.getInstance();;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    ;
     UserSessionManager sessionManager = new UserSessionManager();
     String currentUserId = sessionManager.getUserUid();
+
     public ConversationAdapter(ArrayList<ListMess> conversationList, FragmentActivity context) {
         this.conversationList = conversationList;
         this.context = context;
@@ -40,17 +42,17 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
     @NonNull
     @Override
     public ConversationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-      return   new ConversationViewHolder(ItemConversationBinding.inflate(context.getLayoutInflater(), parent, false));
+        return new ConversationViewHolder(ItemConversationBinding.inflate(context.getLayoutInflater(), parent, false));
     }
 
     @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull ConversationViewHolder holder, int position) {
         ListMess listMess = conversationList.get(position);
-        if (listMess.getName()!=null) {
+        if (listMess.getName() != null) {
             holder.binding.textViewUserName.setText(listMess.getName());
         }
-        if(listMess.getAvatar()!=null){
+        if (listMess.getAvatar() != null) {
             Log.d("ff", listMess.getAvatar());
             Glide.with(context)
                     .load(listMess.getAvatar())
@@ -59,6 +61,12 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
                     .error(R.drawable.user_solid) // Ảnh lỗi nếu tải thất bại
                     .into(holder.binding.imageViewAvatar);
 
+        }
+        holder.binding.textViewLastMessage.setText(listMess.getLastMes());
+
+        if (listMess.getDate() != null) {
+            Log.d("date", listMess.getDate());
+            holder.binding.textViewTime.setText(listMess.getDate());
         }
         holder.binding.body.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,18 +78,24 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
 
             }
         });
-        if (listMess.getStatus()=="0"){
-            holder.binding.textViewLastMessage.setTextColor(R.color.black);
-        }else {
-            holder.binding.textViewLastMessage.setTextColor(R.color.gray_light);
+
+        if (listMess.getStatus() != null) {
+            if (listMess.getStatus().equals("0")) {
+                Log.d("vvv", listMess.getStatus());
+                holder.binding.textViewLastMessage.setTextColor(
+                        ContextCompat.getColor(holder.itemView.getContext(), R.color.black)
+                );
+            } else {
+                holder.binding.textViewLastMessage.setTextColor(
+                        ContextCompat.getColor(holder.itemView.getContext(), R.color.gray_light)
+                );
+            }
+
         }
 
 
-
-
-
-
     }
+
     private void loadImage(StorageReference storageReference, String path, ImageView imageView) {
         if (path != null && !path.isEmpty()) {
             StorageReference imageRef = storageReference.child(path);
@@ -99,6 +113,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
     public class ConversationViewHolder extends RecyclerView.ViewHolder {
         public int position;
         ItemConversationBinding binding;
+
         public ConversationViewHolder(@NonNull ItemConversationBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;

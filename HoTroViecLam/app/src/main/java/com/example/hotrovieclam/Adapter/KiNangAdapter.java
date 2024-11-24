@@ -74,7 +74,7 @@ public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangView
                             public void onClick(DialogInterface dialog, int which) {
                                 // Gọi hàm delete khi người dùng xác nhận xóa
 
-                                fragment.deleteSkill(kiNang.getUid());
+                                //fragment.deleteSkill(kiNang.getUid());
                                 fragment.deleteSkill(kiNang.getId());
                             }
                         })

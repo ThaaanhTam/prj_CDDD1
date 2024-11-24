@@ -303,8 +303,10 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
-                android:indeterminateTint="@android:color/holo_blue_dark"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@drawable/custom_processing"
+                />
 
         </LinearLayout>
     </ScrollView>
