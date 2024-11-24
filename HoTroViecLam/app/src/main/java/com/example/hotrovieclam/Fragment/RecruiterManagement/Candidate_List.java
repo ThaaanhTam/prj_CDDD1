@@ -29,7 +29,7 @@ public class Candidate_List extends Fragment {
     private FragmentCandidateListBinding binding;
     private CandidateAdapter adapter;
     private ArrayList<User> users = new ArrayList<>();
-    private String candidateIdd;
+    private String cv;
     public Candidate_List() {
         // Required empty public constructor
     }
@@ -96,14 +96,14 @@ public class Candidate_List extends Fragment {
         fetchCandidatesRealtime();
         adapter.setClickIem(new CandidateAdapter.OnItemClickListener() {
             @Override
-            public void onClick(String id_candidate) {
+            public void onClick(String id_candidate, Integer po) {
                 // Tạo một instance của Fragment
                 Profile_Candidate_Fragment profileCandidateFragment = new Profile_Candidate_Fragment();
 
                 // Tạo Bundle để truyền dữ liệu
                 Bundle bundle = new Bundle();
                 bundle.putString("id_candidate", id_candidate);
-                bundle.putString("candidate", candidateIdd);
+                bundle.putString("candidate", users.get(po).getCv());
                 bundle.putString("ID_JOB", jobID);
 
 
@@ -143,10 +143,10 @@ public class Candidate_List extends Fragment {
 
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             String candidateId = document.getString("candidateId");
-                             candidateIdd = document.getId();
-                            Log.d("candidateIdd", candidateIdd);
+                             cv = document.getId();
+                            Log.d("candidateIdd", cv);
                             if (candidateId != null) {
-                                fetchUserDetails(candidateId);  // Fetch user details for each candidate
+                                fetchUserDetails(candidateId, cv);  // Fetch user details for each candidate
                             }
                         }
                     } else {
@@ -156,7 +156,7 @@ public class Candidate_List extends Fragment {
     }
 
 
-    private void fetchUserDetails(String candidateId) {
+    private void fetchUserDetails(String candidateId, String cv) {
         db.collection("users")
                 .document(candidateId)
                 .addSnapshotListener((userDocument, e) -> {
@@ -172,6 +172,7 @@ public class Candidate_List extends Fragment {
                         user.setEmail(userDocument.getString("email"));
                         user.setPhoneNumber(userDocument.getString("phoneNumber"));
                         user.setId(userDocument.getString("id"));
+user.setCv(cv);
                         // Add the user to the list
                         users.add(user);
                         // Notify adapter to refresh the list

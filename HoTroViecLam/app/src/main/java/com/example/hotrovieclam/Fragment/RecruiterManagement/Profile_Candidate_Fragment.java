@@ -1,7 +1,10 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -43,13 +46,13 @@ import java.util.ArrayList;
 public class Profile_Candidate_Fragment extends Fragment {
     private FragmentProfileCandidateBinding binding;
     String id_candidate = null;
-    String id_Job=null;
+    String id_Job = null;
     ArrayList<TruongHoc> truonghoc = new ArrayList<>();
     ArrayList<Experience> experiences = new ArrayList<>();
-    ArrayList<KiNang>kiNangs= new ArrayList<>();
+    ArrayList<KiNang> kiNangs = new ArrayList<>();
     ArrayAdapter<TruongHoc> truongHocAdapter;
     ArrayAdapter<Experience> kinhnghiemAdater;
-    ArrayAdapter<KiNang>kiNangArrayAdapter;
+    ArrayAdapter<KiNang> kiNangArrayAdapter;
     String candi;
 
     @Override
@@ -65,7 +68,7 @@ public class Profile_Candidate_Fragment extends Fragment {
         kinhnghiemAdater = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, experiences);
         binding.kinhnghiem.setAdapter(kinhnghiemAdater);
 
-        kiNangArrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1,kiNangs);
+        kiNangArrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, kiNangs);
         binding.kinang.setAdapter(kiNangArrayAdapter);
 
         Bundle bundle = getArguments();
@@ -73,15 +76,18 @@ public class Profile_Candidate_Fragment extends Fragment {
             id_candidate = bundle.getString("id_candidate");
             id_Job = bundle.getString("ID_JOB");
             candi = bundle.getString("candidate");
-            Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", id_candidate+"yyyyyyyyy "+id_Job);
-            if(id_candidate!=null&&id_Job!=null){
+
+            Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", id_candidate + "yyyyyyyyy " + id_Job);
+            if (id_candidate != null && id_Job != null) {
+
                 fetchApplicationDetails(id_Job, candi);
+
             }
 
 
         }
 
-        Log.d("KOK", "yyyyyyyyy "+id_Job);
+        Log.d("KOK", "yyyyyyyyy " + id_Job);
         LoadDataToFireBase(id_candidate);
         binding.deleteCandidate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,7 +182,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
-                        Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", candi+"yyyyyyyyy "+id_Job);
+                        Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", candi + "yyyyyyyyy " + id_Job);
                         if (document.exists()) {
                             // Lấy dữ liệu từ document
                             String fileCv = document.getString("cv_file");
@@ -184,18 +190,35 @@ public class Profile_Candidate_Fragment extends Fragment {
                             // Hiển thị dữ liệu (hoặc xử lý tiếp)
                             Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", "File CV URL: " + fileCv);
 
-                            // Ví dụ: Gọi hàm tải CV về từ URL nếu cần
-                            // downloadFile(fileCv);
+                            if (fileCv == null || fileCv.isEmpty()) {
+                                binding.cvFile.setVisibility(View.GONE);
+                            } else {
+                                binding.cvFile.setVisibility(View.VISIBLE);
 
+                                // Xử lý sự kiện click để mở CV
+                                binding.cvFile.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        try {
+                                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                                            intent.setData(Uri.parse(fileCv));
+                                            startActivity(intent);
+                                        } catch (Exception e) {
+                                            Toast.makeText(requireContext(),
+                                                    "Không thể mở file CV!",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
                         } else {
-                            Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", "Document không tồn tại cho jobId: " );
+                            Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", "Document không tồn tại cho jobId: ");
                         }
                     } else {
                         Log.e("Firestoraaaaaaaaaaaaaaaaaaaaaae", "Lỗi khi lấy dữ liệu Firestore", task.getException());
                     }
                 });
     }
-
 
 
     public void LoadDataToFireBase(String id_candidate) {
@@ -296,7 +319,6 @@ public class Profile_Candidate_Fragment extends Fragment {
                         });
 
 
-
                         CollectionReference docSchool = db.collection("users")
                                 .document(id_candidate)
                                 .collection("role")
@@ -392,7 +414,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                     String name = document.getString("name");
 
 
-                                                    KiNang kiNang = new KiNang( null, null,name,null);
+                                                    KiNang kiNang = new KiNang(null, null, name, null);
 
                                                     kiNangs.add(kiNang); // Thêm vào danh sách
                                                 }
@@ -414,7 +436,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                     .load(avatarUrl)
                                                     .centerCrop()
                                                     .into(binding.imageProfile); // imageView là ImageView của bạn
-                                            Log.d("ii", "onComplete: lay dc anh vs uid"+id_candidate );
+                                            Log.d("ii", "onComplete: lay dc anh vs uid" + id_candidate);
                                         }
                                     }
                                 })

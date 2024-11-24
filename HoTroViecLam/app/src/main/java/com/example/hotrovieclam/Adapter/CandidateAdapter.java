@@ -24,7 +24,7 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
     private OnItemClickListener editListener;
 
     public interface OnItemClickListener {
-        void onClick(String id_candidate);
+        void onClick(String id_candidate, Integer po);
     }
 
     public void setClickIem(OnItemClickListener listener) {
@@ -63,7 +63,7 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
         holder.binding.backgroundItem.setOnClickListener(v -> {
             if (editListener != null) {
                 Log.d("UU", "onBindViewHolder: "+user.getId());
-                editListener.onClick(user.getId());
+                editListener.onClick(user.getId(), position);
             }
         });
     }
