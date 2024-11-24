@@ -47,6 +47,7 @@ public class Candidate_List extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             jobID = getArguments().getString("jobID");
+            Log.d("KKK", "onCreate: "+jobID);
         }
         db = FirebaseFirestore.getInstance();
     }
