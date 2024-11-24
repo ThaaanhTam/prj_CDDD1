@@ -29,7 +29,7 @@ public class Candidate_List extends Fragment {
     private FragmentCandidateListBinding binding;
     private CandidateAdapter adapter;
     private ArrayList<User> users = new ArrayList<>();
-
+    private String candidateIdd;
     public Candidate_List() {
         // Required empty public constructor
     }
@@ -38,6 +38,7 @@ public class Candidate_List extends Fragment {
         Candidate_List fragment = new Candidate_List();
         Bundle args = new Bundle();
         args.putString("jobID", jobID);
+        args.putString("cadidateIDD", jobID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,7 +56,6 @@ public class Candidate_List extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentCandidateListBinding.inflate(inflater, container, false);
-
         // Initialize RecyclerView and Adapter
         adapter = new CandidateAdapter(getActivity(), users);
         binding.candidateList.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -103,7 +103,10 @@ public class Candidate_List extends Fragment {
                 // Tạo Bundle để truyền dữ liệu
                 Bundle bundle = new Bundle();
                 bundle.putString("id_candidate", id_candidate);
+                bundle.putString("candidate", candidateIdd);
                 bundle.putString("ID_JOB", jobID);
+
+
 
                 // Thiết lập arguments cho Fragment
                 profileCandidateFragment.setArguments(bundle);
@@ -116,8 +119,6 @@ public class Candidate_List extends Fragment {
                         .commit();
             }
         });
-
-
         return binding.getRoot();
     }
 
@@ -142,7 +143,8 @@ public class Candidate_List extends Fragment {
 
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             String candidateId = document.getString("candidateId");
-
+                             candidateIdd = document.getId();
+                            Log.d("candidateIdd", candidateIdd);
                             if (candidateId != null) {
                                 fetchUserDetails(candidateId);  // Fetch user details for each candidate
                             }
@@ -152,6 +154,7 @@ public class Candidate_List extends Fragment {
                     }
                 });
     }
+
 
     private void fetchUserDetails(String candidateId) {
         db.collection("users")
@@ -169,10 +172,8 @@ public class Candidate_List extends Fragment {
                         user.setEmail(userDocument.getString("email"));
                         user.setPhoneNumber(userDocument.getString("phoneNumber"));
                         user.setId(userDocument.getString("id"));
-
                         // Add the user to the list
                         users.add(user);
-
                         // Notify adapter to refresh the list
                         adapter.notifyDataSetChanged();
                     } else {

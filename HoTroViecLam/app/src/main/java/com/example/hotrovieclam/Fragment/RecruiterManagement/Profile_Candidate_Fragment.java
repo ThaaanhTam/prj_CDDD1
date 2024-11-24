@@ -25,6 +25,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -45,6 +50,7 @@ public class Profile_Candidate_Fragment extends Fragment {
     ArrayAdapter<TruongHoc> truongHocAdapter;
     ArrayAdapter<Experience> kinhnghiemAdater;
     ArrayAdapter<KiNang>kiNangArrayAdapter;
+    String candi;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,7 +72,15 @@ public class Profile_Candidate_Fragment extends Fragment {
         if (bundle != null) {
             id_candidate = bundle.getString("id_candidate");
             id_Job = bundle.getString("ID_JOB");
+            candi = bundle.getString("candidate");
+            Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", id_candidate+"yyyyyyyyy "+id_Job);
+            if(id_candidate!=null&&id_Job!=null){
+                fetchApplicationDetails(id_Job, candi);
+            }
+
+
         }
+
         Log.d("KOK", "yyyyyyyyy "+id_Job);
         LoadDataToFireBase(id_candidate);
         binding.deleteCandidate.setOnClickListener(new View.OnClickListener() {
@@ -148,6 +162,40 @@ public class Profile_Candidate_Fragment extends Fragment {
                 .setNegativeButton("Hủy", null) // Nếu chọn "Hủy", không làm gì cả
                 .show();
     }
+
+
+    private void fetchApplicationDetails(String a, String b) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        // Truy vấn Firestore với đường dẫn jobs/{jobId}/application/{applicationId}
+        firestore.collection("jobs")
+                .document(a)
+                .collection("application")
+                .document(b)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", candi+"yyyyyyyyy "+id_Job);
+                        if (document.exists()) {
+                            // Lấy dữ liệu từ document
+                            String fileCv = document.getString("cv_file");
+
+                            // Hiển thị dữ liệu (hoặc xử lý tiếp)
+                            Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", "File CV URL: " + fileCv);
+
+                            // Ví dụ: Gọi hàm tải CV về từ URL nếu cần
+                            // downloadFile(fileCv);
+
+                        } else {
+                            Log.d("Firestoraaaaaaaaaaaaaaaaaaaaaae", "Document không tồn tại cho jobId: " );
+                        }
+                    } else {
+                        Log.e("Firestoraaaaaaaaaaaaaaaaaaaaaae", "Lỗi khi lấy dữ liệu Firestore", task.getException());
+                    }
+                });
+    }
+
 
 
     public void LoadDataToFireBase(String id_candidate) {

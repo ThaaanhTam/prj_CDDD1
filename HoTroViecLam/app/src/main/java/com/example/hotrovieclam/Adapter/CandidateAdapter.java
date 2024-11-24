@@ -66,8 +66,6 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
                 editListener.onClick(user.getId());
             }
         });
-
-
     }
 
     @Override
