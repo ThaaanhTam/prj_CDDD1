@@ -82,7 +82,7 @@ public class JobDetailMain extends AppCompatActivity {
         Intent i = getIntent();
         job = (Job) i.getSerializableExtra("KEY_NAME");
 
-        Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaa", job.toString());
+        //Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaa", job.toString());
 
         //Log.e("JobDetailMain", "Received jobIDdddddddddddddddddddddddddddddd: " + jobID);
         if (jobID == null) {
@@ -225,7 +225,7 @@ public class JobDetailMain extends AppCompatActivity {
 
     private void Web_APIJobDetails() {
         if (job != null) {
-            Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaa", job.getJobURL());
+//            Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaa", job.getJobURL());
             binding.dangkiungtuyen.setText("Truy cập trang web");
             binding.msgImg.setVisibility(View.GONE);
             binding.emailSDT.setVisibility(View.GONE);

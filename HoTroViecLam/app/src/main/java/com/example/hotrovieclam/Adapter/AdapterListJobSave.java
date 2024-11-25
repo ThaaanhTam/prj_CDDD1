@@ -1,6 +1,7 @@
 package com.example.hotrovieclam.Adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.hotrovieclam.Activity.JobDetailMain;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.databinding.ItemJobSaveBinding;
 import com.google.firebase.storage.StorageReference;
@@ -71,9 +73,12 @@ public class AdapterListJobSave  extends RecyclerView.Adapter<AdapterListJobSave
         holder.job = job;
 
         holder.binding.btnThongTinMain.setOnClickListener(v -> {
-            if (bamvaodexemchitietcongviecdaluu != null) {
-                bamvaodexemchitietcongviecdaluu.onEditClick(job.getId());
-            }
+            Intent intent = new Intent(context, JobDetailMain.class);
+            Log.d("hh", job.getId());
+            intent.putExtra("jobID", job.getId()); // Truyền ID công việc
+            intent.putExtra("sourceId", job.getSourceId());
+            intent.putExtra("KEY_NAME", job);
+            context.startActivity(intent);
         });
 
         holder.binding.delete.setOnClickListener(v -> {
@@ -81,16 +86,8 @@ public class AdapterListJobSave  extends RecyclerView.Adapter<AdapterListJobSave
                 deleteClickListener.onDeleteClick(job.getId(), holder.getAdapterPosition());
             }
         });
-    }
-    private void loadImage(StorageReference storageReference, String path, ImageView imageView) {
-        if (path != null && !path.isEmpty()) {
-            StorageReference imageRef = storageReference.child(path);
-            imageRef.getDownloadUrl()
-                    .addOnSuccessListener(uri -> Glide.with(context).load(uri).into(imageView))
-                    .addOnFailureListener(e -> Toast.makeText(context, "Không thể tải ảnh", Toast.LENGTH_SHORT).show());
-        }
-    }
 
+    }
     @Override
     public int getItemCount() {
         return jobs.size();
@@ -105,6 +102,10 @@ public class AdapterListJobSave  extends RecyclerView.Adapter<AdapterListJobSave
         public MyViewHolder(@NonNull ItemJobSaveBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
+
         }
+    }
+    public interface OnItemClick {
+        void DetailClick(String SourceId, String jobID, Job job);
     }
 }
