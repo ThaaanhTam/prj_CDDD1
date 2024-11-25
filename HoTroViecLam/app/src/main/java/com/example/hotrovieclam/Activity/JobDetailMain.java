@@ -32,6 +32,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Fragment.ConvestationFrament;
 import com.example.hotrovieclam.Fragment.Home;
 import com.example.hotrovieclam.Fragment.RecruiterManagement.DetailinfoJob;
@@ -171,6 +172,7 @@ public class JobDetailMain extends AppCompatActivity {
                                                 });
                                     }
                                 })
+
                                 .addOnFailureListener(err -> {
                                     Log.e("Firestore", "Lỗi khi kiểm tra conversation: " + err.getMessage());
                                 });
