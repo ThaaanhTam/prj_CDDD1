@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,6 +11,7 @@
     tools:context=".Fragment.RecruiterManagement.Profile_Candidate_Fragment">
 
     <LinearLayout
+        android:id="@+id/a"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -42,6 +44,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/aa"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -236,11 +239,25 @@
 
         </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
+    <WebView
+        android:id="@+id/webview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:visibility="gone" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="3"
+        android:visibility="gone" />
+    <LinearLayout
+        android:id="@+id/aaa"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginTop="20dp"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatButton
