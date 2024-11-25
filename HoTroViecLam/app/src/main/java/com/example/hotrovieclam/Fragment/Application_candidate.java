@@ -3,9 +3,11 @@ package com.example.hotrovieclam.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -30,7 +32,6 @@ public class Application_candidate extends AppCompatActivity {
     ActivityApplicationCandidateBinding binding;
     private AplicationAdapter adapter;
     private List<Candidate> candidateList;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,21 +43,19 @@ public class Application_candidate extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-binding.lvGoBack.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        finish();
-    }
-});
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.title));
+        kt();
+        binding.lvGoBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        Glide.with(this)
-                .asGif()
-                .load(R.drawable.angry)
-                .override(500, 500)  // Điều chỉnh kích thước để đảm bảo không bị treo
-                .into(binding.tvGif);
-         binding.tvGif.setVisibility(View.VISIBLE);
+
         candidateList = new ArrayList<>();
-        adapter = new AplicationAdapter(this,candidateList);
+        adapter = new AplicationAdapter(this, candidateList);
         binding.recyclerView.setAdapter(adapter);
 
         jobsRef.addSnapshotListener((querySnapshot, e) -> {
@@ -78,7 +77,20 @@ binding.lvGoBack.setOnClickListener(new View.OnClickListener() {
 
     UserSessionManager userSessionManager = new UserSessionManager();
     String uid = userSessionManager.getUserUid();
+private    void  kt(){
+    if(candidateList == null){
+        Glide.with(this)
+                .asGif()
+                .load(R.drawable.angry)
+                .override(500, 500)
+                .into(binding.tvGif);
+        binding.tvGif.setVisibility(View.VISIBLE);
+    }else {
 
+        binding.tvGif.setVisibility(View.GONE);
+    }
+
+}
     private void fetchApplications(String jobID, String title) {
         CollectionReference applicationsRef = db.collection("jobs")
                 .document(jobID)  // Đến công việc cụ thể
@@ -113,15 +125,16 @@ binding.lvGoBack.setOnClickListener(new View.OnClickListener() {
                             candidate.setTitle(title);
                             candidate.setId(applicationID);
                             candidate.setJobID(jobID);
-
-                            // Add the candidate to the new list
                             newCandidates.add(candidate);
-                            binding.tvGif.setVisibility(View.GONE);
+
                         }
 
                         // Update candidate list and notify adapter once
+
                         candidateList.addAll(newCandidates);
+                        kt();
                         adapter.notifyDataSetChanged();
+
                     } else {
                         Log.w("Firestore", "No applications found for this job");
                     }
