@@ -80,8 +80,8 @@ public class cv_template extends AppCompatActivity {
                     String email = documentSnapshot.getString("email"); // Trường email
                     String name = documentSnapshot.getString("name"); // Trường name
                     String sdt = documentSnapshot.getString("phoneNumber"); // Trường số điện thoại
-                    String avatarUrl = documentSnapshot.getString("avatar"); //
-                    String ns = documentSnapshot.getString("birthday"); // Lấy ngày sinh
+                    String avatarUrl = documentSnapshot.getString("avatar");
+                    String ns = documentSnapshot.getString("birthday");
                     Long genderLong = documentSnapshot.getLong("gioitinh"); // Lấy giới tính (kiểu Long)
 
                     // Hiển thị thông tin lên UI

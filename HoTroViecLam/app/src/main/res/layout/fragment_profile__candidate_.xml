@@ -242,12 +242,11 @@
             android:background="@drawable/btnt_choi"
             android:text="Bỏ qua"
             android:textColor="@color/white">
-
         </androidx.appcompat.widget.AppCompatButton>
 
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/idProCandidate"
+            android:id="@+id/btnChapNhan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"

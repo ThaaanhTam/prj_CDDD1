@@ -76,6 +76,13 @@ public class Profile_Candidate_Fragment extends Fragment {
             }
         });
 
+        binding.btnChapNhan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         return view;
     }
 

@@ -97,8 +97,6 @@ binding.lvGoBack.setOnClickListener(new View.OnClickListener() {
                             String applicationID = document.getId();
                             String applicantName = document.getString("candidateId");
                             Double status = document.getDouble("status");
-
-                            // Create and set candidate data
                             Candidate candidate = new Candidate();
                             if (status != null) {
                                 if (status.equals(0.0)) {
