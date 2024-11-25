@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -14,7 +15,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -41,6 +48,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class Profile_Candidate_Fragment extends Fragment {
@@ -54,6 +63,10 @@ public class Profile_Candidate_Fragment extends Fragment {
     ArrayAdapter<Experience> kinhnghiemAdater;
     ArrayAdapter<KiNang> kiNangArrayAdapter;
     String candi;
+    private LinearLayout mainLayout;
+    private WebView webView;
+    private ProgressBar progressBar;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,7 +74,7 @@ public class Profile_Candidate_Fragment extends Fragment {
         binding = FragmentProfileCandidateBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 //
-
+        mainLayout = binding.mainLayout;
         truongHocAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, truonghoc);
         binding.lisviewHocVan.setAdapter(truongHocAdapter);
 
@@ -95,79 +108,32 @@ public class Profile_Candidate_Fragment extends Fragment {
                 deleteCandidate(id_Job, id_candidate);
             }
         });
+        webView = new WebView(getContext());
+        webView.setLayoutParams(new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT
+        ));
+        webView.setVisibility(View.GONE);
+
+        progressBar = new ProgressBar(getContext());
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        progressBar.setLayoutParams(params);
+        progressBar.setVisibility(View.GONE);
+
+        // Thêm WebView và ProgressBar vào layout
+        mainLayout.addView(webView);
+        mainLayout.addView(progressBar);
+
+        // Cấu hình WebView
+        configureWebView();
 
         return view;
     }
 
-    private void deleteCandidate(String idJob, String candidateId) {
-        // Hiển thị hộp thoại xác nhận
-        new AlertDialog.Builder(getContext())
-                .setTitle("Xác nhận xóa")
-                .setMessage("Bạn có chắc chắn muốn xóa ứng viên này không?")
-                .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Nếu người dùng chọn "Xóa", tiến hành xóa ứng viên và tài liệu người dùng
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                        // Bước 1: Truy vấn và lấy tài liệu ứng viên trong collection "application"
-                        db.collection("jobs")
-                                .document(idJob)  // ID của công việc
-                                .collection("application")
-                                .whereEqualTo("candidateId", candidateId)  // Tìm ứng viên theo candidateId
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            QuerySnapshot querySnapshot = task.getResult();
-
-                                            // Kiểm tra nếu có tài liệu ứng viên cần xóa
-                                            if (querySnapshot != null && !querySnapshot.isEmpty()) {
-                                                // Lấy id của tài liệu trong collection "application"
-                                                for (QueryDocumentSnapshot document : querySnapshot) {
-                                                    String documentId = document.getId(); // Lấy id của tài liệu trong application
-
-                                                    // Xóa tài liệu ứng viên dựa trên documentId
-                                                    db.collection("jobs")
-                                                            .document(idJob)
-                                                            .collection("application")
-                                                            .document(documentId)
-                                                            .delete()
-                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void aVoid) {
-                                                                    // Xóa thành công tài liệu ứng viên
-                                                                    Toast.makeText(getContext(), "Xóa ứng viên thành công!", Toast.LENGTH_SHORT).show();
-                                                                    Bundle bundle = new Bundle();
-                                                                    bundle.putBoolean("delete", true);  // Đảm bảo tên khóa là "delete"
-                                                                    getParentFragmentManager().setFragmentResult("deleteSuccess", bundle);
-                                                                    getParentFragmentManager().popBackStack();  // Đóng Fragment
-
-                                                                }
-                                                            })
-                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    Toast.makeText(getContext(), "Lỗi khi xóa ứng viên: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            });
-                                                }
-                                            } else {
-                                                // Nếu không tìm thấy tài liệu ứng viên
-                                                Toast.makeText(getContext(), "Không tìm thấy ứng viên với id: " + candidateId, Toast.LENGTH_SHORT).show();
-                                            }
-                                        } else {
-                                            // Trường hợp lỗi khi truy vấn
-                                            Toast.makeText(getContext(), "Lỗi khi truy vấn Firestore: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                    }
-                })
-                .setNegativeButton("Hủy", null) // Nếu chọn "Hủy", không làm gì cả
-                .show();
-    }
 
 
     private void fetchApplicationDetails(String a, String b) {
@@ -199,15 +165,29 @@ public class Profile_Candidate_Fragment extends Fragment {
                                 binding.cvFile.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
+//                                        try {
+//                                            Intent intent = new Intent(Intent.ACTION_VIEW);
+//                                            intent.setData(Uri.parse(fileCv));
+//                                            startActivity(intent);
+//                                        } catch (Exception e) {
+//                                            Toast.makeText(requireContext(),
+//                                                    "Không thể mở file CV!",
+//                                                    Toast.LENGTH_SHORT).show();
+//                                        }
+                                        binding.a.setVisibility(View.GONE);
+                                        binding.aa.setVisibility(View.GONE);
+                                        binding.aaa.setVisibility(View.GONE);
+
+                                        String pdfUrl = fileCv;
+
                                         try {
-                                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                                            intent.setData(Uri.parse(fileCv));
-                                            startActivity(intent);
-                                        } catch (Exception e) {
-                                            Toast.makeText(requireContext(),
-                                                    "Không thể mở file CV!",
-                                                    Toast.LENGTH_SHORT).show();
+                                            pdfUrl = URLEncoder.encode(pdfUrl, "UTF-8");
+                                        } catch (UnsupportedEncodingException e) {
+                                            e.printStackTrace();
                                         }
+
+                                        String googleDocsUrl = "https://docs.google.com/gview?embedded=true&url=" + pdfUrl;
+                                        webView.loadUrl(googleDocsUrl);
                                     }
                                 });
                             }
@@ -252,11 +232,13 @@ public class Profile_Candidate_Fragment extends Fragment {
                                         String ngaysinh = profileDocument.getString("birthday"); // Lấy ngày sinh
                                         String diachi = profileDocument.getString("address"); // Lấy địa chỉ
                                         int gioitinh = profileDocument.getLong("gioitinh").intValue(); // Lấy giới tính dưới dạng số
+                                        if (isAdded()) {
+                                            // Hiển thị thông tin profile
+                                            binding.born.setText(ngaysinh); // Hiển thị ngày sinh
+                                            binding.born.setTextColor(getResources().getColor(R.color.black));// Hiển thị tên giới tính                                        } else {
+                                            Log.e("FragmentError", "Fragment is not attached to a context.");
+                                        }
 
-                                        // Hiển thị thông tin profile
-                                        binding.born.setText(ngaysinh); // Hiển thị ngày sinh
-                                        binding.born.setTextColor(getResources().getColor(R.color.black));// Hiển thị tên giới tính
-// Hiển thị địa chỉ
 
                                         // Truy vấn bảng genders để lấy tên giới tính
                                         db.collection("genders").document(String.valueOf(gioitinh))
@@ -266,8 +248,13 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                         DocumentSnapshot genderDocument = genderTask.getResult();
                                                         if (genderDocument.exists()) {
                                                             String genderName = genderDocument.getString("name");
-                                                            binding.gender.setText(genderName);
-                                                            binding.gender.setTextColor(getResources().getColor(R.color.black));// Hiển thị tên giới tính
+                                                            if (isAdded()) {
+                                                                binding.gender.setText(genderName);
+                                                                binding.gender.setTextColor(getResources().getColor(R.color.black));// Hiển thị tên giới tính                                                            } else {
+                                                                Log.e("FragmentError", "Fragment is not attached to a context.");
+                                                            }
+
+
                                                         } else {
                                                             Log.d("Firestore", "Không tìm thấy giới tính cho ID: " + gioitinh);
                                                         }
@@ -277,10 +264,15 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                 });
 
                                     } else {
-                                        binding.gender.setText("Chưa cập nhật");
-                                        binding.gender.setTextColor(getResources().getColor(R.color.chuacapnhat));
-                                        binding.born.setText("Chưa cập nhật");
-                                        binding.born.setTextColor(getResources().getColor(R.color.chuacapnhat));
+                                        if (isAdded()) {
+                                            binding.gender.setText("Chưa cập nhật");
+                                            binding.gender.setTextColor(requireContext().getResources().getColor(R.color.chuacapnhat));
+                                            binding.born.setText("Chưa cập nhật");
+                                            binding.born.setTextColor(requireContext().getResources().getColor(R.color.chuacapnhat));
+                                        } else {
+                                            Log.e("FragmentError", "Fragment is not attached to a context. Cannot update UI.");
+                                        }
+
 
                                         Log.d("Firestore", "Không tìm thấy dữ liệu profile.");
                                     }
@@ -308,8 +300,13 @@ public class Profile_Candidate_Fragment extends Fragment {
                                             }
                                         } else {
                                             Log.d("Firestore", "Không có document với UID này trong bảng Introduces");
-                                            binding.gioithieu.setText("Chưa cập nhật");
-                                            binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
+                                            if (isAdded()) {
+                                                binding.gioithieu.setText("Chưa cập nhật");
+                                                binding.gioithieu.setTextColor(getResources().getColor(R.color.chuacapnhat));
+                                            } else {
+                                                Log.e("FragmentError", "Fragment is not attached to a context.");
+                                            }
+
                                         }
                                     });
                                 } else {
@@ -455,5 +452,107 @@ public class Profile_Candidate_Fragment extends Fragment {
         });
 
 
+    }
+    private void deleteCandidate(String idJob, String candidateId) {
+        // Hiển thị hộp thoại xác nhận
+        new AlertDialog.Builder(getContext())
+                .setTitle("Xác nhận xóa")
+                .setMessage("Bạn có chắc chắn muốn xóa ứng viên này không?")
+                .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Nếu người dùng chọn "Xóa", tiến hành xóa ứng viên và tài liệu người dùng
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                        // Bước 1: Truy vấn và lấy tài liệu ứng viên trong collection "application"
+                        db.collection("jobs")
+                                .document(idJob)  // ID của công việc
+                                .collection("application")
+                                .whereEqualTo("candidateId", candidateId)  // Tìm ứng viên theo candidateId
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            QuerySnapshot querySnapshot = task.getResult();
+
+                                            // Kiểm tra nếu có tài liệu ứng viên cần xóa
+                                            if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                                // Lấy id của tài liệu trong collection "application"
+                                                for (QueryDocumentSnapshot document : querySnapshot) {
+                                                    String documentId = document.getId(); // Lấy id của tài liệu trong application
+
+                                                    // Xóa tài liệu ứng viên dựa trên documentId
+                                                    db.collection("jobs")
+                                                            .document(idJob)
+                                                            .collection("application")
+                                                            .document(documentId)
+                                                            .delete()
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    // Xóa thành công tài liệu ứng viên
+                                                                    Toast.makeText(getContext(), "Xóa ứng viên thành công!", Toast.LENGTH_SHORT).show();
+                                                                    Bundle bundle = new Bundle();
+                                                                    bundle.putBoolean("delete", true);  // Đảm bảo tên khóa là "delete"
+                                                                    getParentFragmentManager().setFragmentResult("deleteSuccess", bundle);
+                                                                    getParentFragmentManager().popBackStack();  // Đóng Fragment
+
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Toast.makeText(getContext(), "Lỗi khi xóa ứng viên: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            });
+                                                }
+                                            } else {
+                                                // Nếu không tìm thấy tài liệu ứng viên
+                                                Toast.makeText(getContext(), "Không tìm thấy ứng viên với id: " + candidateId, Toast.LENGTH_SHORT).show();
+                                            }
+                                        } else {
+                                            // Trường hợp lỗi khi truy vấn
+                                            Toast.makeText(getContext(), "Lỗi khi truy vấn Firestore: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton("Hủy", null) // Nếu chọn "Hủy", không làm gì cả
+                .show();
+    }
+
+    private void configureWebView() {
+        // Cấu hình WebView
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
+
+        // Set WebViewClient
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                progressBar.setVisibility(View.VISIBLE);
+                webView.setVisibility(View.VISIBLE);
+                binding.cvFile.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode,
+                                        String description, String failingUrl) {
+                progressBar.setVisibility(View.GONE);
+
+                // Hiện lại button nếu có lỗi
+                webView.setVisibility(View.GONE);
+                binding.cvFile.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }
