@@ -46,6 +46,7 @@
             android:layout_height="wrap_content"
             android:hint="Enter your message"
             android:padding="10dp"
+            android:background="@drawable/background"
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toStartOf="@+id/imageButtonSend"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +55,7 @@
 
         <ImageButton
             android:id="@+id/imageButtonSend"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_send"
