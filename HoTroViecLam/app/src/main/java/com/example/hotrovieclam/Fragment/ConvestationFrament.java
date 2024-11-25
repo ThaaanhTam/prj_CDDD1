@@ -50,12 +50,6 @@ public class ConvestationFrament extends Fragment {
 if(currentUserId!=null){
     fetchJobsFromFirestore();
 }
-
-
-
-
-
-
         return binding.getRoot();
     }
 
@@ -105,11 +99,7 @@ if(currentUserId!=null){
                                                             DocumentSnapshot lastMessageDoc = messageSnapshot.getDocuments().get(0);
                                                             String lastMessageContent = lastMessageDoc.getString("content");
                                                             long timestamp = lastMessageDoc.getLong("sent_at");
-
-
-                                                            // Giá trị timestamp cần chuyển đổi
-
-                                                            // Chuyển đổi từ timestamp sang đối tượng Date
+                                                            
                                                             Date date = new Date(timestamp);
 
                                                             // Định dạng ngày giờ thành chuỗi
