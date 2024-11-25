@@ -11,6 +11,7 @@
         android:background="@drawable/message_background_left"
         android:padding="10dp"
         android:textColor="@android:color/white"
+        android:layout_marginRight="20dp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,7 +23,9 @@
         android:background="@drawable/message_background_right"
         android:padding="10dp"
         android:textColor="@android:color/white"
+        android:layout_marginLeft="20dp"
         android:visibility="gone"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

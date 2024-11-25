@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <solid android:color="#4CAF50"/> <!-- Màu nền của tin nhắn -->
+    <solid android:color="#7D7E7D"/> <!-- Màu nền của tin nhắn -->
 
     <corners
         android:topLeftRadius="16dp"

@@ -42,7 +42,7 @@ public class Navigation extends AppCompatActivity {
     private int currentFragmentId = -1;
     UserSessionManager user = new UserSessionManager();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+   static Fragment selectedFragment  = new Home();;
     @Override
     protected void onCreate(Bundle  savedInstanceState) {
         binding = NavigationBinding.inflate(getLayoutInflater());
@@ -81,7 +81,7 @@ public class Navigation extends AppCompatActivity {
 
                 // Cập nhật currentFragmentId với ID mới
                 currentFragmentId = id;
-                Fragment selectedFragment = null;
+                 selectedFragment = null;
 
                 if (id == R.id.home) {
                     selectedFragment = new Home();
