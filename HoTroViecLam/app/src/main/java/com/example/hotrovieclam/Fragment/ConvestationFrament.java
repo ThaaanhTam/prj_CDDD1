@@ -49,8 +49,13 @@ public class ConvestationFrament extends Fragment {
         binding.recyclerViewConversations.setAdapter(adapter);
 if(currentUserId!=null){
     fetchJobsFromFirestore();
-    Log.d("bbbb", "onCreateView: ");
 }
+
+
+
+
+
+
         return binding.getRoot();
     }
 
@@ -81,20 +86,10 @@ if(currentUserId!=null){
                                         }
 
                                         if (userSnapshot != null && userSnapshot.exists()) {
-                                            String name;
-                                            if(userSnapshot.getString("name")!=null) {
-                                                 name = userSnapshot.getString("name");
-                                            } else {
-                                                name = " ";
-                                            }
-                                            String avatar;
-                                            if(userSnapshot.getString("avatar")!=null){
-                                                avatar = userSnapshot.getString("avatar");
-                                            } else {
-                                                avatar = " ";
-                                            }
+                                            String name = userSnapshot.getString("name");
+                                            String avatar = userSnapshot.getString("avatar");
 
-
+                                            // Lắng nghe thay đổi tin nhắn cuối cùng
                                             db.collection("Message")
                                                     .document(messageID)
                                                     .collection("messages")
@@ -111,6 +106,10 @@ if(currentUserId!=null){
                                                             String lastMessageContent = lastMessageDoc.getString("content");
                                                             long timestamp = lastMessageDoc.getLong("sent_at");
 
+
+                                                            // Giá trị timestamp cần chuyển đổi
+
+                                                            // Chuyển đổi từ timestamp sang đối tượng Date
                                                             Date date = new Date(timestamp);
 
                                                             // Định dạng ngày giờ thành chuỗi
@@ -121,10 +120,6 @@ if(currentUserId!=null){
                                                             Log.d("FormattedDate", "Thời gian định dạng: " + formattedDate);
                                                             updateConversationList(
                                                                     documentId, messageID, status, name, avatar, lastMessageContent,formattedDate
-                                                            );
-                                                        }else {
-                                                            updateConversationList(
-                                                                    documentId, messageID, status, name, avatar, " "," "
                                                             );
                                                         }
                                                     });
@@ -147,6 +142,7 @@ if(currentUserId!=null){
         for (int i = 0; i < conversationList.size(); i++) {
             ListMess listMess = conversationList.get(i);
             if (listMess.getReicever_id().equals(documentId)) {
+                // Cập nhật hội thoại đã tồn tại
                 listMess.setMessID(messageID);
                 listMess.setStatus(status);
                 listMess.setName(name);
@@ -161,6 +157,8 @@ if(currentUserId!=null){
                 break;
             }
         }
+
+        // Nếu chưa tồn tại, thêm mới vào danh sách
         if (!isUpdated) {
             ListMess newListMess = new ListMess();
             newListMess.setReicever_id(documentId);

@@ -74,7 +74,7 @@ public class MessageActivity extends AppCompatActivity {
 
         // Tạo Map chứa dữ liệu tin nhắn
         Map<String, Object> messageData = new HashMap<>();
-        messageData.put("sender_id", currentUserId);
+        messageData.put("sender_id", currentUserId);  // Gửi tin nhắn từ người dùng hiện tại
         messageData.put("content", content);
         messageData.put("sent_at", System.currentTimeMillis());
 
