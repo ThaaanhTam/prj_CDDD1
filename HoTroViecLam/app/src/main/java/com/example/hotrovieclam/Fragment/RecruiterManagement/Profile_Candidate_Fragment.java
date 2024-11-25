@@ -63,7 +63,6 @@ public class Profile_Candidate_Fragment extends Fragment {
     ArrayAdapter<Experience> kinhnghiemAdater;
     ArrayAdapter<KiNang> kiNangArrayAdapter;
     String candi;
-    private LinearLayout mainLayout;
     private WebView webView;
     private ProgressBar progressBar;
 
@@ -75,7 +74,6 @@ public class Profile_Candidate_Fragment extends Fragment {
         View view = binding.getRoot();
         webView = binding.webview;
         progressBar = binding.progressBar;
-        mainLayout = binding.mainLayout;
         truongHocAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, truonghoc);
         binding.lisviewHocVan.setAdapter(truongHocAdapter);
 
@@ -109,25 +107,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                 deleteCandidate(id_Job, id_candidate);
             }
         });
-//        webView = new WebView(getContext());
-//        webView.setLayoutParams(new RelativeLayout.LayoutParams(
-//                RelativeLayout.LayoutParams.MATCH_PARENT,
-//                RelativeLayout.LayoutParams.MATCH_PARENT
-//        ));
-//        webView.setVisibility(View.GONE);
-//
-//        progressBar = new ProgressBar(getContext());
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-//                RelativeLayout.LayoutParams.WRAP_CONTENT,
-//                RelativeLayout.LayoutParams.WRAP_CONTENT
-//        );
-//        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-//        progressBar.setLayoutParams(params);
-//        progressBar.setVisibility(View.GONE);
-//
-//        // Thêm WebView và ProgressBar vào layout
-//        mainLayout.addView(webView);
-//        mainLayout.addView(progressBar);
+
 
         // Cấu hình WebView
         configureWebView();
@@ -159,36 +139,41 @@ public class Profile_Candidate_Fragment extends Fragment {
 
                             if (fileCv == null || fileCv.isEmpty()) {
                                 binding.cvFile.setVisibility(View.GONE);
+
                             } else {
                                 binding.cvFile.setVisibility(View.VISIBLE);
 
                                 // Xử lý sự kiện click để mở CV
                                 binding.cvFile.setOnClickListener(new View.OnClickListener() {
+                                    boolean isWebViewVisible = false;
                                     @Override
                                     public void onClick(View v) {
-//                                        try {
-//                                            Intent intent = new Intent(Intent.ACTION_VIEW);
-//                                            intent.setData(Uri.parse(fileCv));
-//                                            startActivity(intent);
-//                                        } catch (Exception e) {
-//                                            Toast.makeText(requireContext(),
-//                                                    "Không thể mở file CV!",
-//                                                    Toast.LENGTH_SHORT).show();
-//                                        }
-                                      //  binding.a.setVisibility(View.GONE);
-                                        binding.aa.setVisibility(View.GONE);
-                                     //   binding.aaa.setVisibility(View.GONE);
+//
+                                        if (!isWebViewVisible) {
+                                            // Chuyển sang hiển thị WebView
+                                            binding.aa.setVisibility(View.GONE);
+                                            webView.setVisibility(View.VISIBLE);
+                                            progressBar.setVisibility(View.VISIBLE);
+                                            binding.cvFile.setText("CV_App");
 
-                                        String pdfUrl = fileCv;
+                                            String pdfUrl = fileCv;
+                                            try {
+                                                pdfUrl = URLEncoder.encode(pdfUrl, "UTF-8");
+                                            } catch (UnsupportedEncodingException e) {
+                                                e.printStackTrace();
+                                            }
 
-                                        try {
-                                            pdfUrl = URLEncoder.encode(pdfUrl, "UTF-8");
-                                        } catch (UnsupportedEncodingException e) {
-                                            e.printStackTrace();
+                                            String googleDocsUrl = "https://docs.google.com/gview?embedded=true&url=" + pdfUrl;
+                                            webView.loadUrl(googleDocsUrl);
+                                            isWebViewVisible = true;
+                                        } else {
+                                            // Quay lại hiển thị aa
+                                            webView.setVisibility(View.GONE);
+                                            binding.aa.setVisibility(View.VISIBLE);
+                                            binding.cvFile.setText("CV_PDF");
+
+                                            isWebViewVisible = false;
                                         }
-
-                                        String googleDocsUrl = "https://docs.google.com/gview?embedded=true&url=" + pdfUrl;
-                                        webView.loadUrl(googleDocsUrl);
                                     }
                                 });
                             }
@@ -537,7 +522,7 @@ public class Profile_Candidate_Fragment extends Fragment {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 progressBar.setVisibility(View.VISIBLE);
                 webView.setVisibility(View.VISIBLE);
-                binding.cvFile.setVisibility(View.GONE);
+
             }
 
             @Override
