@@ -73,7 +73,8 @@ public class Profile_Candidate_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentProfileCandidateBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-//
+        webView = binding.webview;
+        progressBar = binding.progressBar;
         mainLayout = binding.mainLayout;
         truongHocAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, truonghoc);
         binding.lisviewHocVan.setAdapter(truongHocAdapter);
@@ -108,25 +109,25 @@ public class Profile_Candidate_Fragment extends Fragment {
                 deleteCandidate(id_Job, id_candidate);
             }
         });
-        webView = new WebView(getContext());
-        webView.setLayoutParams(new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT
-        ));
-        webView.setVisibility(View.GONE);
-
-        progressBar = new ProgressBar(getContext());
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        progressBar.setLayoutParams(params);
-        progressBar.setVisibility(View.GONE);
-
-        // Thêm WebView và ProgressBar vào layout
-        mainLayout.addView(webView);
-        mainLayout.addView(progressBar);
+//        webView = new WebView(getContext());
+//        webView.setLayoutParams(new RelativeLayout.LayoutParams(
+//                RelativeLayout.LayoutParams.MATCH_PARENT,
+//                RelativeLayout.LayoutParams.MATCH_PARENT
+//        ));
+//        webView.setVisibility(View.GONE);
+//
+//        progressBar = new ProgressBar(getContext());
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+//                RelativeLayout.LayoutParams.WRAP_CONTENT,
+//                RelativeLayout.LayoutParams.WRAP_CONTENT
+//        );
+//        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+//        progressBar.setLayoutParams(params);
+//        progressBar.setVisibility(View.GONE);
+//
+//        // Thêm WebView và ProgressBar vào layout
+//        mainLayout.addView(webView);
+//        mainLayout.addView(progressBar);
 
         // Cấu hình WebView
         configureWebView();
@@ -174,9 +175,9 @@ public class Profile_Candidate_Fragment extends Fragment {
 //                                                    "Không thể mở file CV!",
 //                                                    Toast.LENGTH_SHORT).show();
 //                                        }
-                                        binding.a.setVisibility(View.GONE);
+                                      //  binding.a.setVisibility(View.GONE);
                                         binding.aa.setVisibility(View.GONE);
-                                        binding.aaa.setVisibility(View.GONE);
+                                     //   binding.aaa.setVisibility(View.GONE);
 
                                         String pdfUrl = fileCv;
 
