@@ -81,7 +81,7 @@ public class Information_management extends Fragment {
                 binding.tvCompanyEmail.setText(documentSnapshot.getString("companyEmail"));
                 binding.tvAddress.setText(documentSnapshot.getString("address"));
                 binding.tvWebsite.setText(documentSnapshot.getString("website"));
-                binding.tvStatus.setText(documentSnapshot.getString("statusId"));
+//                binding.tvStatus.setText(documentSnapshot.getString("statusId"));
 
                 anhcccdTruoc = documentSnapshot.getString("legalDocumentFront");
                 binding.tvLegalDocumentFront.setText(anhcccdTruoc);

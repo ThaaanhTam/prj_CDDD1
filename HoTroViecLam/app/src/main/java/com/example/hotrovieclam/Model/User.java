@@ -10,6 +10,15 @@ public class User {
     private String phoneNumber;  // phone_number varchar
     private int userTypeId;      // user_type_id integer [ref: > user_types.id]
     private String avatar;
+private String cv;
+
+    public String getCv() {
+        return cv;
+    }
+
+    public void setCv(String cv) {
+        this.cv = cv;
+    }
 
     private Timestamp createdAt; // created_at timestamp
     private Timestamp updatedAt; // updated_at timestamp
