@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -114,6 +115,8 @@ public class JobDetailMain extends AppCompatActivity {
             Web_APIJobDetails();
 
         }
+        Uri uri = (job.getAvatar() != null && !job.getAvatar().isEmpty()) ? Uri.parse(job.getAvatar()) : Uri.parse("https://123job.vn/images/no_company.png");
+        Glide.with(this).load(uri).into(binding.ivLogo);
         // Khởi tạo Firebase Storage
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -227,10 +230,41 @@ public class JobDetailMain extends AppCompatActivity {
                         });
             }
         });
+        if(job.getEmployerId()!=null) {
+            DocumentReference employerDocRef = db.collection("users")
+                    .document(job.getEmployerId())
+                    .collection("role")
+                    .document("employer");
+            employerDocRef.get().addOnSuccessListener(document -> {
+                if (document != null && document.exists()) {
+                    // Lấy trường logo từ tài liệu employer
+                    String logoUrl = document.getString("logo");
+                    if (logoUrl != null) {
+                        Log.d("logoUrl", logoUrl);
+                        // Tải ảnh từ Firebase Storage nếu có URL của logo
+                        loadImage(storage.getReference(), "images/" + logoUrl, binding.ivLogo);
+                    } else {
+                        Log.w("Firestore", "Logo field is null");
+                    }
+                } else {
+                    Log.w("Firestore", "Document does not exist or role is not employer");
+                }
+            }).addOnFailureListener(e -> {
+                // Xử lý lỗi nếu có
+                Log.e("Firestore", "Error getting document", e);
+            });
+        }
 
     }
 
-
+    private void loadImage(StorageReference storageReference, String path, ImageView imageView) {
+        if (path != null && !path.isEmpty()) {
+            StorageReference imageRef = storageReference.child(path);
+            imageRef.getDownloadUrl()
+                    .addOnSuccessListener(uri -> Glide.with(this).load(uri).into(imageView))
+                    .addOnFailureListener(e -> Toast.makeText(this, "Không thể tải ảnh", Toast.LENGTH_SHORT).show());
+        }
+    }
 
 String employerId = "";
 
