@@ -1,17 +1,26 @@
 package com.example.hotrovieclam.Model;
 
 public class KiNang {
-    private String id,uid,name,description;
+    private String id,uid,name,description,imageUrl;
 
-    public KiNang(String id, String uid, String name, String description) {
+    public KiNang(String id, String uid, String name, String description,String imageUrl) {
         this.id = id;
         this.uid = uid;
         this.name = name;
         this.description = description;
+        this.imageUrl = imageUrl;
     }
 
     public KiNang() {
     }
+     public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
 
     public String getId() {
         return id;

@@ -90,7 +90,7 @@ public class JobDetailMain extends AppCompatActivity {
         Intent i = getIntent();
         job = (Job) i.getSerializableExtra("KEY_NAME");
 
-        Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaa", job.toString());
+        //Log.d("aaaaaaaaaaaaaaaaaaaaaaaaaaaa", job.toString());
 
         //Log.e("JobDetailMain", "Received jobIDdddddddddddddddddddddddddddddd: " + jobID);
         if (jobID == null) {

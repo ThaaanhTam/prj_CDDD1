@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.example.hotrovieclam.Adapter.AdapterListJobSave;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 

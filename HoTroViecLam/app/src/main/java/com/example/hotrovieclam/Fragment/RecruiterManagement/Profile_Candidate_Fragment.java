@@ -448,7 +448,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                             kiNangs.clear(); // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
                                             if (task.getResult().isEmpty()) {
                                                 // Hiển thị thông báo nếu không có dữ liệu
-                                                kiNangs.add(new KiNang(null, null, "Chưa cập nhật kĩ năng", null));
+                                                kiNangs.add(new KiNang(null, null, "Chưa cập nhật kĩ năng", null,null));
                                                 kiNangArrayAdapter.notifyDataSetChanged();
                                                 //binding.lisviewHocVan.setVisibility(View.VISIBLE); // Hiển thị ListView
                                             } else {

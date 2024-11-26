@@ -1,17 +1,25 @@
 package com.example.hotrovieclam.Adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.hotrovieclam.Activity.JobDetailMain;
 import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.databinding.ItemJobSaveBinding;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -19,19 +27,30 @@ public class AdapterListJobSave  extends RecyclerView.Adapter<AdapterListJobSave
     private Activity context;
     private ArrayList<Job> jobs;
     private OnItemEditClickListener bamvaodexemchitietcongviecdaluu;
+    private OnItemDeleteClickListener deleteClickListener;
+    private FirebaseFirestore db;
+    private FirebaseStorage storage;
+
     public interface OnItemEditClickListener {
-        void onEditClick(String idJob); // Phương thức để truyền ID
+        void onEditClick(String idJob);
     }
 
-    public void setbamvaodexemchitietcongviecdaluu(AdapterListJobSave.OnItemEditClickListener listener) {
+    public interface OnItemDeleteClickListener {
+        void onDeleteClick(String jobId, int position);
+    }
+
+    public void setbamvaodexemchitietcongviecdaluu(OnItemEditClickListener listener) {
         this.bamvaodexemchitietcongviecdaluu = listener;
     }
 
+    public void setOnItemDeleteClickListener(OnItemDeleteClickListener listener) {
+        this.deleteClickListener = listener;
+    }
 
     @NonNull
     @Override
     public AdapterListJobSave.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new AdapterListJobSave.MyViewHolder(ItemJobSaveBinding.inflate(context.getLayoutInflater(), parent, false));
+        return new MyViewHolder(ItemJobSaveBinding.inflate(context.getLayoutInflater(), parent, false));
     }
 
     public AdapterListJobSave(Activity context, ArrayList<Job> jobs) {
@@ -42,77 +61,63 @@ public class AdapterListJobSave  extends RecyclerView.Adapter<AdapterListJobSave
     @Override
     public void onBindViewHolder(@NonNull AdapterListJobSave.MyViewHolder holder, int position) {
         Job job = jobs.get(position);
+        Uri uri = (job.getAvatar() != null && !job.getAvatar().isEmpty()) ? Uri.parse(job.getAvatar()) : Uri.parse("https://123job.vn/images/no_company.png");
 
-        Uri uri;
-        //String avatarUrl = job.getAvatar();
-
-        if (job.getAvatar() != null && !job.getAvatar().isEmpty()) {
-            // Nếu avatarUrl hợp lệ, tải ảnh bằng Glide
-            uri = Uri.parse(job.getAvatar());
-        }else {
-            uri = Uri.parse("https://123job.vn/images/no_company.png");
-        }
         Glide.with(context).load(uri).into(holder.binding.ivNameCompany);
 
-        // Nếu avatarUrl không hợp lệ hoặc rỗng, không làm gì cả (không cần else)
         holder.binding.tvNameCompany.setText(job.getTitle());
         holder.binding.tvNameLocation.setText(job.getLocation());
-        if(job.getSalaryMax() == -1.0f  || job.getSalaryMin() == 1.0f ){
+        if (job.getSalaryMax() == -1.0f || job.getSalaryMin() == 1.0f) {
             holder.binding.tvSalary.setText(job.getAgreement());
-        }else {
-            holder.binding.tvSalary.setText( Math.round(job.getSalaryMin())+ " - "+ Math.round(job.getSalaryMax())+ " triệu");
+        } else {
+            holder.binding.tvSalary.setText(Math.round(job.getSalaryMin()) + " - " + Math.round(job.getSalaryMax()) + " triệu");
         }
 
-//        if(job.getSourceId()==1){
-//            holder.binding.backgroundItem.setBackgroundResource(R.color.API);
-//        }
-//        if(job.getSourceId()==2){
-//            holder.binding.backgroundItem.setBackgroundResource(R.color.website);
-//        }
+        holder.jobID = job.getId();
+        holder.job = job;
 
-
-
-        holder.jobID = jobs.get(position).getId();
-        holder.job = jobs.get(position);
-        holder.binding.btnThongTinMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                    if (recycleClick != null){
-//                        recycleClick.DetailClick(SourceId, jobID,job );
-//                    }
-                Log.d("TAG", "onClick: chi tiet"+job.getId());
-                if (bamvaodexemchitietcongviecdaluu != null) {
-                    bamvaodexemchitietcongviecdaluu.onEditClick(job.getId()); // Truyền ID qua interface
-                }
-            }
+        holder.binding.btnThongTinMain.setOnClickListener(v -> {
+            Intent intent = new Intent(context, JobDetailMain.class);
+            Log.d("hh", job.getId());
+            intent.putExtra("jobID", job.getId()); // Truyền ID công việc
+            intent.putExtra("sourceId", job.getSourceId());
+            intent.putExtra("KEY_NAME", job);
+            context.startActivity(intent);
         });
-        holder.binding.delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("TAG", "onClick: Xoa"+job.getId());
+
+        holder.binding.delete.setOnClickListener(v -> {
+            if (deleteClickListener != null) {
+                deleteClickListener.onDeleteClick(job.getId(), holder.getAdapterPosition());
             }
         });
 
     }
-
+    private void loadImage(StorageReference storageReference, String path, ImageView imageView) {
+        if (path != null && !path.isEmpty()) {
+            StorageReference imageRef = storageReference.child(path);
+            imageRef.getDownloadUrl()
+                    .addOnSuccessListener(uri -> Glide.with(context).load(uri).into(imageView))
+                    .addOnFailureListener(e -> Toast.makeText(context, "Không thể tải ảnh", Toast.LENGTH_SHORT).show());
+        }
+    }
     @Override
     public int getItemCount() {
         return jobs.size();
     }
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         public int position;
         ItemJobSaveBinding binding;
-        public String jobID = "",SourceId = "";
+        public String jobID = "", SourceId = "";
         public Job job = new Job();
+
         public MyViewHolder(@NonNull ItemJobSaveBinding itemView) {
             super(itemView.getRoot());
             this.binding = itemView;
 
-
-
-
         }
     }
-
-
+    public interface OnItemClick {
+        void DetailClick(String SourceId, String jobID, Job job);
+    }
 }

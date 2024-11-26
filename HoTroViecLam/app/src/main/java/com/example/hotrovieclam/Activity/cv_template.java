@@ -237,11 +237,11 @@ public class cv_template extends AppCompatActivity {
 
                     kiNangs.clear(); // Xóa dữ liệu cũ
                     if (value != null && value.isEmpty()) {
-                        kiNangs.add(new KiNang(null, null, "Chưa cập nhật kĩ năng", null));
+                        kiNangs.add(new KiNang(null, null, "Chưa cập nhật kĩ năng", null,null));
                     } else if (value != null) {
                         for (DocumentSnapshot document : value) {
                             String name = document.getString("name");
-                            KiNang kiNang = new KiNang(null, null, name, null);
+                            KiNang kiNang = new KiNang(null, null, name, null,null);
                             kiNangs.add(kiNang); // Thêm vào danh sách
                         }
                     }

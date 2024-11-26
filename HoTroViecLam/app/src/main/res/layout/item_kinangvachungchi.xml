@@ -74,6 +74,14 @@
         </LinearLayout>
 
     </LinearLayout>
-
+    <!-- Thêm hình ảnh chi tiết công việc -->
+    <ImageView
+        android:id="@+id/imageDetail"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="fitCenter"
+    android:adjustViewBounds="true"
+    android:src="@drawable/no_company" />
 
 </LinearLayout>
