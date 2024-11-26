@@ -9,21 +9,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Fragment.Child_Fragment.KiNangVaChungChiFragment;
 import com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment.SkillsAndCertificationFragment;
+import com.example.hotrovieclam.Model.Job;
 import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.TruongHoc;
 import com.example.hotrovieclam.databinding.ItemKinangvachungchiBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangViewHolder> {
     private final List<KiNang> kiNangList;
     private OnItemEditClickListener editClickListener;
     private final  KiNangVaChungChiFragment fragment;
-
 
     public interface OnItemEditClickListener {
         void onEditClick(String schoolId); // Phương thức để truyền ID
@@ -32,6 +35,7 @@ public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangView
     public void setOnItemEditClickListener(KiNangAdapter.OnItemEditClickListener listener) {
         this.editClickListener = listener;
     }
+
 
     public KiNangAdapter(List<KiNang> kiNangList, KiNangVaChungChiFragment fragment) {
         this.kiNangList = kiNangList;
@@ -49,6 +53,9 @@ public class KiNangAdapter extends RecyclerView.Adapter<KiNangAdapter.KiNangView
     @Override
     public void onBindViewHolder(@NonNull KiNangAdapter.KiNangViewHolder holder, int position) {
         KiNang kiNang = kiNangList.get(position);
+        Glide.with(fragment)
+                .load(kiNang.getImageUrl())
+                .into(holder.binding.imageDetail);
         holder.binding.tenkinang.setText(kiNang.getName());
         holder.binding.mota.setText(kiNang.getDescription());
         holder.binding.edit.setOnClickListener(new View.OnClickListener() {

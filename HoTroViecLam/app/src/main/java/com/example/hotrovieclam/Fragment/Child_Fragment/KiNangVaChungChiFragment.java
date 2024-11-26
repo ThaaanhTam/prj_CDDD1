@@ -40,7 +40,6 @@ public class KiNangVaChungChiFragment extends Fragment {
         //tao id uid
         uid = userSessionManager.getUserUid();
 
-        kiNangArrayList = new ArrayList<>();
 //        kiNangArrayList.add(new KiNang("33333", "3", "Laapj trinhs php", "hack nasa1"));
 //        kiNangArrayList.add(new KiNang("33333", "3", "Laapj trinhs python", "hack nasa2"));
 
@@ -84,6 +83,7 @@ public class KiNangVaChungChiFragment extends Fragment {
     }
 
     public void SetUpRecycleView() {
+        kiNangArrayList = new ArrayList<>();
         kiNangAdapter = new KiNangAdapter(kiNangArrayList,this);
         binding.ItemKiNang.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.ItemKiNang.setAdapter(kiNangAdapter);

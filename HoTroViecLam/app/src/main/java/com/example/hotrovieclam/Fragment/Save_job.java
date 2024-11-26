@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.hotrovieclam.Activity.JobDetailMain;
 import com.example.hotrovieclam.Adapter.AdapterListJobSave;
@@ -47,14 +48,18 @@ public class Save_job extends Fragment {
         savedJobIds = new HashSet<>(); // Khởi tạo Set để chứa các jobId đã lưu
         adapter = new AdapterListJobSave(getActivity(), listJob);
 
+        // Set up the delete button listener
+        adapter.setOnItemDeleteClickListener((jobId, position) -> deleteSavedJob(jobId, position));
+
+
         // Thiết lập RecyclerView
         binding.listJobSave.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.listJobSave.setAdapter(adapter);
 
-        Website websiteLoader = new Website();
-        websiteLoader.loadWebsitesConcurrentlySequentiallysave(adapter, listJob);
-        API apiLoader = new API();
-        apiLoader.loadAPIsConcurrentlysave(adapter, listJob);
+//        Website websiteLoader = new Website();
+//        websiteLoader.loadWebsitesConcurrentlySequentiallysave(adapter, listJob);
+//        API apiLoader = new API();
+//        apiLoader.loadAPIsConcurrentlysave(adapter, listJob);
 
         // Lấy UID từ UserSessionManager
         uid = user.getUserUid();
@@ -66,6 +71,29 @@ public class Save_job extends Fragment {
         return view;
     }
 
+    // Handle deletion of a saved job
+    private void deleteSavedJob(String jobId, int position) {
+        // Delete job from Firestore
+        db.collection("users")
+                .document(uid)
+                .collection("role")
+                .document("candidate")
+                .collection("saveJob")
+                .document(jobId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    // On success, remove job from the list and update the adapter
+                    listJob.remove(position);
+                    savedJobIds.remove(jobId);
+                    adapter.notifyItemRemoved(position);
+                    Log.d("DeleteJob", "Job successfully deleted.");
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Log.w("DeleteJob", "Error deleting job", e);
+                    Toast.makeText(getContext(), "Failed to delete job", Toast.LENGTH_SHORT).show();
+                });
+    }
 //    private void setRecycleClick(){
 //        adapter.setRecycleClick(new MyRecyclerViewAdapter.OnItemClick() {
 //            @Override
