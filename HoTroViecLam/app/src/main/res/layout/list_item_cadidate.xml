@@ -55,6 +55,15 @@
                     android:textStyle="bold" />
 
             </LinearLayout>
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Đã Từ chối"
+                android:textAlignment="center"
+                android:textColor="@color/red"
+                android:textStyle="bold"
+                android:visibility="gone"/>
 
 
 

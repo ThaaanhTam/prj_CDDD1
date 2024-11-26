@@ -150,6 +150,7 @@ public class Home extends Fragment {
 
         });
         setRecycleClick();
+        adapter.updateList(listJob);
 
     }
     private void setRecycleClick(){

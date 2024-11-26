@@ -12,9 +12,20 @@ public class User {
     private String avatar;
 
     private Timestamp createdAt; // created_at timestamp
-    private Timestamp updatedAt; // updated_at timestamp
+    private Timestamp updatedAt;
+    private Integer status; // Thêm thuộc tính status
+private String idJob;
 
-    public User() {}
+    public String getIdJob() {
+        return idJob;
+    }
+
+    public void setIdJob(String idJob) {
+        this.idJob = idJob;
+    }
+
+    public User() {
+    }
 
     public User(String id, String name, String email, String phoneNumber, int userTypeId, String avatar, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
@@ -90,4 +101,9 @@ public class User {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public Integer getStatus() {return status;}
+
+    public void setStatus(Integer status) {this.status = status;}
+
 }
