@@ -9,6 +9,7 @@ public class UserSessionManager implements UserSession {
     private static String name;
     private static String phoneNumber;
     private static String email;
+    private static int a =0;
 
     public static String getName() {
         return name;
@@ -29,6 +30,10 @@ public class UserSessionManager implements UserSession {
     public static String getEmail() {
         return email;
     }
+    public static int geta() {
+        return a;
+    }
+
 
     public static void setEmail(String email) {
         UserSessionManager.email = email;
@@ -42,5 +47,6 @@ public class UserSessionManager implements UserSession {
     @Override
     public void setUserUid(String uid) {
         userUid = uid;
+        a++;
     }
 }

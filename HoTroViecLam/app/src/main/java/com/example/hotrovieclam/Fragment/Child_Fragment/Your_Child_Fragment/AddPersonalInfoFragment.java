@@ -63,9 +63,7 @@ public class AddPersonalInfoFragment extends Fragment {
                         isBottonClicked = true;
                         addOrUpdateUserInfo(getUid, title);
                         Log.d("GGG", "onClick: " + getUid + title);
-                        binding.btnUpdateProfile.setEnabled(false);
-                        int grayColor = ContextCompat.getColor(getContext(), R.color.gray);
-                        binding.btnUpdateProfile.setBackgroundColor(grayColor);
+                        binding.btnUpdateProfile.setVisibility(View.GONE);
                         LoadingNhanhHon();
                         binding.loadding.setVisibility(View.VISIBLE);
 
