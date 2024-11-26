@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Model.HieuUngThongBao;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentCCCDMatTruocBinding;

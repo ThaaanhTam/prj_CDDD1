@@ -32,6 +32,7 @@ public class Candidate_List extends Fragment {
     private CandidateAdapter adapter;
     private ArrayList<User> users = new ArrayList<>();
     private Number status;
+        private String cv;
 
     public Candidate_List() {
         // Required empty public constructor
@@ -41,6 +42,7 @@ public class Candidate_List extends Fragment {
         Candidate_List fragment = new Candidate_List();
         Bundle args = new Bundle();
         args.putString("jobID", jobID);
+        args.putString("cadidateIDD", jobID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,7 +61,6 @@ public class Candidate_List extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentCandidateListBinding.inflate(inflater, container, false);
-
         // Initialize RecyclerView and Adapter
         adapter = new CandidateAdapter(getActivity(), users);
         binding.candidateList.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -107,7 +108,10 @@ public class Candidate_List extends Fragment {
                 // Tạo Bundle để truyền dữ liệu
                 Bundle bundle = new Bundle();
                 bundle.putString("id_candidate", id_candidate);
+                bundle.putString("candidate", users.get(po).getCv());
                 bundle.putString("ID_JOB", jobID);
+
+
 
                 // Thiết lập arguments cho Fragment
                 profileCandidateFragment.setArguments(bundle);
@@ -145,14 +149,13 @@ public class Candidate_List extends Fragment {
                         users.clear();
 
                         for (QueryDocumentSnapshot document : querySnapshot) {
-                            String candidateId = document.getString("candidateId");
-                            Long status = document.getLong("status");
 
+                        Long status = document.getLong("status");
+String candidateId = document.getString("candidateId");
+                             cv = document.getId();
+                            Log.d("candidateIdd", cv);
                             if (candidateId != null) {
-                                fetchUserDetails(candidateId);
-                                adapter.notifyDataSetChanged();
-
-                                // Fetch user details for each candidate
+                                fetchUserDetails(candidateId, cv);  // Fetch user details for each candidate
                             }
                         }
                     } else {
@@ -161,7 +164,8 @@ public class Candidate_List extends Fragment {
                 });
     }
 
-    private void fetchUserDetails(String candidateId) {
+
+    private void fetchUserDetails(String candidateId, String cv) {
         db.collection("users")
                 .document(candidateId)
                 .addSnapshotListener((userDocument, e) -> {
@@ -208,6 +212,8 @@ public class Candidate_List extends Fragment {
                                         } else {
                                             Toast.makeText(getContext(), "Không tìm thấy ứng viên với id: " + id_user_status, Toast.LENGTH_SHORT).show();
                                         }
+                                        user.setCv(cv);
+
                                         users.add(user);
                                         // Notify adapter để cập nhật danh sách
                                         adapter.notifyDataSetChanged();

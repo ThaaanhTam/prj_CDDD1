@@ -1,13 +1,13 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
-import androidx.fragment.app.DialogFragment;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
 import com.example.hotrovieclam.Model.HieuUngThongBao;
@@ -20,16 +20,18 @@ import com.google.firebase.storage.StorageReference;
 
 
 public class Giay_Phep_Kinh_Doanh extends DialogFragment {
-private FragmentGiayPhepKinhDoanhBinding binding;
+    private FragmentGiayPhepKinhDoanhBinding binding;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding= FragmentGiayPhepKinhDoanhBinding.inflate(inflater,container,false);
-        View view =binding.getRoot();
+        binding = FragmentGiayPhepKinhDoanhBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
         loadCompanyInformation();
         return view;
     }
+
     private void loadCompanyInformation() {
         HieuUngThongBao.startLoadingAnimation(binding.loadImage);
         binding.loadImage.setVisibility(View.VISIBLE);
@@ -67,13 +69,13 @@ private FragmentGiayPhepKinhDoanhBinding binding;
                         Glide.with(this)
                                 .load(uri.toString())
                                 .into(binding.giayphepkd);
-                        Log.d("TAMM", "loadCompanyInformation: "+uri.toString());
+                        Log.d("TAMM", "loadCompanyInformation: " + uri.toString());
                         binding.loadImage.setVisibility(View.GONE);
 
                         //Toast.makeText(getContext(), "lay anh ok ma", Toast.LENGTH_SHORT).show();
                     }).addOnFailureListener(e -> {
                         binding.loadImage.setVisibility(View.GONE);
-HieuUngThongBao.showErrorToast(requireContext(),"Không thể tải ảnh giấy phép");
+                        HieuUngThongBao.showErrorToast(requireContext(), "Không thể tải ảnh giấy phép");
                         //Toast.makeText(getContext(), "Không thể tải ảnh logo", Toast.LENGTH_SHORT).show();
                     });
                 } else {
