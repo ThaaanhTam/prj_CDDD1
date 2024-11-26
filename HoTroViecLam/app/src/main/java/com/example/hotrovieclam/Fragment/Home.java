@@ -50,7 +50,7 @@ public class Home extends Fragment {
     private FirebaseFirestore db;
     private ArrayList<Job> listJob;
     private MyRecyclerViewAdapter adapter;
-    private ExecutorService executorService = Executors.newFixedThreadPool(2);
+
 
     private ArrayList<String> arrayList;
     private TextView textViewSpinner;
@@ -86,12 +86,14 @@ public class Home extends Fragment {
         binding.line1.setVisibility(View.GONE);
         binding.jobList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.jobList.setAdapter(adapter);
-
+        fetchJobsFromFirestore();
         Website websiteLoader = new Website();
         websiteLoader.loadWebsitesConcurrentlySequentially(adapter, listJob);
         API apiLoader = new API();
         apiLoader.loadAPIsConcurrently(adapter, listJob);
-        fetchJobsFromFirestore();
+
+
+
         binding.sourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

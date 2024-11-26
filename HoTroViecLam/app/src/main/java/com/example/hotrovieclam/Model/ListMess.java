@@ -5,6 +5,15 @@ public class ListMess {
     private String avatar;
     private String reicever_id;
 
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    private String companyName;
     public String getReicever_id() {
         return reicever_id;
     }

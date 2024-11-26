@@ -56,14 +56,16 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
             Log.d("ff", listMess.getAvatar());
             Glide.with(context)
                     .load(listMess.getAvatar())
-                    .circleCrop() // Bo tròn hình ảnh
-                    .placeholder(R.drawable.user_solid) // Ảnh thay thế trong khi tải
-                    .error(R.drawable.user_solid) // Ảnh lỗi nếu tải thất bại
+                    .circleCrop()
+                    .placeholder(R.drawable.account_circle_50dp_000000_fill0_wght400_grad0_opsz48) // Ảnh thay thế trong khi tải
+                    .error(R.drawable.account_circle_50dp_000000_fill0_wght400_grad0_opsz48) // Ảnh lỗi nếu tải thất bại
                     .into(holder.binding.imageViewAvatar);
 
         }
         holder.binding.textViewLastMessage.setText(listMess.getLastMes());
+        holder.binding.tvCompanyName.setText(listMess.getCompanyName());
 
+        holder.binding.textViewLastMessage.setText(listMess.getLastMes());
         if (listMess.getDate() != null) {
             Log.d("date", listMess.getDate());
             holder.binding.textViewTime.setText(listMess.getDate());
@@ -78,6 +80,11 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
 
             }
         });
+
+
+
+
+
 
         if (listMess.getStatus() != null) {
             if (listMess.getStatus().equals("0")) {
@@ -121,5 +128,9 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
 
         }
     }
+
+    // Cập nhật và đưa mục lên đầu danh sách
+
+
 
 }

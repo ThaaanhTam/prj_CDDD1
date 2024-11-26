@@ -73,7 +73,7 @@ if(currentUserId!=null){
 
                     if (querySnapshot != null && !querySnapshot.isEmpty()) {
                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                            String documentId = document.getId();
+                            String documentId = document.getId(); // ID của người dùng khác
                             String messageID = document.getString("messageID");
                             String status = document.getString("status");
 
@@ -89,39 +89,50 @@ if(currentUserId!=null){
                                             String name = userSnapshot.getString("name");
                                             String avatar = userSnapshot.getString("avatar");
 
-                                            // Lắng nghe thay đổi tin nhắn cuối cùng
-                                            db.collection("Message")
-                                                    .document(messageID)
-                                                    .collection("messages")
-                                                    .orderBy("sent_at", Query.Direction.DESCENDING)
-                                                    .limit(1)
-                                                    .addSnapshotListener((messageSnapshot, messageError) -> {
-                                                        if (messageError != null) {
-                                                            Log.e("LastMessage", "Lỗi khi lắng nghe tin nhắn cuối: " + messageError.getMessage());
-                                                            return;
-                                                        }
+                                            db.collection("users").document(documentId)
+                                                    .collection("role")
+                                                    .document("employer")
+                                                    .get()
+                                                    .addOnSuccessListener(roleSnapshot -> {
+                                                        String companyName = roleSnapshot != null && roleSnapshot.exists()
+                                                                ? roleSnapshot.getString("companyName")
+                                                                : " ";
 
-                                                        if (messageSnapshot != null && !messageSnapshot.isEmpty()) {
-                                                            DocumentSnapshot lastMessageDoc = messageSnapshot.getDocuments().get(0);
-                                                            String lastMessageContent = lastMessageDoc.getString("content");
-                                                            long timestamp = lastMessageDoc.getLong("sent_at");
+                                                        // Lắng nghe thay đổi tin nhắn cuối cùng
+                                                        db.collection("Message")
+                                                                .document(messageID)
+                                                                .collection("messages")
+                                                                .orderBy("sent_at", Query.Direction.DESCENDING)
+                                                                .limit(1)
+                                                                .addSnapshotListener((messageSnapshot, messageError) -> {
+                                                                    if (messageError != null) {
+                                                                        Log.e("LastMessage", "Lỗi khi lắng nghe tin nhắn cuối: " + messageError.getMessage());
+                                                                        return;
+                                                                    }
 
+                                                                    if (messageSnapshot != null && !messageSnapshot.isEmpty()) {
+                                                                        DocumentSnapshot lastMessageDoc = messageSnapshot.getDocuments().get(0);
+                                                                        String lastMessageContent = lastMessageDoc.getString("content");
+                                                                        long timestamp = lastMessageDoc.getLong("sent_at");
 
-                                                            // Giá trị timestamp cần chuyển đổi
+                                                                        // Chuyển đổi từ timestamp sang chuỗi định dạng
+                                                                        Date date = new Date(timestamp);
+                                                                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM HH:mm", Locale.getDefault());
+                                                                        String formattedDate = sdf.format(date);
 
-                                                            // Chuyển đổi từ timestamp sang đối tượng Date
-                                                            Date date = new Date(timestamp);
+                                                                        Log.d("FormattedDate", "Thời gian định dạng: " + formattedDate);
 
-                                                            // Định dạng ngày giờ thành chuỗi
-                                                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM HH:mm", Locale.getDefault());
-                                                            String formattedDate = sdf.format(date);
+                                                                        // Cập nhật danh sách hội thoại
+                                                                        updateConversationList(
+                                                                                documentId, messageID, status, name, avatar,
+                                                                                lastMessageContent, formattedDate, companyName
+                                                                        );
 
-
-                                                            Log.d("FormattedDate", "Thời gian định dạng: " + formattedDate);
-                                                            updateConversationList(
-                                                                    documentId, messageID, status, name, avatar, lastMessageContent,formattedDate
-                                                            );
-                                                        }
+                                                                    }
+                                                                });
+                                                    })
+                                                    .addOnFailureListener(roleError -> {
+                                                        Log.e("Firestore", "Lỗi khi lấy role/employer: " + roleError.getMessage());
                                                     });
                                         } else {
                                             Log.d("Firestore", "Document user không tồn tại với ID: " + documentId);
@@ -134,8 +145,9 @@ if(currentUserId!=null){
                 });
     }
 
+
     private void updateConversationList(String documentId, String messageID, String status,
-                                        String name, String avatar, String lastMessageContent,String formattedDate) {
+                                        String name, String avatar, String lastMessageContent,String formattedDate, String companyName) {
         boolean isUpdated = false;
 
 
@@ -149,11 +161,14 @@ if(currentUserId!=null){
                 listMess.setAvatar(avatar);
                 listMess.setLastMes(lastMessageContent);
                 listMess.setDate(formattedDate);
-
+                listMess.setCompanyName(companyName);
                 isUpdated = true;
+                adapter.notifyDataSetChanged();
 
+                conversationList.remove(i); // Xóa phần tử cũ
+                conversationList.add(0, listMess);
                 // Cập nhật giao diện
-                adapter.notifyItemChanged(i);
+                adapter.notifyDataSetChanged();
                 break;
             }
         }
@@ -168,6 +183,7 @@ if(currentUserId!=null){
             newListMess.setAvatar(avatar);
             newListMess.setLastMes(lastMessageContent);
             newListMess.setDate(formattedDate);
+            newListMess.setCompanyName(companyName);
             conversationList.add(newListMess);
             adapter.notifyItemInserted(conversationList.size() - 1);
         }

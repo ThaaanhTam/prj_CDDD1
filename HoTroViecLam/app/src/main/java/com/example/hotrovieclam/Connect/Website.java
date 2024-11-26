@@ -76,6 +76,8 @@ public class Website {
                     jobList.add(job);
 
                     new Handler(Looper.getMainLooper()).post(() -> {
+                       // Cập nhật toàn bộ dữ liệu
+
                         adapter.notifyItemInserted(jobList.size() - 1);
                     });
                 }
@@ -116,6 +118,7 @@ public class Website {
                     job.setJobURL(jobUrl);
                     job.setSourceId(2);
 
+
                     //    job.setAgreement(salary);
                     try {
                         String[] salaryParts = salary.split("-");
@@ -135,6 +138,7 @@ public class Website {
                     jobList.add(job);
 
                     new Handler(Looper.getMainLooper()).post(() -> {
+
                         adapter.notifyItemInserted(jobList.size() - 1);
                     });
                 }

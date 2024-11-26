@@ -1,5 +1,6 @@
 package com.example.hotrovieclam.Adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -59,8 +60,9 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
         this.users = users;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         User user = users.get(position);
 
         Uri uri;
@@ -138,9 +140,19 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
                                                                                     // Xóa thành công tài liệu ứng viên
                                                                                     HieuUngThongBao.showSuccessToast(context, "Xóa ứng viên thành công!");
 
-                                                                                    // Xóa ứng viên khỏi danh sách và cập nhật RecyclerView
-                                                                                    users.remove(position);
-                                                                                    notifyItemRemoved(position);
+                                                                                    // Xóa ứng viên khỏi danh sách và cập nhật RecyclerViewifif(ifif(
+
+
+//                                                                                    if(user!= null) {
+//                                                                                        users.remove(position);
+//                                                                                    }
+
+                                                                                    if (position >= 0 && position < users.size()) {
+                                                                                        users.remove(position);
+                                                                                        notifyItemRemoved(position);
+                                                                                        // Nếu muốn cập nhật lại các vị trí còn lại
+                                                                                        notifyItemRangeChanged(position, users.size());
+                                                                                    }
                                                                                 }
                                                                             })
                                                                             .addOnFailureListener(new OnFailureListener() {
@@ -152,7 +164,6 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
                                                                             });
                                                                 }
                                                             } else {
-                                                                // Nếu không tìm thấy tài liệu ứng viên
                                                                 Toast.makeText(context, "Không tìm thấy ứng viên với id: " + id_candidate, Toast.LENGTH_SHORT).show();
                                                             }
                                                         } else {
@@ -172,6 +183,10 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
 
 
             });
+        }else if (user.getStatus() != null && user.getStatus().intValue() == 1){
+            holder.binding.status.setText("Đã chấp nhận");
+            holder.binding.status.setHintTextColor(R.color.title);
+            holder.binding.status.setVisibility(View.VISIBLE);
         }
 
 

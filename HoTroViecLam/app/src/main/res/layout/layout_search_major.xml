@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:textSize="25sp"
         android:fontFamily="monospace"
-        android:text="Select Number"
+        android:text="Ngành"
         />
     <EditText
         android:id="@+id/editText_of_searchMajor"

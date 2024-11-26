@@ -1,13 +1,9 @@
 package com.example.hotrovieclam.Fragment.RecruiterManagement;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +15,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
+import com.example.hotrovieclam.Activity.JobDetailMain;
+import com.example.hotrovieclam.Activity.MessageActivity;
 import com.example.hotrovieclam.Model.Experience;
 import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.TruongHoc;
@@ -27,20 +28,22 @@ import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentProfileCandidateBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Profile_Candidate_Fragment extends Fragment {
     private FragmentProfileCandidateBinding binding;
@@ -56,7 +59,7 @@ public class Profile_Candidate_Fragment extends Fragment {
     private WebView webView;
     private ProgressBar progressBar;
     private FirebaseFirestore db;
-
+    String uid;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,6 +76,10 @@ public class Profile_Candidate_Fragment extends Fragment {
 
         kiNangArrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, kiNangs);
         binding.kinang.setAdapter(kiNangArrayAdapter);
+        UserSessionManager userSessionManager = new UserSessionManager();
+         uid = userSessionManager.getUserUid();
+
+
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -112,8 +119,84 @@ public class Profile_Candidate_Fragment extends Fragment {
         binding.chapnhan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TTTT", "onClick: " + id_candidate);
+                String nameCompany;
+                String jobTitle;
+                db = FirebaseFirestore.getInstance();
+
+                Map<String, Object> messageData = new HashMap<>();
+                messageData.put("conversationTitle", "Cuộc hội thoại giữa User1 và User2");
+
+                List<Map<String, Object>> messagesArray = new ArrayList<>();
+                Map<String, Object> message = new HashMap<>();
+                message.put("content", "Hello, đây là tin nhắn đầu tiên!");
+                messagesArray.add(message);
+
+                messageData.put("messages", messagesArray);
+
+                db.collection("users").document(uid)
+                        .collection("conversation")
+                        .document(id_candidate)
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                // Nếu cuộc trò chuyện đã tồn tại, lấy messageID và gửi tin nhắn
+                                String messageID = documentSnapshot.getString("messageID");
+                                getJobInfo();
+                                getUserCompanyInfo();
+                                sendMessage("Chúng tôi xin chân thành cảm ơn bạn đã dành thời gian tham gia vào quá trình tuyển dụng tại " + companyName + ". Sau khi xem xét và đánh giá kỹ lưỡng hồ sơ và kết quả phỏng vấn của bạn, chúng tôi rất vui mừng thông báo rằng bạn đã trúng tuyển vào vị trí " + title + " tại công ty chúng tôi.\n Chúng tôi hiện đang lên kế hoạch cho lịch phỏng vấn và sẽ thông báo cho bạn thời gian cụ thể trong thời gian sớm nhất. Mong bạn vui lòng giữ lịch linh hoạt để có thể tham gia phỏng vấn khi chúng tôi xác nhận thời gian.", messageID, id_candidate);
+
+                                Intent intent = new Intent(getContext(), MessageActivity.class);
+                                intent.putExtra("messageID", messageID);
+                                intent.putExtra("receiverID", id_candidate);
+                                startActivity(intent);
+                            } else {
+                                // Nếu cuộc trò chuyện chưa tồn tại, tạo mới
+                                db.collection("Message")
+                                        .add(messageData)
+                                        .addOnSuccessListener(documentReference -> {
+                                            String autoGeneratedId = documentReference.getId();
+                                            Log.d("Firestore", "Document được tạo với ID: " + autoGeneratedId);
+
+                                            // Tạo conversation cho cả hai người dùng
+                                            Task<Void> task1 = db.collection("users").document(uid)
+                                                    .collection("conversation")
+                                                    .document(id_candidate)
+                                                    .set(Collections.singletonMap("messageID", autoGeneratedId));
+
+                                            Task<Void> task2 = db.collection("users").document(id_candidate)
+                                                    .collection("conversation")
+                                                    .document(uid)
+                                                    .set(Collections.singletonMap("messageID", autoGeneratedId));
+
+                                            // Đảm bảo cả hai tác vụ đều thành công
+                                            Tasks.whenAllSuccess(task1, task2)
+                                                    .addOnSuccessListener(results -> {
+                                                        Log.d("Firestore", "Đã tạo conversation cho cả hai người dùng");
+
+                                                        // Gửi tin nhắn sau khi tạo conversation thành công
+                                                        sendMessage("oooooo", autoGeneratedId, id_candidate);
+
+                                                        // Chuyển hướng đến MessageActivity
+                                                        Intent intent = new Intent(getContext(), MessageActivity.class);
+                                                        intent.putExtra("messageID", autoGeneratedId);
+                                                        intent.putExtra("receiverID", id_candidate);
+                                                        startActivity(intent);
+                                                    })
+                                                    .addOnFailureListener(err -> {
+                                                        Log.e("Firestore", "Lỗi khi tạo conversation: " + err.getMessage());
+                                                    });
+                                        })
+                                        .addOnFailureListener(err -> {
+                                            Log.e("Firestore", "Lỗi khi tạo document: " + err.getMessage());
+                                        });
+                            }
+                        })
+                        .addOnFailureListener(err -> {
+                            Log.e("Firestore", "Lỗi khi kiểm tra conversation: " + err.getMessage());
+                        });
+
             }
+
         });
         // Cấu hình WebView
         configureWebView();
@@ -121,13 +204,65 @@ public class Profile_Candidate_Fragment extends Fragment {
         return view;
     }
 
+
+
+    private void sendMessage(String content, String messID, String re) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Tạo ID cho tin nhắn mới
+
+        // Tạo Map chứa dữ liệu tin nhắn
+        Map<String, Object> messageData = new HashMap<>();
+        messageData.put("sender_id", uid);  // Gửi tin nhắn từ người dùng hiện tại
+        messageData.put("content", content);
+        messageData.put("sent_at", System.currentTimeMillis());
+
+        db.collection("Message").document(messID)
+                .collection("messages")
+                .add(messageData)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("ChatApp", "Tin nhắn đã được gửi.");
+
+                    } else {
+                        Log.e("ChatApp", "Lỗi gửi tin nhắn: " + task.getException().getMessage());
+                    }
+                });
+
+
+        Map<String, Object> status = new HashMap<>();
+        status.put("status", "0");
+
+
+        DocumentReference docRef = db.collection("users").document(re)
+                .collection("conversation").document(uid);
+        docRef.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        docRef.update(status)
+                                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Cập nhật trường thành công!"))
+                                .addOnFailureListener(err -> Log.e("Firestore", "Lỗi khi cập nhật trường: " + err.getMessage()));
+                    } else {
+                        docRef.set(status)
+                                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Tạo mới tài liệu thành công!"))
+                                .addOnFailureListener(err -> Log.e("Firestore", "Lỗi khi tạo tài liệu: " + err.getMessage()));
+                    }
+                })
+                .addOnFailureListener(err -> Log.e("Firestore", "Lỗi khi kiểm tra tài liệu: " + err.getMessage()));
+
+    }
+
+
+
+
+
     private void updateCandidateStatus(String id_Job, String id_candidate) {
         // Hiển thị hộp thoại xác nhận
-        new AlertDialog.Builder(requireContext() )
+        new AlertDialog.Builder(requireContext())
                 .setTitle("Xác nhận bỏ qua")
                 .setMessage("Bạn có chắc chắn muốn bỏ qua ứng viên này không?")
                 .setPositiveButton("Bỏ qua", (dialog, which) -> {
-                     db = FirebaseFirestore.getInstance();
+                    db = FirebaseFirestore.getInstance();
 
                     // Truy vấn ứng viên trong collection "application"
                     db.collection("jobs")
@@ -203,6 +338,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                 // Xử lý sự kiện click để mở CV
                                 binding.cvFile.setOnClickListener(new View.OnClickListener() {
                                     boolean isWebViewVisible = false;
+
                                     @Override
                                     public void onClick(View v) {
 //
@@ -242,9 +378,6 @@ public class Profile_Candidate_Fragment extends Fragment {
                     }
                 });
     }
-
-
-
 
 
     public void LoadDataToFireBase(String id_candidate) {
@@ -448,7 +581,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                             kiNangs.clear(); // Xóa dữ liệu cũ trước khi thêm dữ liệu mới
                                             if (task.getResult().isEmpty()) {
                                                 // Hiển thị thông báo nếu không có dữ liệu
-                                                kiNangs.add(new KiNang(null, null, "Chưa cập nhật kĩ năng", null,null));
+                                                kiNangs.add(new KiNang(null, null, "Chưa cập nhật kĩ năng", null, null));
                                                 kiNangArrayAdapter.notifyDataSetChanged();
                                                 //binding.lisviewHocVan.setVisibility(View.VISIBLE); // Hiển thị ListView
                                             } else {
@@ -457,7 +590,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                     String name = document.getString("name");
 
 
-                                                    KiNang kiNang = new KiNang(null, null, name, null);
+                                                    KiNang kiNang = new KiNang(null, null, name, null, null);
 
                                                     kiNangs.add(kiNang); // Thêm vào danh sách
                                                 }
@@ -525,11 +658,47 @@ public class Profile_Candidate_Fragment extends Fragment {
             public void onReceivedError(WebView view, int errorCode,
                                         String description, String failingUrl) {
                 progressBar.setVisibility(View.GONE);
-
-                // Hiện lại button nếu có lỗi
                 webView.setVisibility(View.GONE);
                 binding.cvFile.setVisibility(View.VISIBLE);
             }
         });
+    }
+    String companyName = " ";
+    String title = " ";
+    private void getUserCompanyInfo() {
+        db.collection("users")
+                .document(uid)
+                .collection("role")
+                .document("employer") // Lấy dữ liệu từ document "employer"
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+
+                         companyName = documentSnapshot.getString("companyName");
+
+                    } else {
+                        Log.d("Firebase", "Không tìm thấy dữ liệu công ty.");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("Firebase", "Lỗi lấy dữ liệu công ty.", e);
+                });
+    }
+
+    private void getJobInfo() {
+        db.collection("jobs")
+                .document(id_Job)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+
+                        title = documentSnapshot.getString("title");
+                    } else {
+                        Log.d("Firebase", "Không tìm thấy dữ liệu công việc.");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("Firebase", "Lỗi lấy dữ liệu công việc.", e);
+                });
     }
 }
