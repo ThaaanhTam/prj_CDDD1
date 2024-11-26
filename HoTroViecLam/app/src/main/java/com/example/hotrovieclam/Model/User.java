@@ -10,7 +10,7 @@ public class User {
     private String phoneNumber;  // phone_number varchar
     private int userTypeId;      // user_type_id integer [ref: > user_types.id]
     private String avatar;
-private String cv;
+    private String cv;
 
     public String getCv() {
         return cv;
@@ -23,7 +23,7 @@ private String cv;
     private Timestamp createdAt; // created_at timestamp
     private Timestamp updatedAt;
     private Integer status; // Thêm thuộc tính status
-private String idJob;
+    private String idJob;
 
     public String getIdJob() {
         return idJob;
@@ -111,8 +111,12 @@ private String idJob;
         this.updatedAt = updatedAt;
     }
 
-    public Integer getStatus() {return status;}
+    public Integer getStatus() {
+        return status;
+    }
 
-    public void setStatus(Integer status) {this.status = status;}
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
 }

@@ -101,7 +101,7 @@ public class Candidate_List extends Fragment {
         fetchCandidatesRealtime();
         adapter.setClickIem(new CandidateAdapter.OnItemClickListener() {
             @Override
-            public void onClick(String id_candidate) {
+            public void onClick(String id_candidate, Integer po) {
                 // Tạo một instance của Fragment
                 Profile_Candidate_Fragment profileCandidateFragment = new Profile_Candidate_Fragment();
 
