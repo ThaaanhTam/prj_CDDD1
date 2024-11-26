@@ -88,7 +88,7 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
         Log.d("StatusCheck", "Status for " + user.getName() + ": " + user.getStatus());
         if (user.getStatus() != null && user.getStatus().intValue() == 0) {
             int color = ContextCompat.getColor(context, R.color.mauvien);
-
+            holder.binding.status.setText("Đã từ chối");
             holder.binding.backgroundItem.setBackgroundColor(color);
             holder.binding.status.setVisibility(View.VISIBLE);
             holder.binding.backgroundItem.setOnLongClickListener(new View.OnLongClickListener() {
@@ -185,7 +185,7 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
             });
         }else if (user.getStatus() != null && user.getStatus().intValue() == 1){
             holder.binding.status.setText("Đã chấp nhận");
-            holder.binding.status.setHintTextColor(R.color.title);
+            holder.binding.status.setBackgroundColor(R.color.title);
             holder.binding.status.setVisibility(View.VISIBLE);
         }
 
