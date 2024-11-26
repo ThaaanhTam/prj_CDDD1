@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import com.example.hotrovieclam.R;
 
 import java.text.Normalizer;
 
@@ -20,30 +21,27 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.hotrovieclam.Activity.JobDetailMain;
-import com.example.hotrovieclam.Adapter.JobManagementAdapter;
 import com.example.hotrovieclam.Adapter.MyRecyclerViewAdapter;
 import com.example.hotrovieclam.Connect.API;
 import com.example.hotrovieclam.Connect.Website;
-import com.example.hotrovieclam.Fragment.RecruiterManagement.Detail_Job;
 import com.example.hotrovieclam.Model.Job;
 
 import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentHomeBinding;
-import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,7 +55,6 @@ public class Home extends Fragment {
     private ArrayList<String> arrayList;
     private TextView textViewSpinner;
     private Dialog dialog;
-
     public Home() {
         // Required empty public constructor
     }
@@ -94,10 +91,7 @@ public class Home extends Fragment {
         websiteLoader.loadWebsitesConcurrentlySequentially(adapter, listJob);
         API apiLoader = new API();
         apiLoader.loadAPIsConcurrently(adapter, listJob);
-        // Lấy dữ liệu từ Firestore
         fetchJobsFromFirestore();
-
-
         binding.sourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -156,6 +150,7 @@ public class Home extends Fragment {
 
         });
         setRecycleClick();
+        adapter.updateList(listJob);
 
     }
     private void setRecycleClick(){

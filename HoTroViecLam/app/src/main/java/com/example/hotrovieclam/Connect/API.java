@@ -66,45 +66,4 @@ public class API {
             }
         }).start();
     }
-    public void loadAPIsConcurrentlysave(AdapterListJobSave adapter, List<Job> jobList) {
-        new Thread(() -> {
-            try {
-                Response response = okHttpClient.newCall(requestAPI).execute();
-                if (response.isSuccessful() && response.body() != null) {
-                    String jsonResponse = response.body().string();
-                    Log.d("jsonResponse", jsonResponse);
-                    Gson gson = new Gson();
-                    JobDataAPI jobDataAPI = gson.fromJson(jsonResponse, JobDataAPI.class);
-
-                    for (JobDataAPI.Job jobData : jobDataAPI.getResults()) {
-
-                        Job job = new Job();
-                        job.setId(jobData.getId());
-                        Log.d(TAG,  jobData.getApplication_url());
-
-                        job.setTitle(jobData.getTitle());
-                        String rawDescription = jobData.getDescription();
-                        String cleanDescription = Jsoup.parse(rawDescription).text();
-                        job.setDescription(cleanDescription);
-                        job.setLocation(jobData.getLocation());
-                        job.setAvatar(jobData.getCompany().getLogo());
-                        job.setJobURL(jobData.getApplication_url());
-                        job.setSourceId(1);
-
-                        job.setAgreement("Thỏa thuận");
-
-                        jobList.add(job);
-                    }
-                    // Cập nhật toàn bộ dữ liệu sau khi thêm tất cả các job
-                    new Handler(Looper.getMainLooper()).post(adapter::notifyDataSetChanged);
-                    //      Log.d("newJobList", jobList.size() + "");
-                } else {
-                    Log.e(TAG, "Response not successful: " + response.message());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
 }

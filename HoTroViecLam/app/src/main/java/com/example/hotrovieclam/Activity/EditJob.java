@@ -1,4 +1,4 @@
-package com.example.hotrovieclam.Fragment.RecruiterManagement;
+package com.example.hotrovieclam.Activity;
 
 import android.Manifest;
 import android.app.AlertDialog;

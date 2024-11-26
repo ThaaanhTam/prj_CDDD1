@@ -8,7 +8,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="#39BD74"
         android:padding="10dp">
 
@@ -35,6 +36,10 @@
             android:src="@drawable/img_2" />
     </LinearLayout>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,6 +58,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/loading"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@drawable/custom_processing"
                 android:visibility="gone"/>
 
             <EditText
@@ -72,15 +79,17 @@
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
-
-            <EditText
-                android:id="@+id/editTextCongViec"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_text_input_truong_hoc"
-                android:hint="Công việc đã làm"
-                android:padding="10dp" />
-
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editTextCongViec"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_text_input_truong_hoc"
+                    android:hint="Công việc đã làm"
+                    android:padding="10dp" />
+            </ScrollView>
         </LinearLayout>
 
         <LinearLayout
@@ -124,43 +133,35 @@
             android:layout_marginBottom="15dp"
             android:orientation="vertical">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="180dp">
-
-            <EditText
-                android:id="@+id/editTextDC"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/border_text_input_update_info"
-                android:gravity="top"
-                android:hint="Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm việc"
-                android:minLines="6"
-                android:overScrollMode="always"
-                android:padding="7dp"
-                android:scrollbars="vertical" />
+                android:layout_height="180dp">
 
-        </ScrollView>
+                <EditText
+                    android:id="@+id/editTextDC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/border_text_input_update_info"
+                    android:gravity="top"
+                    android:hint="Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm việc"
+                    android:minLines="6"
+                    android:overScrollMode="always"
+                    android:padding="7dp"
+                    android:scrollbars="vertical" />
 
-<!--            <androidx.appcompat.widget.AppCompatButton-->
-<!--                android:id="@+id/btnxoaKN"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="20dp"-->
-<!--                android:layout_marginRight="20dp"-->
-<!--                android:text="Xóa Kinh nghiệm">-->
-
-<!--            </androidx.appcompat.widget.AppCompatButton>-->
+            </ScrollView>
 
         </LinearLayout>
 
     </LinearLayout>
+    </ScrollView>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_update_experience"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
         android:layout_margin="20dp"
         android:background="@color/navigation"
         android:text="cập nhật"

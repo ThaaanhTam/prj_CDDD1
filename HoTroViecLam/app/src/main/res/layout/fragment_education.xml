@@ -35,115 +35,128 @@
             android:src="@drawable/img_2" />
     </LinearLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:background="@drawable/boder_info_linealayout"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:layout_height="0dp"
+        android:layout_weight="9">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
-            <ProgressBar
+            android:layout_margin="20dp"
+            android:background="@drawable/boder_info_linealayout"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/loading"
-                android:visibility="gone"/>
-
-
-            <EditText
-                android:id="@+id/nameSchool"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_text_input_truong_hoc"
-                android:hint="Tên trường học"
-
-                android:padding="10dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
-
-
-            <EditText
-
-                android:id="@+id/nameMajor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_text_input_truong_hoc"
-                android:hint="Ngành đang học"
-                android:padding="10dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-
-            android:orientation="horizontal">
-
-
-            <EditText
-                android:id="@+id/start"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/custom_text_input_truong_hoc"
-                android:clickable="true"
-                android:drawableRight="@drawable/date_icon_input"
-                android:focusable="false"
-                android:hint="Bắt đầu"
-                android:padding="10dp" />
-
-            <EditText
-                android:id="@+id/end"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/custom_text_input_truong_hoc"
-                android:clickable="true"
-                android:drawableRight="@drawable/date_icon_input"
-                android:focusable="false"
-                android:hint="Kết thúc"
-                android:padding="10dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:orientation="vertical">
-
-
-            <CheckBox
-                android:id="@+id/check"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:text="Tôi đang học  ở đây" />
+                android:orientation="vertical">
 
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="180dp">
-    <EditText
-        android:id="@+id/editTextDC"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/border_text_input_update_info"
-        android:gravity="top"
-        android:hint=" Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm
+                <ProgressBar
+                    android:id="@+id/loading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:indeterminate="true"
+                    android:indeterminateDrawable="@drawable/custom_processing"
+                    />
+
+
+                <EditText
+                    android:id="@+id/nameSchool"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/custom_text_input_truong_hoc"
+                    android:hint="Tên trường học"
+
+                    android:padding="10dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:orientation="vertical">
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+
+                        android:id="@+id/nameMajor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/custom_text_input_truong_hoc"
+                        android:hint="Ngành đang học"
+                        android:padding="10dp" />
+                </ScrollView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+
+                android:orientation="horizontal">
+
+
+                <EditText
+                    android:id="@+id/start"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_text_input_truong_hoc"
+                    android:clickable="true"
+                    android:drawableRight="@drawable/date_icon_input"
+                    android:focusable="false"
+                    android:hint="Bắt đầu"
+                    android:padding="10dp" />
+
+                <EditText
+                    android:id="@+id/end"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_text_input_truong_hoc"
+                    android:clickable="true"
+                    android:drawableRight="@drawable/date_icon_input"
+                    android:focusable="false"
+                    android:hint="Kết thúc"
+                    android:padding="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:orientation="vertical">
+
+
+                <CheckBox
+                    android:id="@+id/check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:text="Tôi đang học  ở đây" />
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp">
+
+                    <EditText
+                        android:id="@+id/editTextDC"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:background="@drawable/border_text_input_update_info"
+                        android:gravity="top"
+                        android:hint=" Mô tả chi  tiết công việc, những gì đạt được trong quá trình làm
 việc"
         android:minLines="6"
         android:overScrollMode="always"
@@ -165,7 +178,7 @@ việc"
         </LinearLayout>
 
     </LinearLayout>
-
+    </ScrollView>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_update_education"
         android:layout_width="match_parent"

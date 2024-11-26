@@ -25,7 +25,7 @@ import java.util.List;
 public class AplicationAdapter extends RecyclerView.Adapter<AplicationAdapter.CandidateViewHolder> {
 
     private List<Candidate> candidateList;
-    private Context context; // Thêm Context vào biến
+    private Context context;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     // Thêm context vào constructor
@@ -51,7 +51,6 @@ public class AplicationAdapter extends RecyclerView.Adapter<AplicationAdapter.Ca
         holder.binding.tvStatusValue.setText(candidate.getStatus());
 
         holder.binding.btnCancel.setOnClickListener(v -> {
-            // Hiển thị hộp thoại xác nhận trước khi xóa
             deleteCandidateFromFirestore(position, candidate);
         });
     }

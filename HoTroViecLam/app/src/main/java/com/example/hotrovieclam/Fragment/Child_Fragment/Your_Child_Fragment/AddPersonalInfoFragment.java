@@ -1,5 +1,6 @@
 package com.example.hotrovieclam.Fragment.Child_Fragment.Your_Child_Fragment;
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
@@ -8,12 +9,14 @@ import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.hotrovieclam.R;
+import com.example.hotrovieclam.databinding.CustomToastSuccessBinding;
 import com.example.hotrovieclam.databinding.FragmentAddPersonalInfoBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
@@ -60,13 +63,14 @@ public class AddPersonalInfoFragment extends Fragment {
                         isBottonClicked = true;
                         addOrUpdateUserInfo(getUid, title);
                         Log.d("GGG", "onClick: " + getUid + title);
-                        binding.btnUpdateProfile.setEnabled(false);
-                        int grayColor = ContextCompat.getColor(getContext(), R.color.gray);
-                        binding.btnUpdateProfile.setBackgroundColor(grayColor);
+                        binding.btnUpdateProfile.setVisibility(View.GONE);
+                        LoadingNhanhHon();
                         binding.loadding.setVisibility(View.VISIBLE);
 
                     } else {
-                        Toast.makeText(getContext(), "Vui lòng điền đẩy đủ thông tin", Toast.LENGTH_SHORT).show();
+                        Toast toast = new Toast(getContext());
+                        ThongBaoThatBai(toast,"Vui lòng điền đẩy đủ thông tin");
+                        //Toast.makeText(getContext(), "Vui lòng điền đẩy đủ thông tin", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -107,7 +111,9 @@ public class AddPersonalInfoFragment extends Fragment {
                 .collection("introduction").document("introductdata").set(userInfo)
                 .addOnSuccessListener(aVoid -> {
                     // Hiển thị Toast khi cập nhật thành công
-                    Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                    Toast toast = new Toast(getContext());
+                    ThongBaoThanhCong(toast,"Cập nhật thành công");
                     binding.loadding.setVisibility(View.GONE);
                     binding.edtGioithieu.setText("");
                     Log.d("Firestore", "DocumentSnapshot successfully written!");
@@ -169,5 +175,66 @@ public class AddPersonalInfoFragment extends Fragment {
             }
         }
     }
+    public void ThongBaoThanhCong(Toast toast, String nameTB) {
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_toast_success, null);
+        CustomToastSuccessBinding binding = CustomToastSuccessBinding.bind(view);
 
+        toast.setView(view);
+        binding.messs.setText(nameTB);
+        view.setBackgroundResource(R.drawable.custom_toast_success); // Màu xanh cho thành công
+
+        // Cập nhật toast để hiển thị Toast giữa Gravity.TOP và Gravity.CENTER
+        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, getResources().getDisplayMetrics().heightPixels / 6);
+        toast.setDuration(Toast.LENGTH_SHORT);  // Dài hơn một chút để Toast không biến mất quá nhanh
+
+        // Hiển thị toast
+        toast.show();
+        view.bringToFront();
+
+
+        // Thêm hiệu ứng di chuyển lên sau khi Toast hiển thị
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationY", 0, -300);
+                animator.setDuration(500);
+                animator.start();
+            }
+        }, 1000);
+    }
+    public void ThongBaoThatBai(Toast toast, String nameTB) {
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_toast_success, null);
+        CustomToastSuccessBinding binding = CustomToastSuccessBinding.bind(view);
+
+        toast.setView(view);
+        binding.messs.setText(nameTB);
+        view.setBackgroundResource(R.drawable.custom_toast_error); // Màu xanh cho thành công
+        binding.sgv.setImageResource(R.drawable.error_svgrepo_com);
+        // Cập nhật toast để hiển thị Toast giữa Gravity.TOP và Gravity.CENTER
+        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, getResources().getDisplayMetrics().heightPixels / 6);
+        toast.setDuration(Toast.LENGTH_SHORT);  // Dài hơn một chút để Toast không biến mất quá nhanh
+
+        // Hiển thị toast
+        toast.show();
+        view.bringToFront();
+
+
+        // Thêm hiệu ứng di chuyển lên sau khi Toast hiển thị
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationY", 0, -300);
+                animator.setDuration(500);
+                animator.start();
+            }
+        }, 1000);
+    }
+    public void LoadingNhanhHon() {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(binding.loadding, "rotation", 0f, 360f);
+        animator.setDuration(300);
+        animator.setRepeatCount(ObjectAnimator.INFINITE);
+        animator.start();
+    }
 }

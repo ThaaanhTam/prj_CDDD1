@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.example.hotrovieclam.Model.HieuUngThongBao;
 import com.example.hotrovieclam.Model.KiNang;
 import com.example.hotrovieclam.Model.UserSessionManager;
 import com.example.hotrovieclam.R;
@@ -272,7 +274,8 @@ public class SkillsAndCertificationFragment extends Fragment {
                                                 getParentFragmentManager().setFragmentResult("addSucess", bundle);
                                                 getParentFragmentManager().popBackStack();
                                                 Log.d("Firestore", "Dữ liệu đã được lưu thành công với ID: " + documentReference.getId());
-                                                Toast.makeText(getContext(), "Lưu skill thành công", Toast.LENGTH_SHORT).show();
+                                                HieuUngThongBao.showSuccessToast(requireContext(),"Lưu skill thành công");
+                                                //Toast.makeText(getContext(), "Lưu skill thành công", Toast.LENGTH_SHORT).show();
                                             }
                                         } catch (Exception e) {
                                             Log.e("saveSkill", "Lỗi khi gửi kết quả hoặc cập nhật giao diện", e);
@@ -349,7 +352,8 @@ public class SkillsAndCertificationFragment extends Fragment {
                         getParentFragmentManager().setFragmentResult("addSucess", bundle);
                         getParentFragmentManager().popBackStack();
                         Log.d("Firestore", "Dữ liệu đã được cập nhật thành công với ID: " + id_skill);
-                        Toast.makeText(getContext(), "Cập nhật kỹ năng thành công", Toast.LENGTH_SHORT).show();
+                        HieuUngThongBao.showSuccessToast(requireContext(),"Cập nhật kỹ năng thành công");
+                        //Toast.makeText(getContext(), "Cập nhật kỹ năng thành công", Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
                         Log.e("Firestore", "Lỗi khi cập nhật dữ liệu", e);

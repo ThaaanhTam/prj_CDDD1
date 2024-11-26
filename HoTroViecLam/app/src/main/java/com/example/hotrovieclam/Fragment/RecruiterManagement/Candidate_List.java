@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import com.example.hotrovieclam.R;
 import com.example.hotrovieclam.databinding.FragmentCandidateListBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -29,6 +31,8 @@ public class Candidate_List extends Fragment {
     private FragmentCandidateListBinding binding;
     private CandidateAdapter adapter;
     private ArrayList<User> users = new ArrayList<>();
+    private Number status;
+        private String cv;
 
     public Candidate_List() {
         // Required empty public constructor
@@ -38,6 +42,7 @@ public class Candidate_List extends Fragment {
         Candidate_List fragment = new Candidate_List();
         Bundle args = new Bundle();
         args.putString("jobID", jobID);
+        args.putString("cadidateIDD", jobID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -47,6 +52,7 @@ public class Candidate_List extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             jobID = getArguments().getString("jobID");
+            Log.d("KKK", "onCreate: " + jobID);
         }
         db = FirebaseFirestore.getInstance();
     }
@@ -55,7 +61,6 @@ public class Candidate_List extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentCandidateListBinding.inflate(inflater, container, false);
-
         // Initialize RecyclerView and Adapter
         adapter = new CandidateAdapter(getActivity(), users);
         binding.candidateList.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -96,14 +101,17 @@ public class Candidate_List extends Fragment {
         fetchCandidatesRealtime();
         adapter.setClickIem(new CandidateAdapter.OnItemClickListener() {
             @Override
-            public void onClick(String id_candidate) {
+            public void onClick(String id_candidate, Integer po) {
                 // Tạo một instance của Fragment
                 Profile_Candidate_Fragment profileCandidateFragment = new Profile_Candidate_Fragment();
 
                 // Tạo Bundle để truyền dữ liệu
                 Bundle bundle = new Bundle();
                 bundle.putString("id_candidate", id_candidate);
+                bundle.putString("candidate", users.get(po).getCv());
                 bundle.putString("ID_JOB", jobID);
+
+
 
                 // Thiết lập arguments cho Fragment
                 profileCandidateFragment.setArguments(bundle);
@@ -117,7 +125,7 @@ public class Candidate_List extends Fragment {
             }
         });
 
-
+        Log.d("ConCacTNE", "onCreateView: " + status);
         return binding.getRoot();
     }
 
@@ -141,10 +149,13 @@ public class Candidate_List extends Fragment {
                         users.clear();
 
                         for (QueryDocumentSnapshot document : querySnapshot) {
-                            String candidateId = document.getString("candidateId");
 
+                        Long status = document.getLong("status");
+String candidateId = document.getString("candidateId");
+                             cv = document.getId();
+                            Log.d("candidateIdd", cv);
                             if (candidateId != null) {
-                                fetchUserDetails(candidateId);  // Fetch user details for each candidate
+                                fetchUserDetails(candidateId, cv);  // Fetch user details for each candidate
                             }
                         }
                     } else {
@@ -153,7 +164,8 @@ public class Candidate_List extends Fragment {
                 });
     }
 
-    private void fetchUserDetails(String candidateId) {
+
+    private void fetchUserDetails(String candidateId, String cv) {
         db.collection("users")
                 .document(candidateId)
                 .addSnapshotListener((userDocument, e) -> {
@@ -170,15 +182,51 @@ public class Candidate_List extends Fragment {
                         user.setPhoneNumber(userDocument.getString("phoneNumber"));
                         user.setId(userDocument.getString("id"));
 
-                        // Add the user to the list
-                        users.add(user);
+                        // Thêm user vào danh sách tại đây
 
-                        // Notify adapter to refresh the list
-                        adapter.notifyDataSetChanged();
+                        Log.d("HH", "fetchUserDetails: " + userDocument.getString("id"));
+                        String id_user_status = userDocument.getString("id");
+
+                        // Gọi fetchUserStatus để lấy status
+                        db.collection("jobs")
+                                .document(jobID)  // ID của công việc
+                                .collection("application")
+                                .whereEqualTo("candidateId", id_user_status)  // Tìm ứng viên theo candidateId
+                                .get()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        QuerySnapshot querySnapshot = task.getResult();
+
+                                        if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                            for (QueryDocumentSnapshot document : querySnapshot) {
+                                                Long status = document.getLong("status"); // Lấy giá trị "status"
+
+                                                if (status != null) {
+                                                    user.setStatus(status.intValue()); // Cập nhật status vào User
+                                                    user.setIdJob(jobID);
+                                                    Log.d("Firestore", "Status fetched: " + status);
+                                                } else {
+                                                    Log.w("Firestore", "Status field is null");
+                                                }
+                                            }
+                                        } else {
+                                            Toast.makeText(getContext(), "Không tìm thấy ứng viên với id: " + id_user_status, Toast.LENGTH_SHORT).show();
+                                        }
+                                        user.setCv(cv);
+
+                                        users.add(user);
+                                        // Notify adapter để cập nhật danh sách
+                                        adapter.notifyDataSetChanged();
+                                    } else {
+                                        Toast.makeText(getContext(), "Lỗi khi truy vấn Firestore: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
                     } else {
-
                         Log.d("Candidate_List", "No such user document for candidate ID: " + candidateId);
                     }
                 });
     }
+
+
 }

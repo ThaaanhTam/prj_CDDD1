@@ -65,89 +65,91 @@ public class Register extends AppCompatActivity {
                 String pass = binding.password.getText().toString().trim();
                 String passAgain = binding.passwordAgain.getText().toString().trim();
 
-                // Kiểm tra trường rỗng
+                boolean hasError = false;
+
+// Kiểm tra trường rỗng và xử lý lỗi
                 if (name.isEmpty()) {
-                    binding.progressBarRes.setVisibility(View.GONE);
-                    Toast.makeText(Register.this, "Vui lòng nhập tên", Toast.LENGTH_SHORT).show();
+                    binding.progressBarRes.setVisibility(View.GONE); // Ẩn progress bar
+                    binding.name.setError("Vui lòng nhập tên"); // Hiển thị lỗi trên trường "Tên"
                     binding.name.requestFocus();
                     binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
-                    return;
+                    hasError = true;
                 }
 
                 if (email.isEmpty()) {
                     binding.progressBarRes.setVisibility(View.GONE);
-
-                    Toast.makeText(Register.this, "Vui lòng nhập email", Toast.LENGTH_SHORT).show();
+                    binding.email.setError("Vui lòng nhập email"); // Hiển thị lỗi trên trường "Email"
                     binding.email.requestFocus();
-                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
-                    return;
+                    binding.buttonRegister.setEnabled(true);
+                    hasError = true;
                 }
 
                 if (sdt.isEmpty()) {
                     binding.progressBarRes.setVisibility(View.GONE);
-                    Toast.makeText(Register.this, "Vui lòng nhập số điện thoại", Toast.LENGTH_SHORT).show();
+                    binding.phone.setError("Vui lòng nhập số điện thoại"); // Hiển thị lỗi trên trường "Số điện thoại"
                     binding.phone.requestFocus();
-                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
-                    return;
+                    binding.buttonRegister.setEnabled(true);
+                    hasError = true;
                 }
 
                 if (pass.isEmpty()) {
                     binding.progressBarRes.setVisibility(View.GONE);
-                    Toast.makeText(Register.this, "Vui lòng nhập mật khẩu", Toast.LENGTH_SHORT).show();
+                    binding.password.setError("Vui lòng nhập mật khẩu"); // Hiển thị lỗi trên trường "Mật khẩu"
                     binding.password.requestFocus();
-                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
-                    return;
+                    binding.buttonRegister.setEnabled(true);
+                    hasError = true;
                 }
 
                 if (passAgain.isEmpty()) {
                     binding.progressBarRes.setVisibility(View.GONE);
-                    Toast.makeText(Register.this, "Vui lòng nhập lại mật khẩu", Toast.LENGTH_SHORT).show();
+                    binding.passwordAgain.setError("Vui lòng nhập lại mật khẩu"); // Hiển thị lỗi trên trường "Nhập lại mật khẩu"
                     binding.passwordAgain.requestFocus();
-                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
-                    return;
+                    binding.buttonRegister.setEnabled(true);
+                    hasError = true;
                 }
 
-                // Kiểm tra mật khẩu khớp
+// Kiểm tra mật khẩu khớp
                 if (!pass.equals(passAgain)) {
                     binding.progressBarRes.setVisibility(View.GONE);
-                    Toast.makeText(Register.this, "Mật khẩu không khớp!", Toast.LENGTH_SHORT).show();
+                    binding.passwordAgain.setError("Mật khẩu không khớp!"); // Hiển thị lỗi trên trường "Nhập lại mật khẩu"
                     binding.passwordAgain.requestFocus();
-                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
-                    return;
+                    binding.buttonRegister.setEnabled(true);
+                    hasError = true;
                 }
 
-                // Kiểm tra độ dài mật khẩu
+// Kiểm tra độ dài mật khẩu
                 if (pass.length() < 6) {
                     binding.progressBarRes.setVisibility(View.GONE);
-                    Toast.makeText(Register.this, "Mật khẩu phải tối thiểu 6 kí tự", Toast.LENGTH_SHORT).show();
+                    binding.password.setError("Mật khẩu phải tối thiểu 6 kí tự"); // Hiển thị lỗi trên trường "Mật khẩu"
                     binding.password.requestFocus();
-                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
-                    return;
+                    binding.buttonRegister.setEnabled(true);
+                    hasError = true;
                 }
 
+// Kiểm tra email hợp lệ
                 if (!isValidEmail(email)) {
                     binding.progressBarRes.setVisibility(View.GONE);
-                    Toast.makeText(Register.this, "Email phải đúng định dạng Abc@gmail.com", Toast.LENGTH_SHORT).show();
+                    binding.email.setError("Email không hợp lệ!"); // Hiển thị lỗi trên trường "Email"
                     binding.email.requestFocus();
-                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
-                    return;
-                }
-                if (sdt.length() > 10) {
-                    sdt = sdt.substring(0, 10);
-                    binding.phone.setText(sdt);
+                    binding.buttonRegister.setEnabled(true);
+                    hasError = true;
                 }
 
-// Kiểm tra lại độ dài để đảm bảo số điện thoại có đúng 10 ký tự
+// Kiểm tra số điện thoại có đúng 10 số
                 if (sdt.length() != 10) {
                     binding.progressBarRes.setVisibility(View.GONE);
-                    Toast.makeText(Register.this, "Số điện thoại phải có đúng 10 số", Toast.LENGTH_SHORT).show();
+                    binding.phone.setError("Số điện thoại phải có 10 số"); // Hiển thị lỗi trên trường "Số điện thoại"
                     binding.phone.requestFocus();
-                    binding.buttonRegister.setEnabled(true); // Khôi phục nút khi có lỗi
-                    return;
+                    binding.buttonRegister.setEnabled(true);
+                    hasError = true;
                 }
 
-                // Gọi phương thức tạo tài khoản
-                createAccount(name, email, sdt, pass);
+// Nếu không có lỗi, tiến hành xử lý đăng ký
+                if (!hasError) {
+                    createAccount(name, email, sdt, pass);
+                }
+
+
             }
         });
         binding.progressBarRes.setVisibility(View.GONE);
@@ -203,69 +205,62 @@ public class Register extends AppCompatActivity {
 
     private void createAccount(String name, String email, String phone, String password) {
         // Kiểm tra xem email đã tồn tại trong Firestore chưa
-        db.collection("users")
-                .whereEqualTo("email", email)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (!task.getResult().isEmpty()) {
-                            // Nếu email đã tồn tại
-                            Toast.makeText(Register.this, "Email đã tồn tại!", Toast.LENGTH_SHORT).show();
-                            binding.email.requestFocus();
+        db.collection("users").whereEqualTo("email", email).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (!task.getResult().isEmpty()) {
+                    // Nếu email đã tồn tại
+                    Toast.makeText(Register.this, "Email đã tồn tại!", Toast.LENGTH_SHORT).show();
+                    binding.email.requestFocus();
+                    binding.progressBarRes.setVisibility(View.GONE);
+
+                } else {
+                    // Nếu email chưa tồn tại, tiếp tục tạo tài khoản
+                    mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, authTask -> {
+                        if (authTask.isSuccessful()) {
+                            // Đăng ký thành công, gửi email xác thực
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            if (firebaseUser != null) {
+                                // Tạo đối tượng User
+                                User user = new User(firebaseUser.getUid(), name, email, phone, 1, null, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
+
+                                // Lưu thông tin người dùng vào Firestore
+                                saveUserToFirestore(user);
+
+                                // Gửi email xác thực
+                                firebaseUser.sendEmailVerification().addOnCompleteListener(verificationTask -> {
+                                    if (verificationTask.isSuccessful()) {
+                                        // Hiển thị AlertDialog thông báo người dùng kiểm tra email
+                                        new AlertDialog.Builder(Register.this).setTitle("Xác nhận tài khoản").setMessage("Vui lòng kiểm tra email để xác nhận tài khoản của bạn!").setPositiveButton("OK", (dialog, which) -> {
+                                                    clearInputFields(); // Xóa các trường nhập
+                                                    mAuth.signOut(); // Đăng xuất sau khi gửi mail xác nhận
+                                                    binding.progressBarRes.setVisibility(View.GONE);
+                                                }).setCancelable(false) // Không cho phép đóng dialog khi bấm ngoài
+                                                .show();
+
+
+                                    } else {
+                                        // Gửi email xác thực thất bại.
+
+                                        Toast.makeText(Register.this, "Lỗi khi gửi email xác thực: " + verificationTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        binding.progressBarRes.setVisibility(View.GONE);
+
+                                    }
+                                });
+                            }
+                        } else {
+                            // Đăng ký thất bại
+                            Toast.makeText(Register.this, "Đăng ký thất bại: " + authTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             binding.progressBarRes.setVisibility(View.GONE);
 
-                        } else {
-                            // Nếu email chưa tồn tại, tiếp tục tạo tài khoản
-                            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, authTask -> {
-                                if (authTask.isSuccessful()) {
-                                    // Đăng ký thành công, gửi email xác thực
-                                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                                    if (firebaseUser != null) {
-                                        // Tạo đối tượng User
-                                        User user = new User(firebaseUser.getUid(), name, email, phone, 1, null, new Timestamp(new Date().getTime()), new Timestamp(new Date().getTime()));
-
-                                        // Lưu thông tin người dùng vào Firestore
-                                        saveUserToFirestore(user);
-
-                                        // Gửi email xác thực
-                                        firebaseUser.sendEmailVerification().addOnCompleteListener(verificationTask -> {
-                                            if (verificationTask.isSuccessful()) {
-                                                // Hiển thị AlertDialog thông báo người dùng kiểm tra email
-                                                new AlertDialog.Builder(Register.this)
-                                                        .setTitle("Xác nhận tài khoản")
-                                                        .setMessage("Vui lòng kiểm tra email để xác nhận tài khoản của bạn!")
-                                                        .setPositiveButton("OK", (dialog, which) -> {
-                                                            clearInputFields(); // Xóa các trường nhập
-                                                            mAuth.signOut(); // Đăng xuất sau khi gửi mail xác nhận
-                                                            binding.progressBarRes.setVisibility(View.GONE);
-                                                        })
-                                                        .setCancelable(false) // Không cho phép đóng dialog khi bấm ngoài
-                                                        .show();
-
-
-                                            } else {
-                                                // Gửi email xác thực thất bại.
-
-                                                Toast.makeText(Register.this, "Lỗi khi gửi email xác thực: " + verificationTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                                binding.progressBarRes.setVisibility(View.GONE);
-
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    // Đăng ký thất bại
-                                    Toast.makeText(Register.this, "Đăng ký thất bại: " + authTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                    binding.progressBarRes.setVisibility(View.GONE);
-
-                                }
-                            });
                         }
-                    } else {
-                        Toast.makeText(Register.this, "Lỗi khi kiểm tra email: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        binding.progressBarRes.setVisibility(View.GONE);
+                    });
+                }
+            } else {
+                Toast.makeText(Register.this, "Lỗi khi kiểm tra email: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                binding.progressBarRes.setVisibility(View.GONE);
 
-                    }
-                });
+            }
+        });
     }
 
 
