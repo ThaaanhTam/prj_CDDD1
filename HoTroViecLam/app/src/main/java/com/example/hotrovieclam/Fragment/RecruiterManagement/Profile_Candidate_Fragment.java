@@ -291,9 +291,9 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                         // Thành công
                                                         Toast.makeText(getContext(), "Cập nhật trạng thái ứng viên thành công!", Toast.LENGTH_SHORT).show();
                                                         Bundle bundle = new Bundle();
-                                                        bundle.putBoolean("update", true);  // Gửi kết quả cập nhật
+                                                        bundle.putBoolean("update", true);
                                                         getParentFragmentManager().setFragmentResult("updateSuccess", bundle);
-                                                        getParentFragmentManager().popBackStack();  // Đóng Fragment
+                                                        getParentFragmentManager().popBackStack();
                                                     })
                                                     .addOnFailureListener(e -> {
                                                         // Thất bại
@@ -329,18 +329,14 @@ public class Profile_Candidate_Fragment extends Fragment {
                                     if (querySnapshot != null && !querySnapshot.isEmpty()) {
                                         // Cập nhật tất cả tài liệu phù hợp
                                         for (QueryDocumentSnapshot document : querySnapshot) {
-                                            String documentId = document.getId(); // Lấy id của tài liệu
-
-                                            // Cập nhật trường "status" thành 0
+                                            String documentId = document.getId();
                                             db.collection("jobs")
                                                     .document(id_Job)
                                                     .collection("application")
                                                     .document(documentId)
                                                     .update("status", giaTri)
                                                     .addOnSuccessListener(aVoid -> {
-                                                        // Thành công
-                                                       // Toast.makeText(getContext(), "Cập nhật trạng thái ứng viên thành công!", Toast.LENGTH_SHORT).show();
-                                                       // Đóng Fragment
+
                                                     })
                                                     .addOnFailureListener(e -> {
                                                         // Thất bại

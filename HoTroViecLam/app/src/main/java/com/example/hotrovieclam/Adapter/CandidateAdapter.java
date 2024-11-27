@@ -140,12 +140,7 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
                                                                                     // Xóa thành công tài liệu ứng viên
                                                                                     HieuUngThongBao.showSuccessToast(context, "Xóa ứng viên thành công!");
 
-                                                                                    // Xóa ứng viên khỏi danh sách và cập nhật RecyclerViewifif(ifif(
 
-
-//                                                                                    if(user!= null) {
-//                                                                                        users.remove(position);
-//                                                                                    }
 
                                                                                     if (position >= 0 && position < users.size()) {
                                                                                         users.remove(position);
@@ -185,8 +180,9 @@ public class CandidateAdapter extends RecyclerView.Adapter<CandidateAdapter.MyVi
             });
         }else if (user.getStatus() != null && user.getStatus().intValue() == 1){
             holder.binding.status.setText("Đã chấp nhận");
-            holder.binding.status.setBackgroundColor(R.color.title);
             holder.binding.status.setVisibility(View.VISIBLE);
+            int color = ContextCompat.getColor(context, R.color.success);
+            holder.binding.backgroundItem.setBackgroundColor(color);
         }
 
 

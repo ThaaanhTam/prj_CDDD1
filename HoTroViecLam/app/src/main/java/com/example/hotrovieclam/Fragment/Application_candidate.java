@@ -126,12 +126,11 @@ public class Application_candidate extends AppCompatActivity {
                             candidate.setId(applicationID);
                             candidate.setJobID(jobID);
                             newCandidates.add(candidate);
-
+                            candidateList.add(candidate);
                         }
 
                         // Update candidate list and notify adapter once
 
-                        candidateList.addAll(newCandidates);
                         kt();
                         adapter.notifyDataSetChanged();
 
