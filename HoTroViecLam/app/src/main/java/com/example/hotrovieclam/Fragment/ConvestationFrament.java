@@ -163,10 +163,10 @@ if(currentUserId!=null){
                 listMess.setDate(formattedDate);
                 listMess.setCompanyName(companyName);
                 isUpdated = true;
-                adapter.notifyDataSetChanged();
+               // adapter.notifyDataSetChanged();
 
-                conversationList.remove(i); // Xóa phần tử cũ
-                conversationList.add(0, listMess);
+//                conversationList.remove(i); // Xóa phần tử cũ
+//                conversationList.add(0, listMess);
                 // Cập nhật giao diện
                 adapter.notifyDataSetChanged();
                 break;

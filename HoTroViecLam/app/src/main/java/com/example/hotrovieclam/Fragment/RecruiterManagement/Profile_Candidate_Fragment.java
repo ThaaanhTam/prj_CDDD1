@@ -112,7 +112,7 @@ public class Profile_Candidate_Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d("UYT", "onClick: ttttttt");
-                updateCandidateStatus(id_Job, id_candidate);
+                updateCandidateStatus(id_Job, id_candidate, 0);
 
             }
         });
@@ -123,6 +123,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                 String jobTitle;
                 db = FirebaseFirestore.getInstance();
 
+                updateCandidateStatusss(id_Job, id_candidate, 1);
                 Map<String, Object> messageData = new HashMap<>();
                 messageData.put("conversationTitle", "Cuộc hội thoại giữa User1 và User2");
 
@@ -143,7 +144,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                 String messageID = documentSnapshot.getString("messageID");
                                 getJobInfo();
                                 getUserCompanyInfo();
-                                sendMessage("Chúng tôi xin chân thành cảm ơn bạn đã dành thời gian tham gia vào quá trình tuyển dụng tại " + companyName + ". Sau khi xem xét và đánh giá kỹ lưỡng hồ sơ và kết quả phỏng vấn của bạn, chúng tôi rất vui mừng thông báo rằng bạn đã trúng tuyển vào vị trí " + title + " tại công ty chúng tôi.\n Chúng tôi hiện đang lên kế hoạch cho lịch phỏng vấn và sẽ thông báo cho bạn thời gian cụ thể trong thời gian sớm nhất. Mong bạn vui lòng giữ lịch linh hoạt để có thể tham gia phỏng vấn khi chúng tôi xác nhận thời gian.", messageID, id_candidate);
+                                sendMessage("Chúng tôi xin chân thành cảm ơn bạn đã dành thời gian tham gia vào quá trình tuyển dụng " + companyName + ". Sau khi xem xét và đánh giá kỹ lưỡng hồ sơ và kết quả phỏng vấn của bạn, chúng tôi rất vui mừng thông báo rằng bạn đã trúng tuyển vào vị trí " + title + " tại công ty chúng tôi.\n Chúng tôi hiện đang lên kế hoạch cho lịch phỏng vấn và sẽ thông báo cho bạn thời gian cụ thể trong thời gian sớm nhất. Mong bạn vui lòng giữ lịch linh hoạt để có thể tham gia phỏng vấn khi chúng tôi xác nhận thời gian.", messageID, id_candidate);
 
                                 Intent intent = new Intent(getContext(), MessageActivity.class);
                                 intent.putExtra("messageID", messageID);
@@ -256,7 +257,7 @@ public class Profile_Candidate_Fragment extends Fragment {
 
 
 
-    private void updateCandidateStatus(String id_Job, String id_candidate) {
+    private void updateCandidateStatus(String id_Job, String id_candidate, Integer giaTri) {
         // Hiển thị hộp thoại xác nhận
         new AlertDialog.Builder(requireContext())
                 .setTitle("Xác nhận bỏ qua")
@@ -285,7 +286,7 @@ public class Profile_Candidate_Fragment extends Fragment {
                                                     .document(id_Job)
                                                     .collection("application")
                                                     .document(documentId)
-                                                    .update("status", 0)
+                                                    .update("status", giaTri)
                                                     .addOnSuccessListener(aVoid -> {
                                                         // Thành công
                                                         Toast.makeText(getContext(), "Cập nhật trạng thái ứng viên thành công!", Toast.LENGTH_SHORT).show();
@@ -308,6 +309,52 @@ public class Profile_Candidate_Fragment extends Fragment {
                 .setNegativeButton("Hủy", null)
                 .show(); //;
     }
+    private void updateCandidateStatusss(String id_Job, String id_candidate, Integer giaTri) {
+        // Hiển thị hộp thoại xác nhận
+
+
+                    db = FirebaseFirestore.getInstance();
+
+                    // Truy vấn ứng viên trong collection "application"
+                    db.collection("jobs")
+                            .document(id_Job)  // ID của công việc
+                            .collection("application")
+                            .whereEqualTo("candidateId", id_candidate)  // Tìm ứng viên theo candidateId
+                            .get()
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    QuerySnapshot querySnapshot = task.getResult();
+
+                                    // Kiểm tra nếu có tài liệu ứng viên cần cập nhật
+                                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                        // Cập nhật tất cả tài liệu phù hợp
+                                        for (QueryDocumentSnapshot document : querySnapshot) {
+                                            String documentId = document.getId(); // Lấy id của tài liệu
+
+                                            // Cập nhật trường "status" thành 0
+                                            db.collection("jobs")
+                                                    .document(id_Job)
+                                                    .collection("application")
+                                                    .document(documentId)
+                                                    .update("status", giaTri)
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        // Thành công
+                                                       // Toast.makeText(getContext(), "Cập nhật trạng thái ứng viên thành công!", Toast.LENGTH_SHORT).show();
+                                                       // Đóng Fragment
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        // Thất bại
+                                                        Toast.makeText(getContext(), "Lỗi khi cập nhật trạng thái: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    });
+                                        }
+                                    }
+                                }
+                            });
+
+
+                }
+
+
 
     private void fetchApplicationDetails(String a, String b) {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
